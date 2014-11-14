@@ -1,0 +1,292 @@
+﻿using System.Windows.Forms;
+using MapleCLB.Tools;
+namespace MapleCLB
+{
+    partial class MainForm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.infoGroup = new System.Windows.Forms.GroupBox();
+            this.selType = new System.Windows.Forms.ComboBox();
+            this.character = new System.Windows.Forms.TextBox();
+            this.channel = new System.Windows.Forms.ComboBox();
+            this.username = new System.Windows.Forms.TextBox();
+            this.world = new System.Windows.Forms.ComboBox();
+            this.password = new System.Windows.Forms.TextBox();
+            this.pic = new System.Windows.Forms.TextBox();
+            this.connect = new System.Windows.Forms.Button();
+            this.log = new System.Windows.Forms.TextBox();
+            this.disconnect = new System.Windows.Forms.Button();
+            this.aRestart = new System.Windows.Forms.CheckBox();
+            this.sendPacket = new System.Windows.Forms.TextBox();
+            this.send = new System.Windows.Forms.Button();
+            this.aCS = new System.Windows.Forms.CheckBox();
+            this.infoGroup.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // infoGroup
+            // 
+            this.infoGroup.Controls.Add(this.selType);
+            this.infoGroup.Controls.Add(this.character);
+            this.infoGroup.Controls.Add(this.channel);
+            this.infoGroup.Controls.Add(this.username);
+            this.infoGroup.Controls.Add(this.world);
+            this.infoGroup.Controls.Add(this.password);
+            this.infoGroup.Controls.Add(this.pic);
+            this.infoGroup.Location = new System.Drawing.Point(12, 10);
+            this.infoGroup.Name = "infoGroup";
+            this.infoGroup.Size = new System.Drawing.Size(198, 126);
+            this.infoGroup.TabIndex = 9;
+            this.infoGroup.TabStop = false;
+            this.infoGroup.Text = "Account Information";
+            // 
+            // selType
+            // 
+            this.selType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.selType.FormattingEnabled = true;
+            this.selType.Items.AddRange(new object[] {
+            "Slot",
+            "IGN",
+            "UID"});
+            this.selType.Location = new System.Drawing.Point(6, 97);
+            this.selType.Name = "selType";
+            this.selType.Size = new System.Drawing.Size(61, 21);
+            this.selType.TabIndex = 8;
+            // 
+            // character
+            // 
+            this.character.Location = new System.Drawing.Point(73, 98);
+            this.character.MaxLength = 12;
+            this.character.Name = "character";
+            this.character.Size = new System.Drawing.Size(118, 20);
+            this.character.TabIndex = 7;
+            // 
+            // channel
+            // 
+            this.channel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.channel.FormattingEnabled = true;
+            this.channel.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20"});
+            this.channel.Location = new System.Drawing.Point(121, 71);
+            this.channel.Name = "channel";
+            this.channel.Size = new System.Drawing.Size(70, 21);
+            this.channel.TabIndex = 6;
+            // 
+            // username
+            // 
+            this.username.Location = new System.Drawing.Point(6, 19);
+            this.username.MaxLength = 50;
+            this.username.Name = "username";
+            this.username.Size = new System.Drawing.Size(185, 20);
+            this.username.TabIndex = 2;
+            // 
+            // world
+            // 
+            this.world.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.world.FormattingEnabled = true;
+            this.world.Items.AddRange(new object[] {
+            "Scania",
+            "Bera",
+            "Broa",
+            "Windia",
+            "Khaini",
+            "Bellocan",
+            "Mardia",
+            "Kradia",
+            "Yellonde",
+            "Dementhos",
+            "Galicia",
+            "El Nido",
+            "Zenith",
+            "Arcania",
+            "Chaos",
+            "Nova",
+            "Renegades"});
+            this.world.Location = new System.Drawing.Point(6, 71);
+            this.world.Name = "world";
+            this.world.Size = new System.Drawing.Size(109, 21);
+            this.world.TabIndex = 5;
+            // 
+            // password
+            // 
+            this.password.Location = new System.Drawing.Point(6, 45);
+            this.password.MaxLength = 20;
+            this.password.Name = "password";
+            this.password.PasswordChar = '*';
+            this.password.Size = new System.Drawing.Size(109, 20);
+            this.password.TabIndex = 3;
+            // 
+            // pic
+            // 
+            this.pic.Location = new System.Drawing.Point(121, 45);
+            this.pic.MaxLength = 16;
+            this.pic.Name = "pic";
+            this.pic.Size = new System.Drawing.Size(70, 20);
+            this.pic.TabIndex = 4;
+            // 
+            // connect
+            // 
+            this.connect.Location = new System.Drawing.Point(12, 142);
+            this.connect.Name = "connect";
+            this.connect.Size = new System.Drawing.Size(198, 27);
+            this.connect.TabIndex = 0;
+            this.connect.Text = "Connect";
+            this.connect.UseVisualStyleBackColor = true;
+            this.connect.EnabledChanged += new System.EventHandler(this.connect_EnabledChanged);
+            this.connect.Click += new System.EventHandler(this.connect_Click);
+            // 
+            // log
+            // 
+            this.log.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.log.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.log.Location = new System.Drawing.Point(227, 12);
+            this.log.MaxLength = 0;
+            this.log.Multiline = true;
+            this.log.Name = "log";
+            this.log.ReadOnly = true;
+            this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.log.Size = new System.Drawing.Size(366, 259);
+            this.log.TabIndex = 11;
+            // 
+            // disconnect
+            // 
+            this.disconnect.Enabled = false;
+            this.disconnect.Location = new System.Drawing.Point(12, 175);
+            this.disconnect.Name = "disconnect";
+            this.disconnect.Size = new System.Drawing.Size(198, 27);
+            this.disconnect.TabIndex = 12;
+            this.disconnect.Text = "Disconnect";
+            this.disconnect.UseVisualStyleBackColor = true;
+            this.disconnect.Click += new System.EventHandler(this.disconnect_Click);
+            // 
+            // aRestart
+            // 
+            this.aRestart.AutoSize = true;
+            this.aRestart.Checked = true;
+            this.aRestart.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.aRestart.Location = new System.Drawing.Point(18, 254);
+            this.aRestart.Name = "aRestart";
+            this.aRestart.Size = new System.Drawing.Size(85, 17);
+            this.aRestart.TabIndex = 13;
+            this.aRestart.Text = "Auto Restart";
+            this.aRestart.UseVisualStyleBackColor = true;
+            // 
+            // sendPacket
+            // 
+            this.sendPacket.Location = new System.Drawing.Point(12, 281);
+            this.sendPacket.Name = "sendPacket";
+            this.sendPacket.Size = new System.Drawing.Size(497, 20);
+            this.sendPacket.TabIndex = 14;
+            // 
+            // send
+            // 
+            this.send.Location = new System.Drawing.Point(515, 279);
+            this.send.Name = "send";
+            this.send.Size = new System.Drawing.Size(78, 23);
+            this.send.TabIndex = 15;
+            this.send.Text = "Send";
+            this.send.UseVisualStyleBackColor = true;
+            this.send.Click += new System.EventHandler(this.send_Click);
+            // 
+            // aCS
+            // 
+            this.aCS.AutoSize = true;
+            this.aCS.Checked = true;
+            this.aCS.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.aCS.Location = new System.Drawing.Point(109, 254);
+            this.aCS.Name = "aCS";
+            this.aCS.Size = new System.Drawing.Size(65, 17);
+            this.aCS.TabIndex = 16;
+            this.aCS.Text = "Auto CS";
+            this.aCS.UseVisualStyleBackColor = true;
+            // 
+            // MainForm
+            // 
+            this.AcceptButton = this.send;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(605, 313);
+            this.Controls.Add(this.aCS);
+            this.Controls.Add(this.send);
+            this.Controls.Add(this.sendPacket);
+            this.Controls.Add(this.aRestart);
+            this.Controls.Add(this.disconnect);
+            this.Controls.Add(this.log);
+            this.Controls.Add(this.infoGroup);
+            this.Controls.Add(this.connect);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.Name = "MainForm";
+            this.Text = "MapleStory Clientless Bot v156.1.2";
+            this.infoGroup.ResumeLayout(false);
+            this.infoGroup.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private GroupBox infoGroup;
+        private TextBox character;
+        private ComboBox channel;
+        private TextBox username;
+        private ComboBox world;
+        private TextBox password;
+        private TextBox pic;
+        public TextBox log;
+        public ComboBox selType;
+        public Button connect;
+        public Button disconnect;
+        public CheckBox aRestart;
+        private TextBox sendPacket;
+        private Button send;
+        public CheckBox aCS;
+    }
+}
+
