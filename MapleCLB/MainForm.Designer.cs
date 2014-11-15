@@ -30,6 +30,7 @@ namespace MapleCLB
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.infoGroup = new System.Windows.Forms.GroupBox();
             this.selType = new System.Windows.Forms.ComboBox();
@@ -44,9 +45,14 @@ namespace MapleCLB
             this.disconnect = new System.Windows.Forms.Button();
             this.aRestart = new System.Windows.Forms.CheckBox();
             this.sendPacket = new System.Windows.Forms.TextBox();
-            this.send = new System.Windows.Forms.Button();
             this.aCS = new System.Windows.Forms.CheckBox();
+            this.sendSpam = new wyDay.Controls.SplitButton();
+            this.sendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.sMenuSend = new System.Windows.Forms.ToolStripMenuItem();
+            this.sMenuSpam = new System.Windows.Forms.ToolStripMenuItem();
+            this.delay = new System.Windows.Forms.TextBox();
             this.infoGroup.SuspendLayout();
+            this.sendMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // infoGroup
@@ -217,20 +223,11 @@ namespace MapleCLB
             // 
             // sendPacket
             // 
-            this.sendPacket.Location = new System.Drawing.Point(12, 281);
+            this.sendPacket.Font = new System.Drawing.Font("Consolas", 9F);
+            this.sendPacket.Location = new System.Drawing.Point(8, 280);
             this.sendPacket.Name = "sendPacket";
-            this.sendPacket.Size = new System.Drawing.Size(497, 20);
+            this.sendPacket.Size = new System.Drawing.Size(505, 22);
             this.sendPacket.TabIndex = 14;
-            // 
-            // send
-            // 
-            this.send.Location = new System.Drawing.Point(515, 279);
-            this.send.Name = "send";
-            this.send.Size = new System.Drawing.Size(78, 23);
-            this.send.TabIndex = 15;
-            this.send.Text = "Send";
-            this.send.UseVisualStyleBackColor = true;
-            this.send.Click += new System.EventHandler(this.send_Click);
             // 
             // aCS
             // 
@@ -244,14 +241,62 @@ namespace MapleCLB
             this.aCS.Text = "Auto CS";
             this.aCS.UseVisualStyleBackColor = true;
             // 
+            // sendSpam
+            // 
+            this.sendSpam.AutoSize = true;
+            this.sendSpam.ContextMenuStrip = this.sendMenu;
+            this.sendSpam.Location = new System.Drawing.Point(519, 278);
+            this.sendSpam.Name = "sendSpam";
+            this.sendSpam.Size = new System.Drawing.Size(78, 25);
+            this.sendSpam.SplitMenuStrip = this.sendMenu;
+            this.sendSpam.TabIndex = 17;
+            this.sendSpam.Text = "Send";
+            this.sendSpam.UseVisualStyleBackColor = true;
+            this.sendSpam.Click += new System.EventHandler(this.sendSpam_Click);
+            // 
+            // sendMenu
+            // 
+            this.sendMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sMenuSend,
+            this.sMenuSpam});
+            this.sendMenu.Name = "sendMenu";
+            this.sendMenu.Size = new System.Drawing.Size(153, 70);
+            // 
+            // sMenuSend
+            // 
+            this.sMenuSend.Checked = true;
+            this.sMenuSend.CheckOnClick = true;
+            this.sMenuSend.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sMenuSend.Name = "sMenuSend";
+            this.sMenuSend.Size = new System.Drawing.Size(152, 22);
+            this.sMenuSend.Text = "Send";
+            this.sMenuSend.Click += new System.EventHandler(this.sMenuSend_Click);
+            // 
+            // sMenuSpam
+            // 
+            this.sMenuSpam.CheckOnClick = true;
+            this.sMenuSpam.Name = "sMenuSpam";
+            this.sMenuSpam.Size = new System.Drawing.Size(152, 22);
+            this.sMenuSpam.Text = "Spam";
+            this.sMenuSpam.Click += new System.EventHandler(this.sMenuSpam_Click);
+            // 
+            // delay
+            // 
+            this.delay.Font = new System.Drawing.Font("Consolas", 9F);
+            this.delay.Location = new System.Drawing.Point(467, 280);
+            this.delay.Name = "delay";
+            this.delay.Size = new System.Drawing.Size(45, 22);
+            this.delay.TabIndex = 19;
+            this.delay.Visible = false;
+            // 
             // MainForm
             // 
-            this.AcceptButton = this.send;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(605, 313);
+            this.Controls.Add(this.delay);
+            this.Controls.Add(this.sendSpam);
             this.Controls.Add(this.aCS);
-            this.Controls.Add(this.send);
             this.Controls.Add(this.sendPacket);
             this.Controls.Add(this.aRestart);
             this.Controls.Add(this.disconnect);
@@ -265,6 +310,7 @@ namespace MapleCLB
             this.Text = "MapleStory Clientless Bot v156.1.2";
             this.infoGroup.ResumeLayout(false);
             this.infoGroup.PerformLayout();
+            this.sendMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -285,8 +331,12 @@ namespace MapleCLB
         public Button disconnect;
         public CheckBox aRestart;
         private TextBox sendPacket;
-        private Button send;
         public CheckBox aCS;
+        private wyDay.Controls.SplitButton sendSpam;
+        private ContextMenuStrip sendMenu;
+        private ToolStripMenuItem sMenuSend;
+        private ToolStripMenuItem sMenuSpam;
+        private TextBox delay;
     }
 }
 

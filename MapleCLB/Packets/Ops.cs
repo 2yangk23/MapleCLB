@@ -12,6 +12,11 @@
     CHANGE_CHANNEL  - Sent when changing channels
      * 
     ENTER_CASH_SHOP - Sent when entering cash shop
+     * 
+    MOVE_PLAYER     - Sent when moving player
+     * 
+    NPC_TALK        - Sent when first talking to a NPC
+    NPC_TALK_MORE   - Send when continuing chat with NPC
      ********************************/
     class SendOps
     {
@@ -20,7 +25,7 @@
 
             /* login */
             CLIENT_HELLO = 0x3F,
-            PLAYER_LOGGEDIN = 0x27, //CONST
+            PLAYER_LOGGEDIN = 0x27, //CONST (Usually)
             SERVER_LOGIN = 0x43,
             CHAR_SELECT = 0x47,
 
@@ -33,8 +38,7 @@
             MOVE_PLAYER = 0x5D,
 
             NPC_TALK = 0x7E,
-            NPC_TALK_MORE = NPC_TALK + 0x02,
-            SEED = 0x54;
+            NPC_TALK_MORE = NPC_TALK + 0x02;
     }
 
     /*************RECEIVE************
@@ -51,13 +55,13 @@
     class RecvOps
     {
         public const short
-            PING = 0x13, //CONST
+            PING = 0x13,
 
             /* server */
-            LOGIN_SECOND = 0x02, //CONST
-            CHARLIST = 0x0A, //CONST
-            SERVER_IP = 0x0B, //CONST
-            CHANNEL_IP = 0x12, //CONST
+            LOGIN_SECOND = 0x02, //CONST (Usually)
+            CHARLIST = 0x0A,
+            SERVER_IP = 0x0B,
+            CHANNEL_IP = 0x12,
 
             SPAWN_PLAYER = 0x0197,
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01;
