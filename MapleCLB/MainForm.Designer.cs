@@ -46,7 +46,7 @@ namespace MapleCLB
             this.aRestart = new System.Windows.Forms.CheckBox();
             this.sendPacket = new System.Windows.Forms.TextBox();
             this.aCS = new System.Windows.Forms.CheckBox();
-            this.sendSpam = new wyDay.Controls.SplitButton();
+            this.sendSpam = new SplitButton();
             this.sendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.sMenuSend = new System.Windows.Forms.ToolStripMenuItem();
             this.sMenuSpam = new System.Windows.Forms.ToolStripMenuItem();
@@ -260,7 +260,7 @@ namespace MapleCLB
             this.sMenuSend,
             this.sMenuSpam});
             this.sendMenu.Name = "sendMenu";
-            this.sendMenu.Size = new System.Drawing.Size(153, 70);
+            this.sendMenu.Size = new System.Drawing.Size(105, 48);
             // 
             // sMenuSend
             // 
@@ -268,7 +268,7 @@ namespace MapleCLB
             this.sMenuSend.CheckOnClick = true;
             this.sMenuSend.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sMenuSend.Name = "sMenuSend";
-            this.sMenuSend.Size = new System.Drawing.Size(152, 22);
+            this.sMenuSend.Size = new System.Drawing.Size(104, 22);
             this.sMenuSend.Text = "Send";
             this.sMenuSend.Click += new System.EventHandler(this.sMenuSend_Click);
             // 
@@ -276,7 +276,7 @@ namespace MapleCLB
             // 
             this.sMenuSpam.CheckOnClick = true;
             this.sMenuSpam.Name = "sMenuSpam";
-            this.sMenuSpam.Size = new System.Drawing.Size(152, 22);
+            this.sMenuSpam.Size = new System.Drawing.Size(104, 22);
             this.sMenuSpam.Text = "Spam";
             this.sMenuSpam.Click += new System.EventHandler(this.sMenuSpam_Click);
             // 
@@ -307,7 +307,7 @@ namespace MapleCLB
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "MapleStory Clientless Bot v156.1.2";
+            this.Text = "MapleStory Clientless Bot v156.1.3";
             this.infoGroup.ResumeLayout(false);
             this.infoGroup.PerformLayout();
             this.sendMenu.ResumeLayout(false);
@@ -332,7 +332,7 @@ namespace MapleCLB
         public CheckBox aRestart;
         private TextBox sendPacket;
         public CheckBox aCS;
-        private wyDay.Controls.SplitButton sendSpam;
+        private SplitButton sendSpam;
         private ContextMenuStrip sendMenu;
         private ToolStripMenuItem sMenuSend;
         private ToolStripMenuItem sMenuSpam;

@@ -88,6 +88,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\MultiKeyDictionary.cs" />
     <Compile Include="Tools\HexEncoding.cs" />
+    <Compile Include="Tools\SplitButton.cs" />
     <Compile Include="Tools\win32.cs" />
     <Compile Include="User\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
