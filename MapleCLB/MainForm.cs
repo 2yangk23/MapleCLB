@@ -31,7 +31,7 @@ namespace MapleCLB
             selType.SelectedIndex = 0;
 
             #if DEBUG
-            /* Use this for testing account 
+            /*Use this for testing account 
             username.Text           = "";
             password.Text           = "";
             pic.Text                = "";

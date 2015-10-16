@@ -4,6 +4,8 @@ namespace MapleCLB.Tools
 {
 	public class HexEncoding
 	{
+        private static Random RNG = new Random();
+
 		public static bool IsHexDigit(Char c)
 		{
 			int numChar;
@@ -89,20 +91,17 @@ namespace MapleCLB.Tools
             return String.Format("{0:X2}", b);
         }
 
-        public static string getRandomHexString(int digits, char spacer)
+        public static string getRandomHexString(int digits, string spacer = "")
         {
-            Random rand = new Random();
             string toreturn = string.Empty;
-            toreturn += ToHex((byte)rand.Next(0xFF));
+            toreturn += ToHex((byte)RNG.Next(0xFF));
             for (int i = 0; i < digits - 1; i++)
-                toreturn += spacer + HexEncoding.ToHex((byte)rand.Next(0xFF));
+                toreturn += spacer + HexEncoding.ToHex((byte)RNG.Next(0xFF));
             return toreturn;
         }
 
         public static unsafe string fillRandom(string packet)
         {
-            Random RNG = new Random();
-
             fixed (char* pch = packet)
             {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards

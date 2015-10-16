@@ -60,25 +60,27 @@ namespace MapleCLB.User
             authCode = "";
 
             // Register packet handlers
-            h.RegisterHeader(0x00, new ResetAuth());
+            //h.RegisterHeader(0x00, new ResetAuth()); TODO: FIX AUTH RESET
             h.RegisterHeader(RecvOps.LOGIN_SECOND, new LoginSecond());
             h.RegisterHeader(RecvOps.CHARLIST, new SelectCharacter());
             h.RegisterHeader(RecvOps.SERVER_IP, new ServerIP());
             h.RegisterHeader(RecvOps.CHANNEL_IP, new ChannelIP());
             h.RegisterHeader(RecvOps.PING, new PingPong());
 
+            h.RegisterHeader(0x1C, new WhoKnows());
+
             h.RegisterHeader(RecvOps.SPAWN_PLAYER, new SpawnPlayer());
             h.RegisterHeader(RecvOps.REMOVE_PLAYER, new RemovePlayer());
         }
 
-        public void Connect()
+        public void Connect() //TODO: Initial connect always results in a disconnect, BUG
         {
             Program.gui.BeginInvoke((MethodInvoker)delegate
             {
                 Program.gui.connect.Enabled = false;
                 Program.gui.disconnect.Enabled = false;
             });
-            Program.writeLog(("Connecting to " + Program.loginIP + ":" + Program.loginPort));
+            Program.WriteLog(("Connecting to " + Program.loginIP + ":" + Program.loginPort));
             Connector conn = new Connector(Program.loginIP, Program.loginPort, Program.cipher);
             conn.OnConnected += new EventHandler<Session>(OnConnected);
             conn.OnError += new EventHandler<SocketError>(OnError);
@@ -89,7 +91,7 @@ namespace MapleCLB.User
             }
             catch (Exception)
             {
-                Program.writeLog(("Failed to connect."));
+                Program.WriteLog(("Failed to connect."));
                 if (Program.gui.aRestart.Checked)
                     Connect();  //Start connection again
                 else
@@ -99,7 +101,7 @@ namespace MapleCLB.User
 
         public void Reconnect(string ip, short port)
         {
-            Program.writeLog(("Reconnecting to " + ip + ":" + port));
+            Program.WriteLog(("Reconnecting to " + ip + ":" + port));
             session.Disconnect(false);
             Connector conn = new Connector(ip, port, Program.cipher);
             conn.OnConnected += new EventHandler<Session>(OnConnected);
@@ -118,7 +120,7 @@ namespace MapleCLB.User
                 session.SendPacket(packet);
             }
             catch (Exception) {
-                Program.writeLog(("An error occured when attempting to send packet."));
+                Program.WriteLog(("An error occured when attempting to send packet."));
             }
         }
 
@@ -148,7 +150,7 @@ namespace MapleCLB.User
 
         void OnConnected(object o, Session s)
         {
-            Program.writeLog(("Connected to server."));
+            Program.WriteLog(("Connected to server."));
             session = s;
             s.OnHandshake += new EventHandler<ServerInfo>(OnHandshake);
             s.OnPacket += new EventHandler<byte[]>(OnPacket);
@@ -158,7 +160,7 @@ namespace MapleCLB.User
 
         void OnError(object c, SocketError e)
         {
-            Program.writeLog(("Connection error code " + e));
+            Program.WriteLog(("Connection error code " + e));
             Program.gui.BeginInvoke((MethodInvoker)delegate
             {
                 Program.gui.connect.Enabled = true;
@@ -168,7 +170,7 @@ namespace MapleCLB.User
 
         public void OnDisconnected(object o, EventArgs e)
         {
-            Program.writeLog(("Disconnected from server."));
+            Program.WriteLog(("Disconnected from server."));
             cmode = ClientMode.DISCONNECTED;
             charMap.Clear();
             cst.Enabled = false;
@@ -190,8 +192,9 @@ namespace MapleCLB.User
             switch (cmode)
             {
                 case ClientMode.CONNECTED: //if handshake for login hasn't happened yet
-                    Program.writeLog(("Validating login for MapleStory v" + i.Version + "." + i.Subversion));
+                    Program.WriteLog(("Validating login for MapleStory v" + i.Version + "." + i.Subversion));
                     SendPacket(Login.Validate(i.Version, Int16.Parse(i.Subversion)));
+                    SendPacket("66 00 08"); //Tell server client is ready (Add to Ops)
                     cmode = ClientMode.LOGIN;
 
                     if (authCode == "")
@@ -200,11 +203,17 @@ namespace MapleCLB.User
                         {
                             Thread.CurrentThread.IsBackground = true; //cause it to close with program
                             
-                            Program.writeLog(("Fetching login cookie..."));
+                            Program.WriteLog(("Fetching login cookie..."));
                             authCode = a.loginAuth(user, pass); //get auth code from website
+                            Thread.Sleep(30000); //sleep for long time because who cares it doesnt work
+                            /*PacketWriter pw = new PacketWriter(0x68);
+                            pw.WriteByte(1);
+                            SendPacket(pw);
+                            SendPacket(new PacketWriter(0x76));
+                            SendPacket(new PacketWriter(0x96));*/
                             if (authCode != "error")
                             {
-                                Program.writeLog(("Selecting world and channel..."));
+                                Program.WriteLog(("Selecting world and channel..."));
                                 SendPacket(Login.SelectServer(authCode, world, channel));
                             }
                             else
@@ -220,7 +229,7 @@ namespace MapleCLB.User
                     break;
 
                 case ClientMode.LOGIN: //char select -> channel
-                    Program.writeLog(("Logged in!"));
+                    Program.WriteLog(("Logged in!"));
                     SendPacket(Login.EnterServer(world, uid, sessionID));
                     cst.Enabled = true;
                     cmode = ClientMode.GAME;

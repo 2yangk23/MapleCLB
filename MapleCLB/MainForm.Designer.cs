@@ -46,11 +46,11 @@ namespace MapleCLB
             this.aRestart = new System.Windows.Forms.CheckBox();
             this.sendPacket = new System.Windows.Forms.TextBox();
             this.aCS = new System.Windows.Forms.CheckBox();
-            this.sendSpam = new SplitButton();
             this.sendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.sMenuSend = new System.Windows.Forms.ToolStripMenuItem();
             this.sMenuSpam = new System.Windows.Forms.ToolStripMenuItem();
             this.delay = new System.Windows.Forms.TextBox();
+            this.sendSpam = new MapleCLB.Tools.SplitButton();
             this.infoGroup.SuspendLayout();
             this.sendMenu.SuspendLayout();
             this.SuspendLayout();
@@ -205,15 +205,13 @@ namespace MapleCLB
             this.disconnect.Name = "disconnect";
             this.disconnect.Size = new System.Drawing.Size(198, 27);
             this.disconnect.TabIndex = 12;
-            this.disconnect.Text = "Disconnect";
+            this.disconnect.Text = " ";
             this.disconnect.UseVisualStyleBackColor = true;
             this.disconnect.Click += new System.EventHandler(this.disconnect_Click);
             // 
             // aRestart
             // 
             this.aRestart.AutoSize = true;
-            this.aRestart.Checked = true;
-            this.aRestart.CheckState = System.Windows.Forms.CheckState.Checked;
             this.aRestart.Location = new System.Drawing.Point(18, 254);
             this.aRestart.Name = "aRestart";
             this.aRestart.Size = new System.Drawing.Size(85, 17);
@@ -232,27 +230,12 @@ namespace MapleCLB
             // aCS
             // 
             this.aCS.AutoSize = true;
-            this.aCS.Checked = true;
-            this.aCS.CheckState = System.Windows.Forms.CheckState.Checked;
             this.aCS.Location = new System.Drawing.Point(109, 254);
             this.aCS.Name = "aCS";
             this.aCS.Size = new System.Drawing.Size(65, 17);
             this.aCS.TabIndex = 16;
             this.aCS.Text = "Auto CS";
             this.aCS.UseVisualStyleBackColor = true;
-            // 
-            // sendSpam
-            // 
-            this.sendSpam.AutoSize = true;
-            this.sendSpam.ContextMenuStrip = this.sendMenu;
-            this.sendSpam.Location = new System.Drawing.Point(519, 278);
-            this.sendSpam.Name = "sendSpam";
-            this.sendSpam.Size = new System.Drawing.Size(78, 25);
-            this.sendSpam.SplitMenuStrip = this.sendMenu;
-            this.sendSpam.TabIndex = 17;
-            this.sendSpam.Text = "Send";
-            this.sendSpam.UseVisualStyleBackColor = true;
-            this.sendSpam.Click += new System.EventHandler(this.sendSpam_Click);
             // 
             // sendMenu
             // 
@@ -289,6 +272,19 @@ namespace MapleCLB
             this.delay.TabIndex = 19;
             this.delay.Visible = false;
             // 
+            // sendSpam
+            // 
+            this.sendSpam.AutoSize = true;
+            this.sendSpam.ContextMenuStrip = this.sendMenu;
+            this.sendSpam.Location = new System.Drawing.Point(519, 278);
+            this.sendSpam.Name = "sendSpam";
+            this.sendSpam.Size = new System.Drawing.Size(78, 25);
+            this.sendSpam.SplitMenuStrip = this.sendMenu;
+            this.sendSpam.TabIndex = 17;
+            this.sendSpam.Text = "Send";
+            this.sendSpam.UseVisualStyleBackColor = true;
+            this.sendSpam.Click += new System.EventHandler(this.sendSpam_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -307,7 +303,7 @@ namespace MapleCLB
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "MapleStory Clientless Bot v156.1.3";
+            this.Text = "[166.1.1] MapleStory Clientless Bot";
             this.infoGroup.ResumeLayout(false);
             this.infoGroup.PerformLayout();
             this.sendMenu.ResumeLayout(false);

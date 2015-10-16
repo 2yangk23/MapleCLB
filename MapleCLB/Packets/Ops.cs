@@ -21,30 +21,30 @@
     class SendOps
     {
         public const short
-            PONG = 0x46,
+            PONG = 0x9F,
 
             /* login */
-            CLIENT_HELLO = 0x3F,
-            PLAYER_LOGGEDIN = 0x27, //CONST (Usually)
-            SERVER_LOGIN = 0x43,
-            CHAR_SELECT = 0x47,
+            CLIENT_HELLO = 0x67,
+            PLAYER_LOGGEDIN = 0x6D,
+            SERVER_LOGIN = 0x6A,
+            CHAR_SELECT = 0x6B,
 
-            CHANGE_MAP = 0x50,
-            CHANGE_CHANNEL = CHANGE_MAP + 0x01,
+            CHANGE_MAP = 0xAA,
+            CHANGE_CHANNEL = CHANGE_MAP + 0x01, //AB
 
             /* cashshop */
-            ENTER_CASHSHOP = 0x53,
+            ENTER_CASHSHOP = 0xAF,
 
-            MOVE_PLAYER = 0x5D,
+            MOVE_PLAYER = 0xB9,
 
-            NPC_TALK = 0x7E,
+            NPC_TALK = 0x00, //why do i have this?
             NPC_TALK_MORE = NPC_TALK + 0x02;
     }
 
     /*************RECEIVE************
     PING          - Sent by server, respond with PONG
      * 
-    LOGIN_SECOND  - Received after PLAYER_LOGGEDIN
+    LOGIN_SECOND  - Received after PLAYER_LOGGEDIN (SERVER_LOGIN?)
     CHARLIST      - Received at character select screen
     SERVER_IP     - Received right before connecting to server (first time)
     CHANNEL_IP    - Received right before connecting to channel (rest of the time)
@@ -55,15 +55,16 @@
     class RecvOps
     {
         public const short
-            PING = 0x13,
+            PING = 0x18,
 
             /* server */
-            LOGIN_SECOND = 0x02, //CONST (Usually)
-            CHARLIST = 0x0A,
-            SERVER_IP = 0x0B,
-            CHANNEL_IP = 0x12,
+            LOGIN_SECOND = 0x0E,
+            CHARLIST = 0x0C,
+            //SERVERLIST (useless) 0x07
+            SERVER_IP = 0x0D,
+            CHANNEL_IP = 0x17,
 
-            SPAWN_PLAYER = 0x0197,
-            REMOVE_PLAYER = SPAWN_PLAYER + 0x01;
+            SPAWN_PLAYER = 0x01D3,
+            REMOVE_PLAYER = SPAWN_PLAYER + 0x01; //0x01D4
     }
 }

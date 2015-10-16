@@ -12,7 +12,7 @@ namespace MapleCLB.Packets.Function
     {
         public void Handle(Client c, PacketReader r)
         {
-            Program.writeLog(("Login auth failed.  Clearing auth..."));
+            Program.WriteLog(("Login auth failed.  Clearing auth..."));
             c.authCode = ""; //causes client to fetch new auth
             c.session.Disconnect();
         }
@@ -22,13 +22,18 @@ namespace MapleCLB.Packets.Function
     {
         public void Handle(Client c, PacketReader r)
         {
-            if (r.ReadByte() == 0x07)
+            switch (r.ReadByte())
             {
-                Program.writeLog(("Already logged in. Restarting in 1 minute..."));
-                Thread.Sleep(60000);
-                c.session.Disconnect();
-                return;
+                case 0x01:
+                    Program.WriteLog(("Incorrect password"));
+                    return;
+                case 0x07:
+                    Program.WriteLog(("Already logged in. Restarting in 1 minute..."));
+                    Thread.Sleep(60000);
+                    c.session.Disconnect();
+                    return;
             }
+
             r.Skip(15);
             r.ReadMapleString();
             r.Skip(10);
@@ -42,9 +47,10 @@ namespace MapleCLB.Packets.Function
     {
         public void Handle(Client c, PacketReader r)
         {
-            Program.writeLog(("Selecting Character..."));
+            Program.WriteLog(("Selecting Character..."));
             //no new thread here, MUST finish loading chars
-            Load.Character(c, r);
+            c.uid = 7427509;
+            /*Load.Character(c, r);
 
             int select = 0;
             Program.gui.Invoke((MethodInvoker)delegate { select = Program.gui.selType.SelectedIndex; }); //invoke so it waits
@@ -60,7 +66,7 @@ namespace MapleCLB.Packets.Function
                     }
                     catch
                     {
-                        Program.writeLog(("Error selecting character. Restarting in 1 minute..."));
+                        Program.WriteLog(("Error selecting character. Restarting in 1 minute..."));
                         Thread.Sleep(60000);
                         c.session.Disconnect();
                         return;
@@ -74,14 +80,26 @@ namespace MapleCLB.Packets.Function
                     }
                     catch (KeyNotFoundException)
                     {
-                        Program.writeLog(("Error selecting character. Restarting in 1 minute..."));
+                        Program.WriteLog(("Error selecting character. Restarting in 1 minute..."));
                         Thread.Sleep(60000);
                         c.session.Disconnect();
                         return;
                     }
                     break;
-            }
+            }*/
             c.SendPacket(Login.SelectCharacter(c.uid, c.pic));
+        }
+    }
+
+    class WhoKnows : PacketFunction
+    {
+        public void Handle(Client c, PacketReader r)
+        {
+            PacketWriter pw = new PacketWriter(0x68);
+            pw.WriteByte(1);
+            c.SendPacket(pw);
+            c.SendPacket(new PacketWriter(0x76));
+            c.SendPacket(new PacketWriter(0x96));
         }
     }
 }

@@ -13,15 +13,16 @@ namespace MapleCLB.Packets
             short job;
             byte temp;
             string ign;
-            pr.Skip(13);
+            pr.Skip(13); //+12 bytes (v156)
             byte count = pr.ReadByte();
             for (byte i = 0; i < count; ++i)
             {
                 uid = pr.ReadInt();
                 ign = pr.ReadString(13);
                 pr.Skip(11); //[Gender (1)] [Skin (1)] [Face (4)] [Hair (4)] [level (1)]
+                pr.Skip(3); //Who the fuck knows (v157)
                 job = pr.ReadShort(); //[Job (2)]
-                pr.Skip(26); //[str (2)] [dex (2)] [int (2)] [luk (2)] [hp (4)] [maxhp (4)] [mp (4)] [maxmp (4)] 00 00
+                pr.Skip(26); //[str (2)] [dex (2)] [int (2)] [luk (2)] [hp (4)] [maxhp (4)] [mp (4)] [maxmp (4)] [Unused AP (2)]
 
                 temp = pr.ReadByte(); //some separated SP shit
                 if (temp > 4)
@@ -47,7 +48,7 @@ namespace MapleCLB.Packets
                 else
                 {
                     temp = 24; //[wep (4)] [wep (4)] [wep (4)] [pet (12)]
-
+                    temp += 2; //Idk what im doing (v157)
                     if (job != 0) //Beginners dont have these 16 bytes, not sure why
                         temp += 16;
                     if ((job >= 3100 && job <= 3122) || (job >= 3600 && job <= 3612) || job == 3002 || job == 3001)//demon/demon avenger/xenon char
@@ -71,11 +72,11 @@ namespace MapleCLB.Packets
             try
             {
                 c.uidMap.Add(uid, ign);
-                //Program.writeLog("Added " + uid + "(" + ign + ")");
+                //Program.WriteLog("Added " + uid + "(" + ign + ")");
             }
             catch (Exception)
             {
-                Program.writeLog("Error adding uid to player list.");
+                Program.WriteLog("Error adding uid to player list.");
             }
         }
 
@@ -86,11 +87,11 @@ namespace MapleCLB.Packets
             try
             {
                 c.uidMap.Remove(uid);
-                //Program.writeLog("Removed " + uid);
+                //Program.WriteLog("Removed " + uid);
             }
             catch (Exception)
             {
-                Program.writeLog("Error removing uid from player list.");
+                Program.WriteLog("Error removing uid from player list.");
             }
         }
     }
