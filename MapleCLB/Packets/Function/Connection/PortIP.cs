@@ -2,12 +2,9 @@
 using MapleCLB.User;
 using MaplePacketLib;
 
-namespace MapleCLB.Packets.Function
-{
-    class ServerIP : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
+namespace MapleCLB.Packets.Function {
+    class ServerIP : PacketFunction {
+        public void Handle(Client c, PacketReader r) {
             r.ReadShort();
             byte[] serverIP = r.ReadBytes(4);
             short Port = r.ReadShort();
@@ -16,10 +13,8 @@ namespace MapleCLB.Packets.Function
         }
     }
 
-    class ChannelIP : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
+    class ChannelIP : PacketFunction {
+        public void Handle(Client c, PacketReader r) {
             r.ReadByte();
             byte[] channelIP = r.ReadBytes(4);
             short Port = r.ReadShort();

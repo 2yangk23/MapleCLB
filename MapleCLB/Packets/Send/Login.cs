@@ -1,9 +1,7 @@
 ﻿using MaplePacketLib;
 
-namespace MapleCLB.Packets
-{
-    class Login
-    {
+namespace MapleCLB.Packets {
+    class Login {
         public static PacketWriter Validate(short mapleversion, short subversion) //Checked v160.3
         {
             PacketWriter pw = new PacketWriter();

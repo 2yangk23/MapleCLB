@@ -2,21 +2,17 @@
 using MapleCLB.User;
 using System;
 
-namespace MapleCLB.Packets
-{
-    class Load
-    {
+namespace MapleCLB.Packets {
+    class Load {
         //[Header (2)] 00 [Char count (1)] [UID (4)] [IGN (13)] ...
-        public static void Character(Client c, PacketReader pr)
-        {
+        public static void Character(Client c, PacketReader pr) {
             int uid;
             short job;
             byte temp;
             string ign;
             pr.Skip(13); //+12 bytes (v156)
             byte count = pr.ReadByte();
-            for (byte i = 0; i < count; ++i)
-            {
+            for (byte i = 0; i < count; ++i) {
                 uid = pr.ReadInt();
                 ign = pr.ReadString(13);
                 pr.Skip(11); //[Gender (1)] [Skin (1)] [Face (4)] [Hair (4)] [level (1)]
@@ -41,20 +37,21 @@ namespace MapleCLB.Packets
 
                 if (job >= 10100 && job <= 10112)//zero -guess-
                 {
-                    for (int j = 0; j < 6; ++j)
+                    for (int j = 0; j < 6; ++j) {
                         pr.Next(0xFF); //I guess zero has 3 appearances?
+                    }
                     pr.Skip(1); //extra 00 at the end
-                }
-                else
-                {
+                } else {
                     temp = 24; //[wep (4)] [wep (4)] [wep (4)] [pet (12)]
                     temp += 2; //Idk what im doing (v157)
-                    if (job != 0) //Beginners dont have these 16 bytes, not sure why
+                    if (job != 0) {//Beginners dont have these 16 bytes, not sure why
                         temp += 16;
-                    if ((job >= 3100 && job <= 3122) || (job >= 3600 && job <= 3612) || job == 3002 || job == 3001)//demon/demon avenger/xenon char
+                    }
+                    if ((job >= 3100 && job <= 3122) || (job >= 3600 && job <= 3612) || job == 3002 || job == 3001) {//demon/demon avenger/xenon char
                         temp += 4;
-                    else if (job >= 11200 && job <= 11212) //beast tamer
+                    } else if (job >= 11200 && job <= 11212) {//beast tamer
                         temp += 14;
+                    }
 
                     pr.Skip(temp + 4);
                 }
@@ -63,34 +60,26 @@ namespace MapleCLB.Packets
             }
         }
 
-        public static void Player(Client c, PacketReader pr)
-        {
+        public static void Player(Client c, PacketReader pr) {
             int uid = pr.ReadInt();
             pr.ReadByte();
             string ign = pr.ReadMapleString();
 
-            try
-            {
+            try {
                 c.uidMap.Add(uid, ign);
                 //Program.WriteLog("Added " + uid + "(" + ign + ")");
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Program.WriteLog("Error adding uid to player list.");
             }
         }
 
-        public static void RemovePlayer(Client c, PacketReader pr)
-        {
+        public static void RemovePlayer(Client c, PacketReader pr) {
             int uid = pr.ReadInt();
 
-            try
-            {
+            try {
                 c.uidMap.Remove(uid);
                 //Program.WriteLog("Removed " + uid);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Program.WriteLog("Error removing uid from player list.");
             }
         }

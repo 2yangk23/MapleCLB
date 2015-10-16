@@ -4,12 +4,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace MapleCLB.Tools
-{
-    public class SplitButton : Button
-    {
+namespace MapleCLB.Tools {
+    public class SplitButton : Button {
         PushButtonState _state;
-
 
         const int SplitSectionWidth = 18;
 
@@ -26,45 +23,36 @@ namespace MapleCLB.Tools
 
         TextFormatFlags textFormatFlags = TextFormatFlags.Default;
 
-        public SplitButton()
-        {
+        public SplitButton() {
             AutoSize = true;
         }
 
         #region Properties
 
         [Browsable(false)]
-        public override ContextMenuStrip ContextMenuStrip
-        {
-            get
-            {
+        public override ContextMenuStrip ContextMenuStrip {
+            get {
                 return SplitMenuStrip;
             }
-            set
-            {
+            set {
                 SplitMenuStrip = value;
             }
         }
 
         [DefaultValue(null)]
-        public ContextMenu SplitMenu
-        {
+        public ContextMenu SplitMenu {
             get { return m_SplitMenu; }
-            set
-            {
+            set {
                 //remove the event handlers for the old SplitMenu
-                if (m_SplitMenu != null)
-                {
+                if (m_SplitMenu != null) {
                     m_SplitMenu.Popup -= SplitMenu_Popup;
                 }
 
                 //add the event handlers for the new SplitMenu
-                if (value != null)
-                {
+                if (value != null) {
                     ShowSplit = true;
                     value.Popup += SplitMenu_Popup;
-                }
-                else
+                } else
                     ShowSplit = false;
 
                 m_SplitMenu = value;
@@ -72,29 +60,23 @@ namespace MapleCLB.Tools
         }
 
         [DefaultValue(null)]
-        public ContextMenuStrip SplitMenuStrip
-        {
-            get
-            {
+        public ContextMenuStrip SplitMenuStrip {
+            get {
                 return m_SplitMenuStrip;
             }
-            set
-            {
+            set {
                 //remove the event handlers for the old SplitMenuStrip
-                if (m_SplitMenuStrip != null)
-                {
+                if (m_SplitMenuStrip != null) {
                     m_SplitMenuStrip.Closing -= SplitMenuStrip_Closing;
                     m_SplitMenuStrip.Opening -= SplitMenuStrip_Opening;
                 }
 
                 //add the event handlers for the new SplitMenuStrip
-                if (value != null)
-                {
+                if (value != null) {
                     ShowSplit = true;
                     value.Closing += SplitMenuStrip_Closing;
                     value.Opening += SplitMenuStrip_Opening;
-                }
-                else
+                } else
                     ShowSplit = false;
 
 
@@ -103,12 +85,9 @@ namespace MapleCLB.Tools
         }
 
         [DefaultValue(false)]
-        public bool ShowSplit
-        {
-            set
-            {
-                if (value != showSplit)
-                {
+        public bool ShowSplit {
+            set {
+                if (value != showSplit) {
                     showSplit = value;
                     Invalidate();
 
@@ -118,16 +97,12 @@ namespace MapleCLB.Tools
             }
         }
 
-        private PushButtonState State
-        {
-            get
-            {
+        private PushButtonState State {
+            get {
                 return _state;
             }
-            set
-            {
-                if (!_state.Equals(value))
-                {
+            set {
+                if (!_state.Equals(value)) {
                     _state = value;
                     Invalidate();
                 }
@@ -136,39 +111,29 @@ namespace MapleCLB.Tools
 
         #endregion Properties
 
-        protected override bool IsInputKey(Keys keyData)
-        {
+        protected override bool IsInputKey(Keys keyData) {
             if (keyData.Equals(Keys.Down) && showSplit)
                 return true;
 
             return base.IsInputKey(keyData);
         }
 
-        protected override void OnGotFocus(EventArgs e)
-        {
-            if (!showSplit)
-            {
+        protected override void OnGotFocus(EventArgs e) {
+            if (!showSplit) {
                 base.OnGotFocus(e);
                 return;
             }
 
-            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled))
-            {
+            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled)) {
                 State = PushButtonState.Default;
             }
         }
 
-        protected override void OnKeyDown(KeyEventArgs kevent)
-        {
-            if (showSplit)
-            {
-                if (kevent.KeyCode.Equals(Keys.Down) && !isSplitMenuVisible)
-                {
+        protected override void OnKeyDown(KeyEventArgs kevent) {
+            if (showSplit) {
+                if (kevent.KeyCode.Equals(Keys.Down) && !isSplitMenuVisible) {
                     ShowContextMenuStrip();
-                }
-
-                else if (kevent.KeyCode.Equals(Keys.Space) && kevent.Modifiers == Keys.None)
-                {
+                } else if (kevent.KeyCode.Equals(Keys.Space) && kevent.Modifiers == Keys.None) {
                     State = PushButtonState.Pressed;
                 }
             }
@@ -176,19 +141,13 @@ namespace MapleCLB.Tools
             base.OnKeyDown(kevent);
         }
 
-        protected override void OnKeyUp(KeyEventArgs kevent)
-        {
-            if (kevent.KeyCode.Equals(Keys.Space))
-            {
-                if (MouseButtons == MouseButtons.None)
-                {
+        protected override void OnKeyUp(KeyEventArgs kevent) {
+            if (kevent.KeyCode.Equals(Keys.Space)) {
+                if (MouseButtons == MouseButtons.None) {
                     State = PushButtonState.Normal;
                 }
-            }
-            else if (kevent.KeyCode.Equals(Keys.Apps))
-            {
-                if (MouseButtons == MouseButtons.None && !isSplitMenuVisible)
-                {
+            } else if (kevent.KeyCode.Equals(Keys.Apps)) {
+                if (MouseButtons == MouseButtons.None && !isSplitMenuVisible) {
                     ShowContextMenuStrip();
                 }
             }
@@ -196,66 +155,54 @@ namespace MapleCLB.Tools
             base.OnKeyUp(kevent);
         }
 
-        protected override void OnEnabledChanged(EventArgs e)
-        {
+        protected override void OnEnabledChanged(EventArgs e) {
             State = Enabled ? PushButtonState.Normal : PushButtonState.Disabled;
 
             base.OnEnabledChanged(e);
         }
 
-        protected override void OnLostFocus(EventArgs e)
-        {
-            if (!showSplit)
-            {
+        protected override void OnLostFocus(EventArgs e) {
+            if (!showSplit) {
                 base.OnLostFocus(e);
                 return;
             }
 
-            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled))
-            {
+            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled)) {
                 State = PushButtonState.Normal;
             }
         }
 
         bool isMouseEntered;
 
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            if (!showSplit)
-            {
+        protected override void OnMouseEnter(EventArgs e) {
+            if (!showSplit) {
                 base.OnMouseEnter(e);
                 return;
             }
 
             isMouseEntered = true;
 
-            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled))
-            {
+            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled)) {
                 State = PushButtonState.Hot;
             }
 
         }
 
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            if (!showSplit)
-            {
+        protected override void OnMouseLeave(EventArgs e) {
+            if (!showSplit) {
                 base.OnMouseLeave(e);
                 return;
             }
 
             isMouseEntered = false;
 
-            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled))
-            {
+            if (!State.Equals(PushButtonState.Pressed) && !State.Equals(PushButtonState.Disabled)) {
                 State = Focused ? PushButtonState.Default : PushButtonState.Normal;
             }
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            if (!showSplit)
-            {
+        protected override void OnMouseDown(MouseEventArgs e) {
+            if (!showSplit) {
                 base.OnMouseDown(e);
                 return;
             }
@@ -264,42 +211,32 @@ namespace MapleCLB.Tools
             if (m_SplitMenu != null && e.Button == MouseButtons.Left && !isMouseEntered)
                 skipNextOpen = true;
 
-            if (dropDownRectangle.Contains(e.Location) && !isSplitMenuVisible && e.Button == MouseButtons.Left)
-            {
+            if (dropDownRectangle.Contains(e.Location) && !isSplitMenuVisible && e.Button == MouseButtons.Left) {
                 ShowContextMenuStrip();
-            }
-            else
-            {
+            } else {
                 State = PushButtonState.Pressed;
             }
         }
 
-        protected override void OnMouseUp(MouseEventArgs mevent)
-        {
-            if (!showSplit)
-            {
+        protected override void OnMouseUp(MouseEventArgs mevent) {
+            if (!showSplit) {
                 base.OnMouseUp(mevent);
                 return;
             }
 
             // if the right button was released inside the button
-            if (mevent.Button == MouseButtons.Right && ClientRectangle.Contains(mevent.Location) && !isSplitMenuVisible)
-            {
+            if (mevent.Button == MouseButtons.Right && ClientRectangle.Contains(mevent.Location) && !isSplitMenuVisible) {
                 ShowContextMenuStrip();
-            }
-            else if (m_SplitMenuStrip == null && m_SplitMenu == null || !isSplitMenuVisible)
-            {
+            } else if (m_SplitMenuStrip == null && m_SplitMenu == null || !isSplitMenuVisible) {
                 SetButtonDrawState();
 
-                if (ClientRectangle.Contains(mevent.Location) && !dropDownRectangle.Contains(mevent.Location))
-                {
+                if (ClientRectangle.Contains(mevent.Location) && !dropDownRectangle.Contains(mevent.Location)) {
                     OnClick(new EventArgs());
                 }
             }
         }
 
-        protected override void OnPaint(PaintEventArgs pevent)
-        {
+        protected override void OnPaint(PaintEventArgs pevent) {
             base.OnPaint(pevent);
 
             if (!showSplit)
@@ -309,17 +246,14 @@ namespace MapleCLB.Tools
             Rectangle bounds = ClientRectangle;
 
             // draw the button background as according to the current state.
-            if (State != PushButtonState.Pressed && IsDefault && !Application.RenderWithVisualStyles)
-            {
+            if (State != PushButtonState.Pressed && IsDefault && !Application.RenderWithVisualStyles) {
                 Rectangle backgroundBounds = bounds;
                 backgroundBounds.Inflate(-1, -1);
                 ButtonRenderer.DrawButton(g, backgroundBounds, State);
 
                 // button renderer doesnt draw the black frame when themes are off
                 g.DrawRectangle(SystemPens.WindowFrame, 0, 0, bounds.Width - 1, bounds.Height - 1);
-            }
-            else
-            {
+            } else {
                 ButtonRenderer.DrawButton(g, bounds, State);
             }
 
@@ -336,22 +270,17 @@ namespace MapleCLB.Tools
             bool drawSplitLine = (State == PushButtonState.Hot || State == PushButtonState.Pressed || !Application.RenderWithVisualStyles);
 
 
-            if (RightToLeft == RightToLeft.Yes)
-            {
+            if (RightToLeft == RightToLeft.Yes) {
                 dropDownRectangle.X = bounds.Left + 1;
                 focusRect.X = dropDownRectangle.Right;
 
-                if (drawSplitLine)
-                {
+                if (drawSplitLine) {
                     // draw two lines at the edge of the dropdown button
                     g.DrawLine(SystemPens.ButtonShadow, bounds.Left + SplitSectionWidth, BorderSize, bounds.Left + SplitSectionWidth, bounds.Bottom - BorderSize);
                     g.DrawLine(SystemPens.ButtonFace, bounds.Left + SplitSectionWidth + 1, BorderSize, bounds.Left + SplitSectionWidth + 1, bounds.Bottom - BorderSize);
                 }
-            }
-            else
-            {
-                if (drawSplitLine)
-                {
+            } else {
+                if (drawSplitLine) {
                     // draw two lines at the edge of the dropdown button
                     g.DrawLine(SystemPens.ButtonShadow, bounds.Right - SplitSectionWidth, BorderSize, bounds.Right - SplitSectionWidth, bounds.Bottom - BorderSize);
                     g.DrawLine(SystemPens.ButtonFace, bounds.Right - SplitSectionWidth - 1, BorderSize, bounds.Right - SplitSectionWidth - 1, bounds.Bottom - BorderSize);
@@ -365,14 +294,12 @@ namespace MapleCLB.Tools
             PaintTextandImage(g, new Rectangle(0, 0, ClientRectangle.Width - SplitSectionWidth, ClientRectangle.Height));
 
             // draw the focus rectangle.
-            if (State != PushButtonState.Pressed && Focused && ShowFocusCues)
-            {
+            if (State != PushButtonState.Pressed && Focused && ShowFocusCues) {
                 ControlPaint.DrawFocusRectangle(g, focusRect);
             }
         }
 
-        private void PaintTextandImage(Graphics g, Rectangle bounds)
-        {
+        private void PaintTextandImage(Graphics g, Rectangle bounds) {
             // Figure out where our text and image should go
             Rectangle text_rectangle;
             Rectangle image_rectangle;
@@ -380,8 +307,7 @@ namespace MapleCLB.Tools
             CalculateButtonTextAndImageLayout(ref bounds, out text_rectangle, out image_rectangle);
 
             //draw the image
-            if (Image != null)
-            {
+            if (Image != null) {
                 if (Enabled)
                     g.DrawImage(Image, image_rectangle.X, image_rectangle.Y, Image.Width, Image.Height);
                 else
@@ -395,8 +321,7 @@ namespace MapleCLB.Tools
                 textFormatFlags = textFormatFlags | TextFormatFlags.HidePrefix;
 
             //draw the text
-            if (!string.IsNullOrEmpty(Text))
-            {
+            if (!string.IsNullOrEmpty(Text)) {
                 if (Enabled)
                     TextRenderer.DrawText(g, Text, Font, text_rectangle, ForeColor, textFormatFlags);
                 else
@@ -404,8 +329,7 @@ namespace MapleCLB.Tools
             }
         }
 
-        private void PaintArrow(Graphics g, Rectangle dropDownRect)
-        {
+        private void PaintArrow(Graphics g, Rectangle dropDownRect) {
             Point middle = new Point(Convert.ToInt32(dropDownRect.Left + dropDownRect.Width / 2), Convert.ToInt32(dropDownRect.Top + dropDownRect.Height / 2));
 
             //if the width is odd - favor pushing it over one pixel right.
@@ -419,13 +343,11 @@ namespace MapleCLB.Tools
                 g.FillPolygon(SystemBrushes.ButtonShadow, arrow);
         }
 
-        public override Size GetPreferredSize(Size proposedSize)
-        {
+        public override Size GetPreferredSize(Size proposedSize) {
             Size preferredSize = base.GetPreferredSize(proposedSize);
 
             //autosize correctly for splitbuttons
-            if (showSplit)
-            {
+            if (showSplit) {
                 if (AutoSize)
                     return CalculateButtonAutoSize();
 
@@ -436,21 +358,18 @@ namespace MapleCLB.Tools
             return preferredSize;
         }
 
-        private Size CalculateButtonAutoSize()
-        {
+        private Size CalculateButtonAutoSize() {
             Size ret_size = Size.Empty;
             Size text_size = TextRenderer.MeasureText(Text, Font);
             Size image_size = Image == null ? Size.Empty : Image.Size;
 
             // Pad the text size
-            if (Text.Length != 0)
-            {
+            if (Text.Length != 0) {
                 text_size.Height += 4;
                 text_size.Width += 4;
             }
 
-            switch (TextImageRelation)
-            {
+            switch (TextImageRelation) {
                 case TextImageRelation.Overlay:
                     ret_size.Height = Math.Max(Text.Length == 0 ? 0 : text_size.Height, image_size.Height);
                     ret_size.Width = Math.Max(text_size.Width, image_size.Width);
@@ -484,16 +403,14 @@ namespace MapleCLB.Tools
         //implementation, specifically "ThemeWin32Classic.cs", 
         //then modified to fit the context of this splitButton
 
-        private void CalculateButtonTextAndImageLayout(ref Rectangle content_rect, out Rectangle textRectangle, out Rectangle imageRectangle)
-        {
+        private void CalculateButtonTextAndImageLayout(ref Rectangle content_rect, out Rectangle textRectangle, out Rectangle imageRectangle) {
             Size text_size = TextRenderer.MeasureText(Text, Font, content_rect.Size, textFormatFlags);
             Size image_size = Image == null ? Size.Empty : Image.Size;
 
             textRectangle = Rectangle.Empty;
             imageRectangle = Rectangle.Empty;
 
-            switch (TextImageRelation)
-            {
+            switch (TextImageRelation) {
                 case TextImageRelation.Overlay:
                     // Overlay is easy, text always goes here
                     textRectangle = OverlayObjectRect(ref content_rect, ref text_size, TextAlign); // Rectangle.Inflate(content_rect, -4, -4);
@@ -526,12 +443,10 @@ namespace MapleCLB.Tools
             }
         }
 
-        private static Rectangle OverlayObjectRect(ref Rectangle container, ref Size sizeOfObject, System.Drawing.ContentAlignment alignment)
-        {
+        private static Rectangle OverlayObjectRect(ref Rectangle container, ref Size sizeOfObject, System.Drawing.ContentAlignment alignment) {
             int x, y;
 
-            switch (alignment)
-            {
+            switch (alignment) {
                 case System.Drawing.ContentAlignment.TopLeft:
                     x = 4;
                     y = 4;
@@ -577,8 +492,7 @@ namespace MapleCLB.Tools
             return new Rectangle(x, y, sizeOfObject.Width, sizeOfObject.Height);
         }
 
-        private void LayoutTextBeforeOrAfterImage(Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, out Rectangle textRect, out Rectangle imageRect)
-        {
+        private void LayoutTextBeforeOrAfterImage(Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, out Rectangle textRect, out Rectangle imageRect) {
             int element_spacing = 0;	// Spacing between the Text and the Image
             int total_width = textSize.Width + element_spacing + imageSize.Width;
 
@@ -586,8 +500,7 @@ namespace MapleCLB.Tools
                 element_spacing += 2;
 
             // If the text is too big, chop it down to the size we have available to it
-            if (total_width > totalArea.Width)
-            {
+            if (total_width > totalArea.Width) {
                 textSize.Width = totalArea.Width - element_spacing - imageSize.Width;
                 total_width = totalArea.Width;
             }
@@ -610,13 +523,10 @@ namespace MapleCLB.Tools
             else
                 offset += 2 * (excess_width / 3);
 
-            if (textFirst)
-            {
+            if (textFirst) {
                 final_text_rect = new Rectangle(totalArea.Left + offset, AlignInRectangle(totalArea, textSize, TextAlign).Top, textSize.Width, textSize.Height);
                 final_image_rect = new Rectangle(final_text_rect.Right + element_spacing, AlignInRectangle(totalArea, imageSize, ImageAlign).Top, imageSize.Width, imageSize.Height);
-            }
-            else
-            {
+            } else {
                 final_image_rect = new Rectangle(totalArea.Left + offset, AlignInRectangle(totalArea, imageSize, ImageAlign).Top, imageSize.Width, imageSize.Height);
                 final_text_rect = new Rectangle(final_image_rect.Right + element_spacing, AlignInRectangle(totalArea, textSize, TextAlign).Top, textSize.Width, textSize.Height);
             }
@@ -625,8 +535,7 @@ namespace MapleCLB.Tools
             imageRect = final_image_rect;
         }
 
-        private void LayoutTextAboveOrBelowImage(Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, out Rectangle textRect, out Rectangle imageRect)
-        {
+        private void LayoutTextAboveOrBelowImage(Rectangle totalArea, bool textFirst, Size textSize, Size imageSize, out Rectangle textRect, out Rectangle imageRect) {
             int element_spacing = 0;	// Spacing between the Text and the Image
             int total_height = textSize.Height + element_spacing + imageSize.Height;
 
@@ -637,8 +546,7 @@ namespace MapleCLB.Tools
                 textSize.Width = totalArea.Width;
 
             // If the there isn't enough room and we're text first, cut out the image
-            if (total_height > totalArea.Height && textFirst)
-            {
+            if (total_height > totalArea.Height && textFirst) {
                 imageSize = Size.Empty;
                 total_height = totalArea.Height;
             }
@@ -661,13 +569,10 @@ namespace MapleCLB.Tools
             else
                 offset += 2 * (excess_height / 3);
 
-            if (textFirst)
-            {
+            if (textFirst) {
                 final_text_rect = new Rectangle(AlignInRectangle(totalArea, textSize, TextAlign).Left, totalArea.Top + offset, textSize.Width, textSize.Height);
                 final_image_rect = new Rectangle(AlignInRectangle(totalArea, imageSize, ImageAlign).Left, final_text_rect.Bottom + element_spacing, imageSize.Width, imageSize.Height);
-            }
-            else
-            {
+            } else {
                 final_image_rect = new Rectangle(AlignInRectangle(totalArea, imageSize, ImageAlign).Left, totalArea.Top + offset, imageSize.Width, imageSize.Height);
                 final_text_rect = new Rectangle(AlignInRectangle(totalArea, textSize, TextAlign).Left, final_image_rect.Bottom + element_spacing, textSize.Width, textSize.Height);
 
@@ -679,10 +584,8 @@ namespace MapleCLB.Tools
             imageRect = final_image_rect;
         }
 
-        private static HorizontalAlignment GetHorizontalAlignment(System.Drawing.ContentAlignment align)
-        {
-            switch (align)
-            {
+        private static HorizontalAlignment GetHorizontalAlignment(System.Drawing.ContentAlignment align) {
+            switch (align) {
                 case System.Drawing.ContentAlignment.BottomLeft:
                 case System.Drawing.ContentAlignment.MiddleLeft:
                 case System.Drawing.ContentAlignment.TopLeft:
@@ -700,10 +603,8 @@ namespace MapleCLB.Tools
             return HorizontalAlignment.Left;
         }
 
-        private static VerticalAlignment GetVerticalAlignment(System.Drawing.ContentAlignment align)
-        {
-            switch (align)
-            {
+        private static VerticalAlignment GetVerticalAlignment(System.Drawing.ContentAlignment align) {
+            switch (align) {
                 case System.Drawing.ContentAlignment.TopLeft:
                 case System.Drawing.ContentAlignment.TopCenter:
                 case System.Drawing.ContentAlignment.TopRight:
@@ -721,8 +622,7 @@ namespace MapleCLB.Tools
             return VerticalAlignment.Top;
         }
 
-        internal static Rectangle AlignInRectangle(Rectangle outer, Size inner, System.Drawing.ContentAlignment align)
-        {
+        internal static Rectangle AlignInRectangle(Rectangle outer, Size inner, System.Drawing.ContentAlignment align) {
             int x = 0;
             int y = 0;
 
@@ -745,10 +645,8 @@ namespace MapleCLB.Tools
         #endregion Button Layout Calculations
 
 
-        private void ShowContextMenuStrip()
-        {
-            if (skipNextOpen)
-            {
+        private void ShowContextMenuStrip() {
+            if (skipNextOpen) {
                 // we were called because we're closing the context menu strip
                 // when clicking the dropdown button.
                 skipNextOpen = false;
@@ -757,44 +655,35 @@ namespace MapleCLB.Tools
 
             State = PushButtonState.Pressed;
 
-            if (m_SplitMenu != null)
-            {
+            if (m_SplitMenu != null) {
                 m_SplitMenu.Show(this, new Point(0, Height));
-            }
-            else if (m_SplitMenuStrip != null)
-            {
+            } else if (m_SplitMenuStrip != null) {
                 m_SplitMenuStrip.Show(this, new Point(0, Height), ToolStripDropDownDirection.BelowRight);
             }
         }
 
-        void SplitMenuStrip_Opening(object sender, CancelEventArgs e)
-        {
+        void SplitMenuStrip_Opening(object sender, CancelEventArgs e) {
             isSplitMenuVisible = true;
         }
 
-        void SplitMenuStrip_Closing(object sender, ToolStripDropDownClosingEventArgs e)
-        {
+        void SplitMenuStrip_Closing(object sender, ToolStripDropDownClosingEventArgs e) {
             isSplitMenuVisible = false;
 
             SetButtonDrawState();
 
-            if (e.CloseReason == ToolStripDropDownCloseReason.AppClicked)
-            {
+            if (e.CloseReason == ToolStripDropDownCloseReason.AppClicked) {
                 skipNextOpen = (dropDownRectangle.Contains(PointToClient(Cursor.Position))) && MouseButtons == MouseButtons.Left;
             }
         }
 
 
-        void SplitMenu_Popup(object sender, EventArgs e)
-        {
+        void SplitMenu_Popup(object sender, EventArgs e) {
             isSplitMenuVisible = true;
         }
 
-        protected override void WndProc(ref Message m)
-        {
+        protected override void WndProc(ref Message m) {
             //0x0212 == WM_EXITMENULOOP
-            if (m.Msg == 0x0212)
-            {
+            if (m.Msg == 0x0212) {
                 //this message is only sent when a ContextMenu is closed (not a ContextMenuStrip)
                 isSplitMenuVisible = false;
                 SetButtonDrawState();
@@ -803,22 +692,14 @@ namespace MapleCLB.Tools
             base.WndProc(ref m);
         }
 
-        private void SetButtonDrawState()
-        {
-            if (Bounds.Contains(Parent.PointToClient(Cursor.Position)))
-            {
+        private void SetButtonDrawState() {
+            if (Bounds.Contains(Parent.PointToClient(Cursor.Position))) {
                 State = PushButtonState.Hot;
-            }
-            else if (Focused)
-            {
+            } else if (Focused) {
                 State = PushButtonState.Default;
-            }
-            else if (!Enabled)
-            {
+            } else if (!Enabled) {
                 State = PushButtonState.Disabled;
-            }
-            else
-            {
+            } else {
                 State = PushButtonState.Normal;
             }
         }

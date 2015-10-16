@@ -9,10 +9,8 @@ using MapleCLB.Packets.Function;
 using MapleCLB.Tools;
 using MaplePacketLib;
 
-namespace MapleCLB.User
-{
-    enum ClientMode
-    {
+namespace MapleCLB.User {
+    enum ClientMode {
         DISCONNECTED,
         CONNECTED,
         LOGIN,
@@ -20,8 +18,7 @@ namespace MapleCLB.User
         GAME,
     }
 
-    public class Client
-    {
+    public class Client {
         public Session session;
         private ClientMode cmode = ClientMode.DISCONNECTED;
         private Auth a;
@@ -42,8 +39,7 @@ namespace MapleCLB.User
         public Dictionary<int, string> uidMap; //uid -> ign
         public MultiKeyDictionary<byte, string, int> charMap; //slot/ign -> uid
 
-        public Client()
-        {
+        public Client() {
             Random RNG = new Random();
             Program.hwid1 = RNG.Next(0, Int32.MaxValue);
             Program.hwid2 = RNG.Next(0, Int16.MaxValue);
@@ -67,16 +63,12 @@ namespace MapleCLB.User
             h.RegisterHeader(RecvOps.CHANNEL_IP, new ChannelIP());
             h.RegisterHeader(RecvOps.PING, new PingPong());
 
-            h.RegisterHeader(0x1C, new WhoKnows());
-
             h.RegisterHeader(RecvOps.SPAWN_PLAYER, new SpawnPlayer());
             h.RegisterHeader(RecvOps.REMOVE_PLAYER, new RemovePlayer());
         }
 
-        public void Connect() //TODO: Initial connect always results in a disconnect, BUG
-        {
-            Program.gui.BeginInvoke((MethodInvoker)delegate
-            {
+        public void Connect() { //TODO: Initial connect always results in a disconnect, BUG
+            Program.gui.BeginInvoke((MethodInvoker)delegate {
                 Program.gui.connect.Enabled = false;
                 Program.gui.disconnect.Enabled = false;
             });
@@ -84,23 +76,20 @@ namespace MapleCLB.User
             Connector conn = new Connector(Program.loginIP, Program.loginPort, Program.cipher);
             conn.OnConnected += new EventHandler<Session>(OnConnected);
             conn.OnError += new EventHandler<SocketError>(OnError);
-            try
-            {
+            try {
                 conn.Connect(serverTimeout);
                 cmode = ClientMode.CONNECTED;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Program.WriteLog(("Failed to connect."));
-                if (Program.gui.aRestart.Checked)
+                if (Program.gui.aRestart.Checked) {
                     Connect();  //Start connection again
-                else
+                } else {
                     Program.gui.BeginInvoke((MethodInvoker)delegate { Program.gui.connect.Enabled = true; });
+                }
             }
         }
 
-        public void Reconnect(string ip, short port)
-        {
+        public void Reconnect(string ip, short port) {
             Program.WriteLog(("Reconnecting to " + ip + ":" + port));
             session.Disconnect(false);
             Connector conn = new Connector(ip, port, Program.cipher);
@@ -108,8 +97,7 @@ namespace MapleCLB.User
             conn.OnError += new EventHandler<SocketError>(OnError);
             try {
                 conn.Connect(channelTimeout);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 session.Disconnect();
             }
         }
@@ -118,8 +106,7 @@ namespace MapleCLB.User
         {
             try {
                 session.SendPacket(packet);
-            }
-            catch (Exception) {
+            } catch (Exception) {
                 Program.WriteLog(("An error occured when attempting to send packet."));
             }
         }
@@ -141,15 +128,13 @@ namespace MapleCLB.User
         /* Event Handlers */
         void AutoCS(Object sender, System.Timers.ElapsedEventArgs e) //AutoCS Event (Timer)
         {
-            if (Program.gui.aCS.Checked)
-            {
+            if (Program.gui.aCS.Checked) {
                 SendPacket(General.EnterCS());
                 cmode = ClientMode.CASHSHOP;
             }
         }
 
-        void OnConnected(object o, Session s)
-        {
+        void OnConnected(object o, Session s) {
             Program.WriteLog(("Connected to server."));
             session = s;
             s.OnHandshake += new EventHandler<ServerInfo>(OnHandshake);
@@ -158,51 +143,41 @@ namespace MapleCLB.User
             Program.gui.BeginInvoke((MethodInvoker)delegate { Program.gui.disconnect.Enabled = true; });
         }
 
-        void OnError(object c, SocketError e)
-        {
+        void OnError(object c, SocketError e) {
             Program.WriteLog(("Connection error code " + e));
-            Program.gui.BeginInvoke((MethodInvoker)delegate
-            {
+            Program.gui.BeginInvoke((MethodInvoker)delegate {
                 Program.gui.connect.Enabled = true;
                 Program.gui.disconnect.Enabled = false;
             });
         }
 
-        public void OnDisconnected(object o, EventArgs e)
-        {
+        public void OnDisconnected(object o, EventArgs e) {
             Program.WriteLog(("Disconnected from server."));
             cmode = ClientMode.DISCONNECTED;
             charMap.Clear();
             cst.Enabled = false;
             if (Program.gui.aRestart.Checked) {
                 Connect();  //Start connection again
-            }
-            else
-            {
-                Program.gui.BeginInvoke((MethodInvoker)delegate
-                {
+            } else {
+                Program.gui.BeginInvoke((MethodInvoker)delegate {
                     Program.gui.disconnect.Enabled = false;
                     Program.gui.connect.Enabled = true;
                 });
             }
         }
 
-        public void OnHandshake(object o, ServerInfo i)
-        {
-            switch (cmode)
-            {
+        public void OnHandshake(object o, ServerInfo i) {
+            switch (cmode) {
                 case ClientMode.CONNECTED: //if handshake for login hasn't happened yet
                     Program.WriteLog(("Validating login for MapleStory v" + i.Version + "." + i.Subversion));
                     SendPacket(Login.Validate(i.Version, Int16.Parse(i.Subversion)));
                     SendPacket("66 00 08"); //Tell server client is ready (Add to Ops)
                     cmode = ClientMode.LOGIN;
 
-                    if (authCode == "")
-                    {
-                        new Thread(delegate()
-                        {
+                    if (authCode == "") {
+                        new Thread(delegate() {
                             Thread.CurrentThread.IsBackground = true; //cause it to close with program
-                            
+
                             Program.WriteLog(("Fetching login cookie..."));
                             authCode = a.loginAuth(user, pass); //get auth code from website
                             Thread.Sleep(30000); //sleep for long time because who cares it doesnt work
@@ -211,19 +186,14 @@ namespace MapleCLB.User
                             SendPacket(pw);
                             SendPacket(new PacketWriter(0x76));
                             SendPacket(new PacketWriter(0x96));*/
-                            if (authCode != "error")
-                            {
+                            if (authCode != "error") {
                                 Program.WriteLog(("Selecting world and channel..."));
                                 SendPacket(Login.SelectServer(authCode, world, channel));
-                            }
-                            else
-                            {
+                            } else {
                                 session.Disconnect();
                             }
                         }).Start();
-                    }
-                    else
-                    {
+                    } else {
                         SendPacket(Login.SelectServer(authCode, world, channel));
                     }
                     break;
@@ -248,8 +218,7 @@ namespace MapleCLB.User
             }
         }
 
-        public void OnPacket(object o, byte[] packet)
-        {
+        public void OnPacket(object o, byte[] packet) {
             h.Handle(this, new PacketReader(packet));
         }
     }

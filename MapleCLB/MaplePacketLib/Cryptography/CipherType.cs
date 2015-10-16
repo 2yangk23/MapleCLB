@@ -1,7 +1,5 @@
-﻿namespace MaplePacketLib.Cryptography
-{
-    public enum CipherType : byte
-    {
+﻿namespace MaplePacketLib.Cryptography {
+    public enum CipherType : byte {
         Encrypt,
         Decrypt
     }

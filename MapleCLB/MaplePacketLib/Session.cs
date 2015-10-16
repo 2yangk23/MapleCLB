@@ -2,10 +2,8 @@
 using System.Net.Sockets;
 using MaplePacketLib.Cryptography;
 
-namespace MaplePacketLib
-{
-    public sealed class Session
-    {
+namespace MaplePacketLib {
+    public sealed class Session {
         private static readonly Random Random = new Random();
         public const short ReceiveSize = 1024;
 
@@ -29,30 +27,23 @@ namespace MaplePacketLib
         public event EventHandler<byte[]> OnPacket;
         public event EventHandler OnDisconnected;
 
-        public bool Connected
-        {
-            get
-            {
+        public bool Connected {
+            get {
                 return m_connected;
             }
         }
-        public bool Encrypted
-        {
-            get
-            {
+        public bool Encrypted {
+            get {
                 return m_encrypted;
             }
         }
-        public SessionType SessionType
-        {
-            get
-            {
+        public SessionType SessionType {
+            get {
                 return m_sessionType;
             }
         }
 
-        internal Session(Socket socket, SessionType type, AesCipher aesCipher)
-        {
+        internal Session(Socket socket, SessionType type, AesCipher aesCipher) {
             m_socket = socket;
             m_sessionType = type;
             m_aesCipher = aesCipher;
@@ -72,10 +63,8 @@ namespace MaplePacketLib
             m_sendLock = new object();
         }
 
-        internal void Start(ServerInfo info)
-        {
-            if (info != null)
-            {
+        internal void Start(ServerInfo info) {
+            if (info != null) {
                 var siv = new byte[4];
                 var riv = new byte[4];
 
@@ -85,8 +74,7 @@ namespace MaplePacketLib
                 m_clientCipher = new MapleCipher(info.Version, siv, m_aesCipher, CipherType.Encrypt);
                 m_serverCipher = new MapleCipher(info.Version, riv, m_aesCipher, CipherType.Decrypt);
 
-                using (var p = new PacketWriter(14, 16))
-                {
+                using (var p = new PacketWriter(14, 16)) {
                     p.WriteShort(info.Version);
                     p.WriteMapleString(info.Subversion);
                     p.WriteBytes(riv);
@@ -100,45 +88,35 @@ namespace MaplePacketLib
             Receive();
         }
 
-        private void Receive()
-        {
-            if (m_connected)
-            {
+        private void Receive() {
+            if (m_connected) {
                 var error = SocketError.Success;
 
                 m_socket.BeginReceive(m_recvBuffer, 0, ReceiveSize, SocketFlags.None, out error, PacketCallback, null);
 
-                if (error != SocketError.Success)
-                {
+                if (error != SocketError.Success) {
                     Disconnect();
                 }
             }
         }
 
-        private void PacketCallback(IAsyncResult iar)
-        {
-            if (m_connected)
-            {
+        private void PacketCallback(IAsyncResult iar) {
+            if (m_connected) {
                 var error = SocketError.Success;
 
                 int length = m_socket.EndReceive(iar, out error);
 
-                if (length == 0 || error != SocketError.Success)
-                {
+                if (length == 0 || error != SocketError.Success) {
                     Disconnect();
-                }
-                else
-                {
+                } else {
                     Append(length);
                     ManipulateBuffer();
                     Receive();
                 }
             }
         }
-        private void Append(int length)
-        {
-            if (m_packetBuffer.Length - m_cursor < length)
-            {
+        private void Append(int length) {
+            if (m_packetBuffer.Length - m_cursor < length) {
                 int newSize = m_packetBuffer.Length * 2;
 
                 while (newSize < m_cursor + length)
@@ -151,10 +129,8 @@ namespace MaplePacketLib
 
             m_cursor += length;
         }
-        private void ManipulateBuffer()
-        {
-            if (m_encrypted)
-            {
+        private void ManipulateBuffer() {
+            if (m_encrypted) {
                 const int HeaderSize = 4;
 
                 while (m_cursor > HeaderSize && m_connected) //header room + still connected
@@ -176,21 +152,18 @@ namespace MaplePacketLib
                     {
                         Buffer.BlockCopy(m_packetBuffer, packetSize + HeaderSize, m_packetBuffer, 0, m_cursor);
                     }
-                    
+
                     if (OnPacket != null)
                         OnPacket(this, buffer);
 
                     buffer = null; //get rid of buffer
                 }
-            }
-            else if (m_cursor >= 2)
-            {
+            } else if (m_cursor >= 2) {
                 const int HeaderSize = 2;
 
                 short packetSize = BitConverter.ToInt16(m_packetBuffer, 0);
 
-                if (m_cursor >= packetSize + HeaderSize)
-                {
+                if (m_cursor >= packetSize + HeaderSize) {
                     byte[] buffer = new byte[packetSize];
                     Buffer.BlockCopy(m_packetBuffer, HeaderSize, buffer, 0, packetSize);
 
@@ -206,10 +179,8 @@ namespace MaplePacketLib
 
                     m_encrypted = true; //start waiting for encrypted packets
 
-                    if (OnHandshake != null)
-                    {
-                        var info = new ServerInfo()
-                        {
+                    if (OnHandshake != null) {
+                        var info = new ServerInfo() {
                             Version = major,
                             Subversion = minor,
                             Locale = locale
@@ -224,22 +195,18 @@ namespace MaplePacketLib
             }
         }
 
-        public void SendPacket(PacketWriter packet)
-        {
-            if (!m_connected)
-            {
+        public void SendPacket(PacketWriter packet) {
+            if (!m_connected) {
                 throw new InvalidOperationException("Socket is not connected");
             }
 
-            if (!m_encrypted)
-            {
+            if (!m_encrypted) {
                 throw new InvalidOperationException("Handshake has not been received yet");
             }
 
             byte[] data = packet.ToArray();
 
-            if (data.Length < 2)
-            {
+            if (data.Length < 2) {
                 throw new ArgumentOutOfRangeException("Packet length must be greater than 2", "packet");
             }
             //check for odd number of chars
@@ -247,12 +214,10 @@ namespace MaplePacketLib
 
             const int HeaderSize = 4;
 
-            lock (m_sendLock)
-            {
+            lock (m_sendLock) {
                 byte[] final = new byte[data.Length + HeaderSize];
 
-                switch (m_sessionType)
-                {
+                switch (m_sessionType) {
                     case SessionType.Client:
                         m_clientCipher.GetHeaderToServer(data.Length, final);
                         break;
@@ -269,17 +234,14 @@ namespace MaplePacketLib
             }
         }
 
-        private void SendRawPacket(byte[] packet)
-        {
+        private void SendRawPacket(byte[] packet) {
             int offset = 0;
 
-            while (offset < packet.Length)
-            {
+            while (offset < packet.Length) {
                 SocketError errorCode = SocketError.Success;
                 int sent = m_socket.Send(packet, offset, packet.Length - offset, SocketFlags.None, out errorCode);
 
-                if (sent == 0 || errorCode != SocketError.Success)
-                {
+                if (sent == 0 || errorCode != SocketError.Success) {
                     Disconnect();
                     return;
                 }
@@ -288,10 +250,8 @@ namespace MaplePacketLib
             }
         }
 
-        public void Disconnect(bool finished = true)
-        {
-            if (m_connected)
-            {
+        public void Disconnect(bool finished = true) {
+            if (m_connected) {
                 m_connected = false;
                 m_encrypted = false;
                 m_cursor = 0;
@@ -300,8 +260,7 @@ namespace MaplePacketLib
                 m_socket.Disconnect(false);
                 m_socket.Dispose();
 
-                if (finished)
-                {
+                if (finished) {
                     m_clientCipher = null;
                     m_serverCipher = null;
 

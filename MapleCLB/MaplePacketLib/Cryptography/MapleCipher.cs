@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace MaplePacketLib.Cryptography
-{
-    internal sealed class MapleCipher
-    {
+namespace MaplePacketLib.Cryptography {
+    internal sealed class MapleCipher {
         private static readonly byte[] sShiftKey = new byte[256]
         {
             0xEC, 0x3F, 0x77, 0xA4, 0x45, 0xD0, 0x71, 0xBF, 0xB7, 0x98, 0x20, 0xFC, 0x4B, 0xE9, 0xB3, 0xE1,
@@ -23,15 +21,14 @@ namespace MaplePacketLib.Cryptography
             0x96, 0x41, 0x74, 0xAC, 0x52, 0x33, 0xF0, 0xD9, 0x29, 0x80, 0xB1, 0x16, 0xD3, 0xAB, 0x91, 0xB9,
             0x84, 0x7F, 0x61, 0x1E, 0xCF, 0xC5, 0xD1, 0x56, 0x3D, 0xCA, 0xF4, 0x05, 0xC6, 0xE5, 0x08, 0x49
         };
-        
+
         private readonly short m_majorVersion;
         private readonly byte[] m_IV;
         private readonly AesCipher m_aesCipher;
 
         public const int IVLength = 4;
 
-        public MapleCipher(short majorVersion, byte[] IV, AesCipher aes, CipherType transformDirection)
-        {
+        public MapleCipher(short majorVersion, byte[] IV, AesCipher aes, CipherType transformDirection) {
             m_majorVersion = majorVersion;
 
             m_IV = new byte[IVLength];
@@ -40,14 +37,12 @@ namespace MaplePacketLib.Cryptography
             m_aesCipher = aes;
         }
 
-        public unsafe void Transform(byte[] data)
-        {
+        public unsafe void Transform(byte[] data) {
             m_aesCipher.Transform(data, m_IV);
 
             byte[] newIV = new byte[IVLength] { 0xF2, 0x53, 0x50, 0xC6 };
 
-            for (int i = 0; i < IVLength; i++)
-            {
+            for (int i = 0; i < IVLength; i++) {
                 byte input = m_IV[i];
                 byte tableInput = sShiftKey[input];
 
@@ -63,8 +58,7 @@ namespace MaplePacketLib.Cryptography
             Buffer.BlockCopy(newIV, 0, m_IV, 0, IVLength);
         }
 
-        public void GetHeaderToClient(int size, byte[] packet)
-        {
+        public void GetHeaderToClient(int size, byte[] packet) {
             var a = (m_IV[3] * 0x100 + m_IV[2]) ^ -(m_majorVersion + 1);
             var b = a ^ size;
             packet[0] = (byte)a;
@@ -72,8 +66,7 @@ namespace MaplePacketLib.Cryptography
             packet[2] = (byte)(b ^ 0x100);
             packet[3] = (byte)((b - packet[2]) / 0x100);
         }
-        public void GetHeaderToServer(int size, byte[] packet)
-        {
+        public void GetHeaderToServer(int size, byte[] packet) {
             var a = (m_IV[3] * 0x100 + m_IV[2]) ^ m_majorVersion;
             var b = a ^ size;
 
@@ -83,8 +76,7 @@ namespace MaplePacketLib.Cryptography
             packet[3] = (byte)(b / 0x100);
         }
 
-        public static int GetPacketLength(byte[] packetHeader)
-        {
+        public static int GetPacketLength(byte[] packetHeader) {
             return (packetHeader[0] + (packetHeader[1] << 8)) ^ (packetHeader[2] + (packetHeader[3] << 8));
         }
     }

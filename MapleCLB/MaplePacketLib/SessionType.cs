@@ -1,7 +1,5 @@
-﻿namespace MaplePacketLib
-{
-    public enum SessionType : byte
-    {
+﻿namespace MaplePacketLib {
+    public enum SessionType : byte {
         Client,
         Server
     }

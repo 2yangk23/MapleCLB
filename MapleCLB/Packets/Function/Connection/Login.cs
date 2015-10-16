@@ -6,24 +6,18 @@ using MapleCLB.MaplePacketLib;
 using MapleCLB.User;
 using MaplePacketLib;
 
-namespace MapleCLB.Packets.Function
-{
-    class ResetAuth : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
+namespace MapleCLB.Packets.Function {
+    class ResetAuth : PacketFunction {
+        public void Handle(Client c, PacketReader r) {
             Program.WriteLog(("Login auth failed.  Clearing auth..."));
             c.authCode = ""; //causes client to fetch new auth
             c.session.Disconnect();
         }
     }
 
-    class LoginSecond : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
-            switch (r.ReadByte())
-            {
+    class LoginSecond : PacketFunction {
+        public void Handle(Client c, PacketReader r) {
+            switch (r.ReadByte()) {
                 case 0x01:
                     Program.WriteLog(("Incorrect password"));
                     return;
@@ -43,10 +37,8 @@ namespace MapleCLB.Packets.Function
         }
     }
 
-    class SelectCharacter : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
+    class SelectCharacter : PacketFunction {
+        public void Handle(Client c, PacketReader r) {
             Program.WriteLog(("Selecting Character..."));
             //no new thread here, MUST finish loading chars
             c.uid = 7427509;
@@ -88,18 +80,6 @@ namespace MapleCLB.Packets.Function
                     break;
             }*/
             c.SendPacket(Login.SelectCharacter(c.uid, c.pic));
-        }
-    }
-
-    class WhoKnows : PacketFunction
-    {
-        public void Handle(Client c, PacketReader r)
-        {
-            PacketWriter pw = new PacketWriter(0x68);
-            pw.WriteByte(1);
-            c.SendPacket(pw);
-            c.SendPacket(new PacketWriter(0x76));
-            c.SendPacket(new PacketWriter(0x96));
         }
     }
 }

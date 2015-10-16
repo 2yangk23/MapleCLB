@@ -1,11 +1,8 @@
 ﻿using MaplePacketLib;
 
-namespace MapleCLB.Packets
-{
-    class Movement
-    {
-        public static PacketWriter Teleport(int crc, short x, short y, short pid)
-        {
+namespace MapleCLB.Packets {
+    class Movement {
+        public static PacketWriter Teleport(int crc, short x, short y, short pid) {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.MOVE_PLAYER);
             pw.WriteByte(Portal.count);

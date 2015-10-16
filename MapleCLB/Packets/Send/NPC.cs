@@ -1,11 +1,8 @@
 ﻿using MaplePacketLib;
 
-namespace MapleCLB.Packets
-{
-    class NPC
-    {
-        public static PacketWriter Talk(int id, short x = 0, short y = 0)
-        {
+namespace MapleCLB.Packets {
+    class NPC {
+        public static PacketWriter Talk(int id, short x = 0, short y = 0) {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK);
             pw.WriteInt(id);
@@ -15,8 +12,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter Select(int n)
-        {
+        public static PacketWriter Select(int n) {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK_MORE);
             pw.WriteByte(5);
@@ -26,8 +22,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter Yes()
-        {
+        public static PacketWriter Yes() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK_MORE);
             pw.WriteByte(2);
@@ -36,8 +31,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter No()
-        {
+        public static PacketWriter No() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK_MORE);
             pw.WriteByte(2);
@@ -46,8 +40,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter Next()
-        {
+        public static PacketWriter Next() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK_MORE);
             pw.WriteByte();
@@ -56,8 +49,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter End()
-        {
+        public static PacketWriter End() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK_MORE);
             pw.WriteByte(5);

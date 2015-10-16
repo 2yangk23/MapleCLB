@@ -1,11 +1,8 @@
 ﻿using MaplePacketLib;
 
-namespace MapleCLB.Packets
-{
-    class General
-    {
-        public static PacketWriter Pong()
-        {
+namespace MapleCLB.Packets {
+    class General {
+        public static PacketWriter Pong() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.PONG);
             pw.Timestamp(); //Is this actually timestamp?
@@ -13,8 +10,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter ChangeChannel(byte channel)
-        {
+        public static PacketWriter ChangeChannel(byte channel) {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.CHANGE_CHANNEL);
             pw.WriteByte(channel);
@@ -23,8 +19,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter EnterCS()
-        {
+        public static PacketWriter EnterCS() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.ENTER_CASHSHOP);
             pw.Timestamp();
@@ -33,8 +28,7 @@ namespace MapleCLB.Packets
             return pw;
         }
 
-        public static PacketWriter ExitCS()
-        {
+        public static PacketWriter ExitCS() {
             PacketWriter pw = new PacketWriter();
             pw.WriteShort(SendOps.CHANGE_MAP);
 
