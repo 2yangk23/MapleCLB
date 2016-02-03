@@ -17,6 +17,8 @@ namespace MapleCLB.MapleClient {
         GAME,
     }
 
+    //Kelvin smellssssssssss
+
     public class Client {
         private readonly Connector Conn;
         public Session Session;
