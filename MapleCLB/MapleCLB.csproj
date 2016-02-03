@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;CONTRACTS_FULL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -63,26 +63,32 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MaplePacketLib\Connector.cs" />
-    <Compile Include="MaplePacketLib\Cryptography\AesCipher.cs" />
-    <Compile Include="MaplePacketLib\Cryptography\CipherType.cs" />
-    <Compile Include="MaplePacketLib\Cryptography\MapleCipher.cs" />
-    <Compile Include="MaplePacketLib\PacketException.cs" />
-    <Compile Include="MaplePacketLib\PacketHandler.cs" />
-    <Compile Include="MaplePacketLib\PacketReader.cs" />
-    <Compile Include="MaplePacketLib\PacketWriter.cs" />
-    <Compile Include="MaplePacketLib\ServerInfo.cs" />
-    <Compile Include="MaplePacketLib\Session.cs" />
-    <Compile Include="MaplePacketLib\SessionType.cs" />
+    <Compile Include="MapleClient\Handlers\Handler.cs" />
+    <Compile Include="MapleClient\Handlers\Handshake.cs" />
+    <Compile Include="MapleClient\Handlers\Packet.cs" />
+    <Compile Include="MapleLib\Connector.cs" />
+    <Compile Include="MapleLib\Crypto\AesCipher.cs" />
+    <Compile Include="MapleLib\Crypto\AuthCipher.cs" />
+    <Compile Include="MapleLib\Crypto\MapleCipher.cs" />
+    <Compile Include="MapleLib\Packet\HexEncoding.cs" />
+    <Compile Include="MapleLib\Packet\PacketReader.cs" />
+    <Compile Include="MapleLib\Packet\PacketWriter.cs" />
+    <Compile Include="MapleLib\ServerInfo.cs" />
+    <Compile Include="MapleLib\Session.cs" />
+    <Compile Include="MapleLib\SessionType.cs" />
     <Compile Include="Packets\Function\Connection\Login.cs" />
-    <Compile Include="Packets\Function\Connection\PingPong.cs" />
-    <Compile Include="Packets\Function\Connection\PortIP.cs" />
+    <Compile Include="Packets\Function\Connection\Request.cs" />
+    <Compile Include="Packets\Function\Connection\PortIp.cs" />
+    <Compile Include="Packets\Function\MapInfo\FMMovement.cs" />
+    <Compile Include="Packets\Function\MapInfo\MapCheck.cs" />
+    <Compile Include="Packets\Function\MapInfo\Mushrooms.cs" />
     <Compile Include="Packets\Function\MapInfo\Player.cs" />
     <Compile Include="Packets\Recv\Load.cs" />
     <Compile Include="Packets\Send\General.cs" />
     <Compile Include="Packets\Send\Login.cs" />
     <Compile Include="Packets\Send\Movement.cs" />
     <Compile Include="Packets\Send\NPC.cs" />
+    <Compile Include="Packets\Send\Shop.cs" />
     <Compile Include="Packets\Send\Portal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,9 +98,10 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Tools\win32.cs" />
-    <Compile Include="User\Auth.cs" />
+    <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
-    <Compile Include="User\Client.cs" />
+    <Compile Include="MapleClient\Client.cs" />
+    <Compile Include="Types\Character.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

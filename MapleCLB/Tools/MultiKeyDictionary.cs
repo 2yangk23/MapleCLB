@@ -3,16 +3,16 @@ using System.Linq;
 using System.Threading;
 
 namespace MapleCLB.Tools {
-    public class MultiKeyDictionary<K, L, V> {
-        internal readonly Dictionary<K, V> baseDictionary = new Dictionary<K, V>();
-        internal readonly Dictionary<L, K> subDictionary = new Dictionary<L, K>();
-        internal readonly Dictionary<K, L> primaryToSubkeyMapping = new Dictionary<K, L>();
+    public class MultiKeyDictionary<TK, TL, TV> {
+        internal readonly Dictionary<TK, TV> BaseDictionary = new Dictionary<TK, TV>();
+        internal readonly Dictionary<TL, TK> SubDictionary = new Dictionary<TL, TK>();
+        internal readonly Dictionary<TK, TL> PrimaryToSubkeyMapping = new Dictionary<TK, TL>();
 
-        ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
+        ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();
 
-        public V this[L subKey] {
+        public TV this[TL subKey] {
             get {
-                V item;
+                TV item;
                 if (TryGetValue(subKey, out item)) {
                     return item;
                 }
@@ -21,9 +21,9 @@ namespace MapleCLB.Tools {
             }
         }
 
-        public V this[K primaryKey] {
+        public TV this[TK primaryKey] {
             get {
-                V item;
+                TV item;
                 if (TryGetValue(primaryKey, out item)) {
                     return item;
                 }
@@ -32,210 +32,210 @@ namespace MapleCLB.Tools {
             }
         }
 
-        public void Associate(L subKey, K primaryKey) {
-            readerWriterLock.EnterUpgradeableReadLock();
+        public void Associate(TL subKey, TK primaryKey) {
+            ReaderWriterLock.EnterUpgradeableReadLock();
 
             try {
-                if (!baseDictionary.ContainsKey(primaryKey))
+                if (!BaseDictionary.ContainsKey(primaryKey))
                     throw new KeyNotFoundException(string.Format("The base dictionary does not contain the key '{0}'", primaryKey));
 
-                if (primaryToSubkeyMapping.ContainsKey(primaryKey)) // Remove the old mapping first
+                if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) // Remove the old mapping first
                 {
-                    readerWriterLock.EnterWriteLock();
+                    ReaderWriterLock.EnterWriteLock();
 
                     try {
-                        if (subDictionary.ContainsKey(primaryToSubkeyMapping[primaryKey])) {
-                            subDictionary.Remove(primaryToSubkeyMapping[primaryKey]);
+                        if (SubDictionary.ContainsKey(PrimaryToSubkeyMapping[primaryKey])) {
+                            SubDictionary.Remove(PrimaryToSubkeyMapping[primaryKey]);
                         }
 
-                        primaryToSubkeyMapping.Remove(primaryKey);
+                        PrimaryToSubkeyMapping.Remove(primaryKey);
                     } finally {
-                        readerWriterLock.ExitWriteLock();
+                        ReaderWriterLock.ExitWriteLock();
                     }
                 }
 
-                subDictionary[subKey] = primaryKey;
-                primaryToSubkeyMapping[primaryKey] = subKey;
+                SubDictionary[subKey] = primaryKey;
+                PrimaryToSubkeyMapping[primaryKey] = subKey;
             } finally {
-                readerWriterLock.ExitUpgradeableReadLock();
+                ReaderWriterLock.ExitUpgradeableReadLock();
             }
         }
 
-        public bool TryGetValue(L subKey, out V val) {
-            val = default(V);
+        public bool TryGetValue(TL subKey, out TV val) {
+            val = default(TV);
 
-            K primaryKey;
+            TK primaryKey;
 
-            readerWriterLock.EnterReadLock();
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                if (subDictionary.TryGetValue(subKey, out primaryKey)) {
-                    return baseDictionary.TryGetValue(primaryKey, out val);
+                if (SubDictionary.TryGetValue(subKey, out primaryKey)) {
+                    return BaseDictionary.TryGetValue(primaryKey, out val);
                 }
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
 
             return false;
         }
 
-        public bool TryGetValue(K primaryKey, out V val) {
-            readerWriterLock.EnterReadLock();
+        public bool TryGetValue(TK primaryKey, out TV val) {
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                return baseDictionary.TryGetValue(primaryKey, out val);
+                return BaseDictionary.TryGetValue(primaryKey, out val);
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
         }
 
-        public bool ContainsKey(L subKey) {
-            V val;
+        public bool ContainsKey(TL subKey) {
+            TV val;
 
             return TryGetValue(subKey, out val);
         }
 
-        public bool ContainsKey(K primaryKey) {
-            V val;
+        public bool ContainsKey(TK primaryKey) {
+            TV val;
 
             return TryGetValue(primaryKey, out val);
         }
 
-        public void Remove(K primaryKey) {
-            readerWriterLock.EnterWriteLock();
+        public void Remove(TK primaryKey) {
+            ReaderWriterLock.EnterWriteLock();
 
             try {
-                if (primaryToSubkeyMapping.ContainsKey(primaryKey)) {
-                    if (subDictionary.ContainsKey(primaryToSubkeyMapping[primaryKey])) {
-                        subDictionary.Remove(primaryToSubkeyMapping[primaryKey]);
+                if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) {
+                    if (SubDictionary.ContainsKey(PrimaryToSubkeyMapping[primaryKey])) {
+                        SubDictionary.Remove(PrimaryToSubkeyMapping[primaryKey]);
                     }
 
-                    primaryToSubkeyMapping.Remove(primaryKey);
+                    PrimaryToSubkeyMapping.Remove(primaryKey);
                 }
 
-                baseDictionary.Remove(primaryKey);
+                BaseDictionary.Remove(primaryKey);
             } finally {
-                readerWriterLock.ExitWriteLock();
+                ReaderWriterLock.ExitWriteLock();
             }
         }
 
-        public void Remove(L subKey) {
-            readerWriterLock.EnterWriteLock();
+        public void Remove(TL subKey) {
+            ReaderWriterLock.EnterWriteLock();
 
             try {
-                baseDictionary.Remove(subDictionary[subKey]);
+                BaseDictionary.Remove(SubDictionary[subKey]);
 
-                primaryToSubkeyMapping.Remove(subDictionary[subKey]);
+                PrimaryToSubkeyMapping.Remove(SubDictionary[subKey]);
 
-                subDictionary.Remove(subKey);
+                SubDictionary.Remove(subKey);
             } finally {
-                readerWriterLock.ExitWriteLock();
+                ReaderWriterLock.ExitWriteLock();
             }
         }
 
-        public void Add(K primaryKey, V val) {
-            readerWriterLock.EnterWriteLock();
+        public void Add(TK primaryKey, TV val) {
+            ReaderWriterLock.EnterWriteLock();
 
             try {
-                baseDictionary.Add(primaryKey, val);
+                BaseDictionary.Add(primaryKey, val);
             } finally {
-                readerWriterLock.ExitWriteLock();
+                ReaderWriterLock.ExitWriteLock();
             }
         }
 
-        public void Add(K primaryKey, L subKey, V val) {
+        public void Add(TK primaryKey, TL subKey, TV val) {
             Add(primaryKey, val);
 
             Associate(subKey, primaryKey);
         }
 
-        public V[] CloneValues() {
-            readerWriterLock.EnterReadLock();
+        public TV[] CloneValues() {
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                V[] values = new V[baseDictionary.Values.Count];
+                TV[] values = new TV[BaseDictionary.Values.Count];
 
-                baseDictionary.Values.CopyTo(values, 0);
+                BaseDictionary.Values.CopyTo(values, 0);
 
                 return values;
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
         }
 
-        public List<V> Values {
+        public List<TV> Values {
             get {
-                readerWriterLock.EnterReadLock();
+                ReaderWriterLock.EnterReadLock();
 
                 try {
-                    return baseDictionary.Values.ToList();
+                    return BaseDictionary.Values.ToList();
                 } finally {
-                    readerWriterLock.ExitReadLock();
+                    ReaderWriterLock.ExitReadLock();
                 }
             }
         }
 
-        public K[] ClonePrimaryKeys() {
-            readerWriterLock.EnterReadLock();
+        public TK[] ClonePrimaryKeys() {
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                K[] values = new K[baseDictionary.Keys.Count];
+                TK[] values = new TK[BaseDictionary.Keys.Count];
 
-                baseDictionary.Keys.CopyTo(values, 0);
+                BaseDictionary.Keys.CopyTo(values, 0);
 
                 return values;
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
         }
 
-        public L[] CloneSubKeys() {
-            readerWriterLock.EnterReadLock();
+        public TL[] CloneSubKeys() {
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                L[] values = new L[subDictionary.Keys.Count];
+                TL[] values = new TL[SubDictionary.Keys.Count];
 
-                subDictionary.Keys.CopyTo(values, 0);
+                SubDictionary.Keys.CopyTo(values, 0);
 
                 return values;
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
         }
 
         public void Clear() {
-            readerWriterLock.EnterWriteLock();
+            ReaderWriterLock.EnterWriteLock();
 
             try {
-                baseDictionary.Clear();
+                BaseDictionary.Clear();
 
-                subDictionary.Clear();
+                SubDictionary.Clear();
 
-                primaryToSubkeyMapping.Clear();
+                PrimaryToSubkeyMapping.Clear();
             } finally {
-                readerWriterLock.ExitWriteLock();
+                ReaderWriterLock.ExitWriteLock();
             }
         }
 
         public int Count {
             get {
-                readerWriterLock.EnterReadLock();
+                ReaderWriterLock.EnterReadLock();
 
                 try {
-                    return baseDictionary.Count;
+                    return BaseDictionary.Count;
                 } finally {
-                    readerWriterLock.ExitReadLock();
+                    ReaderWriterLock.ExitReadLock();
                 }
             }
         }
 
-        public IEnumerator<KeyValuePair<K, V>> GetEnumerator() {
-            readerWriterLock.EnterReadLock();
+        public IEnumerator<KeyValuePair<TK, TV>> GetEnumerator() {
+            ReaderWriterLock.EnterReadLock();
 
             try {
-                return baseDictionary.GetEnumerator();
+                return BaseDictionary.GetEnumerator();
             } finally {
-                readerWriterLock.ExitReadLock();
+                ReaderWriterLock.ExitReadLock();
             }
         }
     }

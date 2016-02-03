@@ -1,25 +1,24 @@
-﻿using MapleCLB.MaplePacketLib;
-using MapleCLB.User;
-using MaplePacketLib;
+﻿using MapleCLB.MapleClient;
+using MapleCLB.MapleLib.Packet;
 
-namespace MapleCLB.Packets.Function {
-    class ServerIP : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
+namespace MapleCLB.Packets.Function.Connection {
+    class PortIp {
+        public static void ServerIp(object o, PacketReader r) {
+            var c = o as Client;
             r.ReadShort();
-            byte[] serverIP = r.ReadBytes(4);
-            short Port = r.ReadShort();
-            string IP = serverIP[0] + "." + serverIP[1] + "." + serverIP[2] + "." + serverIP[3];
-            c.Reconnect(IP, Port);
+            byte[] serverIp = r.ReadBytes(4);
+            short port = r.ReadShort();
+            string ip = serverIp[0] + "." + serverIp[1] + "." + serverIp[2] + "." + serverIp[3];
+            c.Reconnect(ip, port);
         }
-    }
 
-    class ChannelIP : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
+        public static void ChannelIp(object o, PacketReader r) {
+            var c = o as Client;
             r.ReadByte();
-            byte[] channelIP = r.ReadBytes(4);
-            short Port = r.ReadShort();
-            string IP = channelIP[0] + "." + channelIP[1] + "." + channelIP[2] + "." + channelIP[3];
-            c.Reconnect(IP, Port);
+            byte[] channelIp = r.ReadBytes(4);
+            short port = r.ReadShort();
+            string ip = channelIp[0] + "." + channelIp[1] + "." + channelIp[2] + "." + channelIp[3];
+            c.Reconnect(ip, port);
         }
     }
 }

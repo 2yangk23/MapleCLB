@@ -2,84 +2,100 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using MapleCLB.MaplePacketLib;
-using MapleCLB.User;
-using MaplePacketLib;
+using MapleCLB.MapleClient;
+using MapleCLB.MapleLib.Packet;
+using MapleCLB.Packets.Recv;
 
-namespace MapleCLB.Packets.Function {
-    class ResetAuth : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
-            Program.WriteLog(("Login auth failed.  Clearing auth..."));
-            c.authCode = ""; //causes client to fetch new auth
-            c.session.Disconnect();
-        }
-    }
-
-    class LoginSecond : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
-            switch (r.ReadByte()) {
+namespace MapleCLB.Packets.Function.Connection {
+    class Login {
+        public static void LoginSecond(object o, PacketReader r) {
+            var c = o as Client;
+            switch (r.ReadByte())
+            {
                 case 0x01:
                     Program.WriteLog(("Incorrect password"));
                     return;
                 case 0x07:
                     Program.WriteLog(("Already logged in. Restarting in 1 minute..."));
                     Thread.Sleep(60000);
-                    c.session.Disconnect();
+                    c.Session.Disconnect();
                     return;
             }
-
             r.Skip(15);
-            r.ReadMapleString();
-            r.Skip(10);
-            r.ReadMapleString();
-            r.Skip(12);
-            c.sessionID = r.ReadLong(); //Get session ID from login recieve
+            r.ReadMapleStringv2();
+            r.Skip(11);
+            r.ReadMapleStringv2();
+            
+            r.Skip(13);
+            
+            c.SessionId = r.ReadLong(); //Get session ID from login recieve
         }
-    }
 
-    class SelectCharacter : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
+
+
+        public static void LoginStatus(object o, PacketReader r)
+        {
+            var c = o as Client;
+            switch (r.ReadByte())
+            {
+                case 0x01:
+                    Program.WriteLog(("Incorrect Password"));
+                    c.Session.Disconnect();
+                    return;
+                case 0x02:
+                    Program.WriteLog(("Banned R.I.P "));
+                    c.Session.Disconnect();
+                    return;
+                case 0x07:
+                    Program.WriteLog(("Already logged in. Restart in 1 Minute"));
+                    Thread.Sleep(120000);
+                    c.Session.Disconnect();
+                    return;
+                default:
+                c.SendPacket(Send.Login.acceptWorld());
+                c.SendPacket(Send.Login.SelectServer(c.World, c.Channel));
+                return;
+            }
+
+        }
+
+
+
+        public static void SelectCharacter(object o, PacketReader r) {
+            var c = o as Client;
             Program.WriteLog(("Selecting Character..."));
             //no new thread here, MUST finish loading chars
-            c.uid = 7427509;
-            /*Load.Character(c, r);
+            Load.Character(c, r);
 
             int select = 0;
-            Program.gui.Invoke((MethodInvoker)delegate { select = Program.gui.selType.SelectedIndex; }); //invoke so it waits
+            Program.Gui.Invoke((MethodInvoker)delegate { select = Program.Gui.selType.SelectedIndex; }); //invoke so it waits
 
-            switch (select)
-            {
+            switch (select) {
                 case 0:
-                    try
-                    {
+                    try {
                         byte n;
-                        Byte.TryParse(c.ign, out n);
-                        c.uid = c.charMap[--n];
-                    }
-                    catch
-                    {
+                        Byte.TryParse(c.Ign, out n);
+                        c.UserId = c.CharMap[--n];
+                    } catch {
                         Program.WriteLog(("Error selecting character. Restarting in 1 minute..."));
                         Thread.Sleep(60000);
-                        c.session.Disconnect();
+                        c.Session.Disconnect();
                         return;
                     }
                     break;
 
                 case 1:
-                    try
-                    {
-                        c.uid = c.charMap[c.ign.ToLower()];
-                    }
-                    catch (KeyNotFoundException)
-                    {
+                    try {
+                        c.UserId = c.CharMap[c.Ign.ToLower()];
+                    } catch (KeyNotFoundException) {
                         Program.WriteLog(("Error selecting character. Restarting in 1 minute..."));
                         Thread.Sleep(60000);
-                        c.session.Disconnect();
+                        c.Session.Disconnect();
                         return;
                     }
                     break;
-            }*/
-            c.SendPacket(Login.SelectCharacter(c.uid, c.pic));
+            }
+            c.SendPacket(Send.Login.SelectCharacter(c.UserId, c.Pic));
         }
     }
 }

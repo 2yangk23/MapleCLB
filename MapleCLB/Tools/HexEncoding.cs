@@ -2,7 +2,7 @@
 
 namespace MapleCLB.Tools {
     public class HexEncoding {
-        private static Random RNG = new Random();
+        private static Random rng = new Random();
 
         public static bool IsHexDigit(Char c) {
             int numChar;
@@ -63,9 +63,9 @@ namespace MapleCLB.Tools {
             return new String(ret);
         }
 
-        public static string byteArrayToString(byte[] Array) {
+        public static string ByteArrayToString(byte[] array) {
             string temp = "";
-            foreach (byte bit in Array) {
+            foreach (byte bit in array) {
                 temp += String.Format("{0:X2} ", bit);
             }
             return temp;
@@ -75,20 +75,20 @@ namespace MapleCLB.Tools {
             return String.Format("{0:X2}", b);
         }
 
-        public static string getRandomHexString(int digits, string spacer = "") {
+        public static string GetRandomHexString(int digits, string spacer = "") {
             string toreturn = string.Empty;
-            toreturn += ToHex((byte)RNG.Next(0xFF));
+            toreturn += ToHex((byte)rng.Next(0xFF));
             for (int i = 0; i < digits - 1; i++)
-                toreturn += spacer + HexEncoding.ToHex((byte)RNG.Next(0xFF));
+                toreturn += spacer + HexEncoding.ToHex((byte)rng.Next(0xFF));
             return toreturn;
         }
 
-        public static unsafe string fillRandom(string packet) {
+        public static unsafe string FillRandom(string packet) {
             fixed (char* pch = packet) {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards
                 {
                     if (pch[i] == '*') {
-                        pch[i] = String.Format("{0:X}", RNG.Next(16))[0];
+                        pch[i] = String.Format("{0:X}", rng.Next(16))[0];
                     }
                 }
             }

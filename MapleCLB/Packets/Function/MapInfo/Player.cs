@@ -1,17 +1,21 @@
-﻿using MapleCLB.MaplePacketLib;
-using MapleCLB.User;
-using MaplePacketLib;
+﻿using MapleCLB.MapleClient;
+using MapleCLB.MapleLib.Packet;
+using MapleCLB.Packets.Recv;
 
-namespace MapleCLB.Packets.Function {
-    class SpawnPlayer : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
+namespace MapleCLB.Packets.Function.MapInfo {
+    class Player {
+        public static void SpawnPlayer(object o, PacketReader r) {
+            var c = o as Client;
             Load.Player(c, r);
         }
-    }
 
-    class RemovePlayer : PacketFunction {
-        public void Handle(Client c, PacketReader r) {
+        public static void RemovePlayer(object o, PacketReader r) {
+            var c = o as Client;
             Load.RemovePlayer(c, r);
         }
+
+        
+
+
     }
 }

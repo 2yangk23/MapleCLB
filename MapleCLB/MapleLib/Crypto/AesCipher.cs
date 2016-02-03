@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace MaplePacketLib.Cryptography {
+namespace MapleCLB.MapleLib.Crypto {
     public sealed class AesCipher {
-        private ICryptoTransform m_crypto;
+        private readonly ICryptoTransform Crypto;
 
         public AesCipher(byte[] aesKey) {
             if (aesKey == null)
@@ -12,18 +12,18 @@ namespace MaplePacketLib.Cryptography {
             if (aesKey.Length != 32)
                 throw new ArgumentOutOfRangeException("Key length needs to be 32", "key");
 
-            RijndaelManaged aes = new RijndaelManaged() {
+            RijndaelManaged aes = new RijndaelManaged {
                 Key = aesKey,
                 Mode = CipherMode.ECB,
                 Padding = PaddingMode.PKCS7
             };
 
             using (aes) {
-                m_crypto = aes.CreateEncryptor();
+                Crypto = aes.CreateEncryptor();
             }
         }
 
-        internal void Transform(byte[] data, byte[] IV) {
+        internal void Transform(byte[] data, byte[] iv) {
             byte[] morphKey = new byte[16];
             int remaining = data.Length;
             int start = 0;
@@ -31,14 +31,14 @@ namespace MaplePacketLib.Cryptography {
 
             while (remaining > 0) {
                 for (int i = 0; i < 16; i++)
-                    morphKey[i] = IV[i % 4];
+                    morphKey[i] = iv[i % 4];
 
                 if (remaining < length)
                     length = remaining;
 
                 for (int index = start; index < (start + length); index++) {
                     if ((index - start) % 16 == 0)
-                        m_crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
+                        Crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
 
                     data[index] ^= morphKey[(index - start) % 16];
                 }

@@ -34,6 +34,7 @@ namespace MapleCLB
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.infoGroup = new System.Windows.Forms.GroupBox();
             this.selType = new System.Windows.Forms.ComboBox();
+            this.loginMode = new System.Windows.Forms.ComboBox();
             this.character = new System.Windows.Forms.TextBox();
             this.channel = new System.Windows.Forms.ComboBox();
             this.username = new System.Windows.Forms.TextBox();
@@ -50,7 +51,11 @@ namespace MapleCLB
             this.sMenuSend = new System.Windows.Forms.ToolStripMenuItem();
             this.sMenuSpam = new System.Windows.Forms.ToolStripMenuItem();
             this.delay = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.CC = new System.Windows.Forms.Button();
+            this.name = new System.Windows.Forms.Label();
             this.sendSpam = new MapleCLB.Tools.SplitButton();
+            this.EnterCS = new System.Windows.Forms.Button();
             this.infoGroup.SuspendLayout();
             this.sendMenu.SuspendLayout();
             this.SuspendLayout();
@@ -58,6 +63,7 @@ namespace MapleCLB
             // infoGroup
             // 
             this.infoGroup.Controls.Add(this.selType);
+            this.infoGroup.Controls.Add(this.loginMode);
             this.infoGroup.Controls.Add(this.character);
             this.infoGroup.Controls.Add(this.channel);
             this.infoGroup.Controls.Add(this.username);
@@ -66,7 +72,7 @@ namespace MapleCLB
             this.infoGroup.Controls.Add(this.pic);
             this.infoGroup.Location = new System.Drawing.Point(12, 10);
             this.infoGroup.Name = "infoGroup";
-            this.infoGroup.Size = new System.Drawing.Size(198, 126);
+            this.infoGroup.Size = new System.Drawing.Size(198, 153);
             this.infoGroup.TabIndex = 9;
             this.infoGroup.TabStop = false;
             this.infoGroup.Text = "Account Information";
@@ -83,6 +89,18 @@ namespace MapleCLB
             this.selType.Name = "selType";
             this.selType.Size = new System.Drawing.Size(61, 21);
             this.selType.TabIndex = 8;
+            // 
+            // loginMode
+            // 
+            this.loginMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.loginMode.FormattingEnabled = true;
+            this.loginMode.Items.AddRange(new object[] {
+            "Login Mode",
+            "ShopBot Mode"});
+            this.loginMode.Location = new System.Drawing.Point(6, 124);
+            this.loginMode.Name = "loginMode";
+            this.loginMode.Size = new System.Drawing.Size(191, 21);
+            this.loginMode.TabIndex = 23;
             // 
             // character
             // 
@@ -176,7 +194,7 @@ namespace MapleCLB
             // 
             // connect
             // 
-            this.connect.Location = new System.Drawing.Point(12, 142);
+            this.connect.Location = new System.Drawing.Point(12, 169);
             this.connect.Name = "connect";
             this.connect.Size = new System.Drawing.Size(198, 27);
             this.connect.TabIndex = 0;
@@ -195,24 +213,24 @@ namespace MapleCLB
             this.log.Name = "log";
             this.log.ReadOnly = true;
             this.log.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.log.Size = new System.Drawing.Size(366, 259);
+            this.log.Size = new System.Drawing.Size(370, 259);
             this.log.TabIndex = 11;
             // 
             // disconnect
             // 
             this.disconnect.Enabled = false;
-            this.disconnect.Location = new System.Drawing.Point(12, 175);
+            this.disconnect.Location = new System.Drawing.Point(12, 202);
             this.disconnect.Name = "disconnect";
             this.disconnect.Size = new System.Drawing.Size(198, 27);
             this.disconnect.TabIndex = 12;
-            this.disconnect.Text = " ";
+            this.disconnect.Text = " Disconnect";
             this.disconnect.UseVisualStyleBackColor = true;
             this.disconnect.Click += new System.EventHandler(this.disconnect_Click);
             // 
             // aRestart
             // 
             this.aRestart.AutoSize = true;
-            this.aRestart.Location = new System.Drawing.Point(18, 254);
+            this.aRestart.Location = new System.Drawing.Point(12, 270);
             this.aRestart.Name = "aRestart";
             this.aRestart.Size = new System.Drawing.Size(85, 17);
             this.aRestart.TabIndex = 13;
@@ -222,7 +240,7 @@ namespace MapleCLB
             // sendPacket
             // 
             this.sendPacket.Font = new System.Drawing.Font("Consolas", 9F);
-            this.sendPacket.Location = new System.Drawing.Point(8, 280);
+            this.sendPacket.Location = new System.Drawing.Point(8, 293);
             this.sendPacket.Name = "sendPacket";
             this.sendPacket.Size = new System.Drawing.Size(505, 22);
             this.sendPacket.TabIndex = 14;
@@ -230,7 +248,7 @@ namespace MapleCLB
             // aCS
             // 
             this.aCS.AutoSize = true;
-            this.aCS.Location = new System.Drawing.Point(109, 254);
+            this.aCS.Location = new System.Drawing.Point(103, 270);
             this.aCS.Name = "aCS";
             this.aCS.Size = new System.Drawing.Size(65, 17);
             this.aCS.TabIndex = 16;
@@ -266,17 +284,47 @@ namespace MapleCLB
             // delay
             // 
             this.delay.Font = new System.Drawing.Font("Consolas", 9F);
-            this.delay.Location = new System.Drawing.Point(467, 280);
+            this.delay.Location = new System.Drawing.Point(468, 293);
             this.delay.Name = "delay";
             this.delay.Size = new System.Drawing.Size(45, 22);
             this.delay.TabIndex = 19;
             this.delay.Visible = false;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(227, 321);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(198, 27);
+            this.button1.TabIndex = 20;
+            this.button1.Text = " Send Move";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // CC
+            // 
+            this.CC.Location = new System.Drawing.Point(12, 321);
+            this.CC.Name = "CC";
+            this.CC.Size = new System.Drawing.Size(198, 27);
+            this.CC.TabIndex = 21;
+            this.CC.Text = "CC";
+            this.CC.UseVisualStyleBackColor = true;
+            this.CC.Click += new System.EventHandler(this.CC_Click);
+            // 
+            // name
+            // 
+            this.name.AutoSize = true;
+            this.name.Location = new System.Drawing.Point(628, 29);
+            this.name.Name = "name";
+            this.name.Size = new System.Drawing.Size(41, 13);
+            this.name.TabIndex = 22;
+            this.name.Text = "Name: ";
+            this.name.TextChanged += new System.EventHandler(this.name_TextChanged);
+            // 
             // sendSpam
             // 
             this.sendSpam.AutoSize = true;
             this.sendSpam.ContextMenuStrip = this.sendMenu;
-            this.sendSpam.Location = new System.Drawing.Point(519, 278);
+            this.sendSpam.Location = new System.Drawing.Point(519, 293);
             this.sendSpam.Name = "sendSpam";
             this.sendSpam.Size = new System.Drawing.Size(78, 25);
             this.sendSpam.SplitMenuStrip = this.sendMenu;
@@ -285,11 +333,25 @@ namespace MapleCLB
             this.sendSpam.UseVisualStyleBackColor = true;
             this.sendSpam.Click += new System.EventHandler(this.sendSpam_Click);
             // 
+            // Enter CS
+            // 
+            this.EnterCS.Location = new System.Drawing.Point(431, 321);
+            this.EnterCS.Name = "button2";
+            this.EnterCS.Size = new System.Drawing.Size(166, 27);
+            this.EnterCS.TabIndex = 23;
+            this.EnterCS.Text = "EnterCS";
+            this.EnterCS.UseVisualStyleBackColor = true;
+            this.EnterCS.Click += new System.EventHandler(this.EnterCS_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(605, 313);
+            this.ClientSize = new System.Drawing.Size(835, 351);
+            this.Controls.Add(this.EnterCS);
+            this.Controls.Add(this.name);
+            this.Controls.Add(this.CC);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.delay);
             this.Controls.Add(this.sendSpam);
             this.Controls.Add(this.aCS);
@@ -303,7 +365,7 @@ namespace MapleCLB
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "[166.1.1] MapleStory Clientless Bot";
+            this.Text = "[170.1.1] MapleStory Clientless Bot";
             this.infoGroup.ResumeLayout(false);
             this.infoGroup.PerformLayout();
             this.sendMenu.ResumeLayout(false);
@@ -333,6 +395,11 @@ namespace MapleCLB
         private ToolStripMenuItem sMenuSend;
         private ToolStripMenuItem sMenuSpam;
         private TextBox delay;
+        public Button button1;
+        public Button CC;
+        private Label name;
+        private ComboBox loginMode;
+        private Button EnterCS;
     }
 }
 

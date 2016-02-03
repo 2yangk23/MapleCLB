@@ -7,7 +7,7 @@ namespace MapleCLB.Tools {
     /// Win32 support code.
     /// (C) 2003 Bob Bradley / ZBobb@hotmail.com
     /// </summary>
-    public class win32 {
+    public class Win32 {
         public const int WM_MOUSEMOVE = 0x0200;
         public const int WM_LBUTTONDOWN = 0x0201;
         public const int WM_LBUTTONUP = 0x0202;
@@ -66,7 +66,7 @@ namespace MapleCLB.Tools {
             System.IntPtr meptr = new System.IntPtr(meint);
 
             System.IntPtr hdc = g2.GetHdc();
-            win32.SendMessage(control.Handle, win32.WM_PRINT, hdc, meptr);
+            Win32.SendMessage(control.Handle, Win32.WM_PRINT, hdc, meptr);
 
             g2.ReleaseHdc(hdc);
             g2.Dispose();

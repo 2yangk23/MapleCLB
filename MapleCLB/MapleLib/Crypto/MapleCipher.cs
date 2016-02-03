@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace MaplePacketLib.Cryptography {
+namespace MapleCLB.MapleLib.Crypto {
     internal sealed class MapleCipher {
-        private static readonly byte[] sShiftKey = new byte[256]
-        {
+        public const int IV_LENGTH = 4;
+
+        private static readonly byte[] ShiftKey = {
             0xEC, 0x3F, 0x77, 0xA4, 0x45, 0xD0, 0x71, 0xBF, 0xB7, 0x98, 0x20, 0xFC, 0x4B, 0xE9, 0xB3, 0xE1,
             0x5C, 0x22, 0xF7, 0x0C, 0x44, 0x1B, 0x81, 0xBD, 0x63, 0x8D, 0xD4, 0xC3, 0xF2, 0x10, 0x19, 0xE0,
             0xFB, 0xA1, 0x6E, 0x66, 0xEA, 0xAE, 0xD6, 0xCE, 0x06, 0x18, 0x4E, 0xEB, 0x78, 0x95, 0xDB, 0xBA,
@@ -22,62 +23,64 @@ namespace MaplePacketLib.Cryptography {
             0x84, 0x7F, 0x61, 0x1E, 0xCF, 0xC5, 0xD1, 0x56, 0x3D, 0xCA, 0xF4, 0x05, 0xC6, 0xE5, 0x08, 0x49
         };
 
-        private readonly short m_majorVersion;
-        private readonly byte[] m_IV;
-        private readonly AesCipher m_aesCipher;
+        private readonly AesCipher AesCipher;
+        private readonly byte[] IV;
 
-        public const int IVLength = 4;
+        private readonly short MajorVersion;
 
-        public MapleCipher(short majorVersion, byte[] IV, AesCipher aes, CipherType transformDirection) {
-            m_majorVersion = majorVersion;
+        public MapleCipher(short majorVersion, byte[] iv, AesCipher aes) {
+            MajorVersion = majorVersion;
 
-            m_IV = new byte[IVLength];
-            Buffer.BlockCopy(IV, 0, m_IV, 0, IVLength);
+            IV = new byte[IV_LENGTH];
+            Buffer.BlockCopy(iv, 0, IV, 0, IV_LENGTH);
 
-            m_aesCipher = aes;
+            AesCipher = aes;
         }
 
         public unsafe void Transform(byte[] data) {
-            m_aesCipher.Transform(data, m_IV);
+            AesCipher.Transform(data, IV);
 
-            byte[] newIV = new byte[IVLength] { 0xF2, 0x53, 0x50, 0xC6 };
+            byte[] newIV = {0xF2, 0x53, 0x50, 0xC6};
 
-            for (int i = 0; i < IVLength; i++) {
-                byte input = m_IV[i];
-                byte tableInput = sShiftKey[input];
+            for (int i = 0; i < IV_LENGTH; i++) {
+                byte input = IV[i];
+                byte tableInput = ShiftKey[input];
 
-                newIV[0] += (byte)(sShiftKey[newIV[1]] - input);
-                newIV[1] -= (byte)(newIV[2] ^ tableInput);
-                newIV[2] ^= (byte)(sShiftKey[newIV[3]] + input);
-                newIV[3] -= (byte)(newIV[0] - tableInput);
+                newIV[0] += (byte) (ShiftKey[newIV[1]] - input);
+                newIV[1] -= (byte) (newIV[2] ^ tableInput);
+                newIV[2] ^= (byte) (ShiftKey[newIV[3]] + input);
+                newIV[3] -= (byte) (newIV[0] - tableInput);
 
                 fixed (byte* ptr = newIV)
-                    *(uint*)ptr = (*(uint*)ptr << 3) | (*(uint*)ptr >> 32 - 3); //RC6 ROL 3
+                    *(uint*) ptr = (*(uint*) ptr << 3) | (*(uint*) ptr >> 32 - 3); //RC6 ROL 3
             }
 
-            Buffer.BlockCopy(newIV, 0, m_IV, 0, IVLength);
+            Buffer.BlockCopy(newIV, 0, IV, 0, IV_LENGTH);
         }
 
         public void GetHeaderToClient(int size, byte[] packet) {
-            var a = (m_IV[3] * 0x100 + m_IV[2]) ^ -(m_majorVersion + 1);
-            var b = a ^ size;
-            packet[0] = (byte)a;
-            packet[1] = (byte)((a - packet[0]) / 0x100);
-            packet[2] = (byte)(b ^ 0x100);
-            packet[3] = (byte)((b - packet[2]) / 0x100);
+            int a = (IV[3] * 0x100 + IV[2]) ^ -(MajorVersion + 1);
+            int b = a ^ size;
+            packet[0] = (byte) a;
+            packet[1] = (byte) ((a - packet[0]) / 0x100);
+            packet[2] = (byte) (b ^ 0x100);
+            packet[3] = (byte) ((b - packet[2]) / 0x100);
         }
+
         public void GetHeaderToServer(int size, byte[] packet) {
-            var a = (m_IV[3] * 0x100 + m_IV[2]) ^ m_majorVersion;
-            var b = a ^ size;
+            int a = (IV[3] * 0x100 + IV[2]) ^ MajorVersion;
+            int b = a ^ size;
 
-            packet[0] = (byte)(a % 0x100);
-            packet[1] = (byte)(a / 0x100);
-            packet[2] = (byte)(b % 0x100);
-            packet[3] = (byte)(b / 0x100);
+            packet[0] = (byte) (a % 0x100);
+            packet[1] = (byte) (a / 0x100);
+            packet[2] = (byte) (b % 0x100);
+            packet[3] = (byte) (b / 0x100);
         }
 
-        public static int GetPacketLength(byte[] packetHeader) {
-            return (packetHeader[0] + (packetHeader[1] << 8)) ^ (packetHeader[2] + (packetHeader[3] << 8));
+        public static unsafe int GetPacketLength(byte[] data) {
+            fixed (byte* pData = data) {
+                return *(ushort*) pData ^ *((ushort*) pData + 1);
+            }
         }
     }
 }

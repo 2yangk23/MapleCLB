@@ -1,11 +1,11 @@
-﻿using MaplePacketLib;
+﻿using MapleCLB.MapleLib.Packet;
 
-namespace MapleCLB.Packets {
+namespace MapleCLB.Packets.Send {
     class Movement {
-        public static PacketWriter Teleport(int crc, short x, short y, short pid) {
-            PacketWriter pw = new PacketWriter();
+        public static byte[] Teleport(int crc, short x, short y, short pid) {
+            var pw = new PacketWriter();
             pw.WriteShort(SendOps.MOVE_PLAYER);
-            pw.WriteByte(Portal.count);
+            pw.WriteByte(Portal.Count);
             pw.WriteInt(crc);
             pw.Timestamp();
             pw.WriteZero(5);
@@ -15,16 +15,23 @@ namespace MapleCLB.Packets {
             pw.WriteShort(1); //number of movement things  1 minimum
             pw.WriteShort(x);
             pw.WriteShort(y);
-            pw.WriteZero(4);
+            pw.WriteZero(10);
             pw.WriteShort(pid);
-            pw.WriteZero(8);
+            pw.WriteZero(3);
             // Technically dont need these but I keep for consistency
             pw.WriteShort(x);
             pw.WriteShort(y);
             pw.WriteShort(x);
             pw.WriteShort(y);
+            pw.WriteZero(16);
 
-            return pw;
+            return pw.ToArray();
+
+            //CRC = 9F F5 D0 03
+            // y = 13 01
+            // X = 5C FE 
+            //PID = 03 5A
         }
+
     }
 }
