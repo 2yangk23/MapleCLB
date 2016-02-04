@@ -233,6 +233,7 @@ namespace MapleCLB.MapleLib {
             if (!Encrypted && OnReconnect != null)
             {
                 OnReconnect(this, null);
+                Console.WriteLine("FORCING A RECONNECT");
                 return;
             }
 

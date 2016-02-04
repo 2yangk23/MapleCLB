@@ -33,11 +33,17 @@ namespace MapleCLB.MapleClient {
         public System.Timers.Timer cst;
         public int autoCStime;
 
+        public System.Timers.Timer ccst;
+        public int autoCCtime;
+
+
         /* Login Info */
         internal string User, Pass, Pic, Ign;
         internal byte World, Channel, doWhat;
         internal int UserId, MapId;
         internal long SessionId;
+
+        public Boolean shouldCC;
 
 
         /* Dictionaries */  
@@ -62,8 +68,13 @@ namespace MapleCLB.MapleClient {
             ChannelTimeout = 12000;
             autoCStime = 1000000;
 
-            cst = new System.Timers.Timer(autoCStime);
-            cst.Elapsed += new System.Timers.ElapsedEventHandler(AutoCS);
+            //cst = new System.Timers.Timer(autoCStime);
+           // cst.Elapsed += new System.Timers.ElapsedEventHandler(AutoCS);
+
+            ccst = new System.Timers.Timer(autoCStime);
+            ccst.Elapsed += new System.Timers.ElapsedEventHandler(AutoCC);
+
+            shouldCC = false;
 
             UidMap = new Dictionary<int, string>();
             CharMap = new MultiKeyDictionary<byte, string, int>();
@@ -143,26 +154,34 @@ namespace MapleCLB.MapleClient {
             });
         }
 
+        void AutoCC(Object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (doWhat == 1)
+            {
+                Program.WriteLog("Changing to Ch 2");
+                shouldCC = true;
+                SendPacket(General.ChangeChannel(0x01));
+            }
+        }
+
         void AutoCS(Object sender, System.Timers.ElapsedEventArgs e) //AutoCS Event (Timer)
         {
-            if (Program.Gui.aCS.Checked)
-            {
-                Program.WriteLog(("Auto CS time!"));
-                SendPacket(General.EnterCS());
-                Mode = ClientMode.CASHSHOP;
-            }
+            //if (Program.Gui.aCS.Checked)
+            //{
+            //    Program.WriteLog(("Auto CS time!"));
+            //   SendPacket(General.EnterCS());
+            //    Mode = ClientMode.CASHSHOP;
+            // }
         }
 
 
         public void OnDisconnected(object o, EventArgs e) {
-
-                Connect();
                 Program.WriteLog(("Disconnected from server."));
                 Mode = ClientMode.DISCONNECTED;
                 CharMap.Clear();
                 IgnUid.Clear();
                 UidMovementPacket.Clear();
-                cst.Enabled = false;
+                //cst.Enabled = false;
                 if (Program.Gui.aRestart.Checked)
                 {
                     Connect();  //Start connection again

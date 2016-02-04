@@ -27,7 +27,7 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.REMOVE_PLAYER, Player.RemovePlayer);
 
             Register(RecvOps.LOAD_MUSHY,  Mushrooms.loadMushrooms);
-           // Register(RecvOps.MAP_LOAD, MapCheck.mapCheck);
+            Register(RecvOps.MAP_LOAD, MapCheck.mapCheck);
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
 
         }

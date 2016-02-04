@@ -21,7 +21,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     break;
                 case ClientMode.LOGIN:
                     Debug.WriteLine("Logged in!");
-                    Client.cst.Enabled = true;
+                   // Client.cst.Enabled = true;
                     SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
                     Client.Mode = ClientMode.GAME;
                     break;
@@ -31,10 +31,10 @@ namespace MapleCLB.MapleClient.Handlers {
                     break;
                 case ClientMode.CASHSHOP:
                     System.Threading.Thread.Sleep(2000);
-                    //SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
-                    //System.Threading.Thread.Sleep(2000);
-                    //SendPacket(General.ExitCS());
-                    //Client.Mode = ClientMode.GAME;
+                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
+                    System.Threading.Thread.Sleep(2000);
+                    SendPacket(General.ExitCS());
+                    Client.Mode = ClientMode.GAME;
                     Program.WriteLog(("Left CS!"));
                     break;
             }

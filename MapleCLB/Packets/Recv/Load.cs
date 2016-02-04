@@ -112,7 +112,8 @@ namespace MapleCLB.Packets.Recv {
             string ign = pr.ReadMapleString();
 
             try {
-                c.UidMap.Add(uid, ign);
+                c.UidMap[uid] = ign;
+                //c.UidMap.Add(uid, ign);
                 Program.WriteLog("Added " + uid + "(" + ign + ")");
             } catch (Exception) {
                 Program.WriteLog("Error adding uid to player list.");
@@ -131,12 +132,22 @@ namespace MapleCLB.Packets.Recv {
         }
 
         public static void mapID(Client c, PacketReader pr){
-            pr.Skip(44);
-            long mapID = pr.ReadInt();
-            if (mapID != 910000001 && c.doWhat == 1)
+            if(c.shouldCC == true && c.doWhat == 1)
             {
-                Program.WriteLog("Not In FM Room 1");
-                c.Session.Disconnect();
+                pr.Skip(176);
+                long mapID = pr.ReadInt();
+                Program.WriteLog("In Map: " + mapID);
+                if (mapID == 910000001)
+                {
+                    c.shouldCC = false;
+                    c.SendPacket(General.ChangeChannel(0x00));
+                }
+                else
+                {
+                    Program.WriteLog("Not In FM Room 1");
+                    c.shouldCC = false;
+                    c.Session.Disconnect();
+                }
             }
         }
 
@@ -153,7 +164,8 @@ namespace MapleCLB.Packets.Recv {
             //IGN -> UID 
             try
             {
-                c.IgnUid.Add(ign,uid);
+                //c.IgnUid.Add(ign,uid);
+                c.IgnUid[ign] = uid;
             } catch (Exception) {
                 Program.WriteLog("Error loading mushrooms");
             }
@@ -165,7 +177,6 @@ namespace MapleCLB.Packets.Recv {
                 Program.WriteLog("Error adding UID to Movement Packet");
             }
                     
-
         }
     }
 }

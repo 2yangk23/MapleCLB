@@ -67,7 +67,9 @@ namespace MapleCLB {
 
         private void CC_Click(object sender, EventArgs e)
         {
-            C.SendPacket(General.RandomChannel());
+            Program.WriteLog("Changing to Ch 2");
+            C.shouldCC = true;
+            C.SendPacket(General.ChangeChannel(0x01));
         }
 
 
