@@ -181,7 +181,8 @@ namespace MapleCLB.MapleClient {
                 CharMap.Clear();
                 IgnUid.Clear();
                 UidMovementPacket.Clear();
-                //cst.Enabled = false;
+            //cst.Enabled = false;
+               ccst.Enabled = false;
                 if (Program.Gui.aRestart.Checked)
                 {
                     Connect();  //Start connection again

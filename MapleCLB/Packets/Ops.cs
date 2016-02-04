@@ -54,6 +54,7 @@
     SPAWN_PLAYER  - Received when player enters map or when you enter a new map
     REMOVE_PLAYER - Received when player leaves map
 
+    LOAD_SEED    - Received when you login [HEADER][4 Bytes]
     LOAD_MUSHY   - Received when client loads mushrooms in FM
     ********************************/
 
@@ -71,6 +72,7 @@
             LOAD_MUSHY = 0x03AD,
             MAP_LOAD = 0x019B,
             FINISH_LOAD = 0x0045,
+            LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
             SPAWN_PLAYER = 0x01EB, //0x01D3
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01; //0x01D4
             
