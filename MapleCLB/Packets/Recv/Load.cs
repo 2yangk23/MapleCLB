@@ -96,6 +96,7 @@ namespace MapleCLB.Packets.Recv {
                 }
                 // charList.Add(chr);
                 // System.Diagnostics.Debug.WriteLine("" + chr.Id + " : " + chr.Job + " : " + chr.Name + Environment.NewLine);
+                c.UpdateName.Report(chr.Name.ToLower());  //SIKE DONT DO THIS HERE I R IDIOT
                 c.CharMap.Add(i, chr.Name.ToLower(), chr.Id);
             }
 
@@ -171,7 +172,8 @@ namespace MapleCLB.Packets.Recv {
             c.WriteLog.Report("Added : "+ ign +" to UID : "+uid +" @ "+x +" " +y);
             try
             {
-             c.UidMovementPacket.Add(uid, HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid)));
+            c.UidMovementPacket[uid] = HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid));
+            // c.UidMovementPacket.Add(uid, HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid)));
             } catch (Exception) {
                 c.WriteLog.Report("Error adding UID to Movement Packet");
             }

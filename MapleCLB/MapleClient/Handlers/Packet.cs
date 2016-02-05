@@ -11,8 +11,8 @@ namespace MapleCLB.MapleClient.Handlers {
         private readonly Dictionary<short, EventHandler<PacketReader>> HeaderMap;
 
         internal Packet(Client client) : base(client) {
-            HeaderMap = new Dictionary<short, EventHandler<PacketReader>>();
 
+            HeaderMap = new Dictionary<short, EventHandler<PacketReader>>();
             //Register(RecvOps.LOGIN_STATUS, Login.LoginSecond);
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
@@ -33,8 +33,7 @@ namespace MapleCLB.MapleClient.Handlers {
 
         internal override void Handle(object session, byte[] packet)
         {
-            Debug.WriteLine(HexEncoding.ToHexString(packet));
-
+            Client.WritePacketLog.Report(HexEncoding.ToHexString(packet));
             var pr = new PacketReader(packet);
             short header = pr.ReadShort();
             if (HeaderMap.ContainsKey(header))

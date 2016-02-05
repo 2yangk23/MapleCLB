@@ -52,6 +52,7 @@
             this.Tabs = new System.Windows.Forms.TabControl();
             this.AccountTab = new System.Windows.Forms.TabPage();
             this.PacketTab = new System.Windows.Forms.TabPage();
+            this.PacketLog = new System.Windows.Forms.TextBox();
             this.RushTab = new System.Windows.Forms.TabPage();
             this.RushStatusBar = new System.Windows.Forms.StatusStrip();
             this.MapStatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
@@ -77,6 +78,7 @@
             this.FeatureGroup.SuspendLayout();
             this.Tabs.SuspendLayout();
             this.AccountTab.SuspendLayout();
+            this.PacketTab.SuspendLayout();
             this.RushTab.SuspendLayout();
             this.RushStatusBar.SuspendLayout();
             this.LogTab.SuspendLayout();
@@ -374,7 +376,7 @@
             this.Tabs.Location = new System.Drawing.Point(0, 0);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
-            this.Tabs.Size = new System.Drawing.Size(639, 344);
+            this.Tabs.Size = new System.Drawing.Size(639, 341);
             this.Tabs.TabIndex = 16;
             // 
             // AccountTab
@@ -394,13 +396,29 @@
             // 
             // PacketTab
             // 
+            this.PacketTab.Controls.Add(this.PacketLog);
             this.PacketTab.Location = new System.Drawing.Point(4, 22);
             this.PacketTab.Name = "PacketTab";
             this.PacketTab.Padding = new System.Windows.Forms.Padding(3);
-            this.PacketTab.Size = new System.Drawing.Size(631, 318);
+            this.PacketTab.Size = new System.Drawing.Size(631, 315);
             this.PacketTab.TabIndex = 1;
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
+            // 
+            // PacketLog
+            // 
+            this.PacketLog.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.PacketLog.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PacketLog.Location = new System.Drawing.Point(-1, -2);
+            this.PacketLog.Margin = new System.Windows.Forms.Padding(0);
+            this.PacketLog.MaxLength = 0;
+            this.PacketLog.Multiline = true;
+            //this.PacketLog.WordWrap = false;
+            this.PacketLog.Name = "PacketLog";
+            this.PacketLog.ReadOnly = true;
+            this.PacketLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.PacketLog.Size = new System.Drawing.Size(632, 324);
+            this.PacketLog.TabIndex = 13;
             // 
             // RushTab
             // 
@@ -583,6 +601,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.Controls.Add(this.SendSpamBtn);
             this.Controls.Add(this.DelayInput);
             this.Controls.Add(this.PacketInput);
@@ -597,6 +616,8 @@
             this.Tabs.ResumeLayout(false);
             this.AccountTab.ResumeLayout(false);
             this.AccountTab.PerformLayout();
+            this.PacketTab.ResumeLayout(false);
+            this.PacketTab.PerformLayout();
             this.RushTab.ResumeLayout(false);
             this.RushTab.PerformLayout();
             this.RushStatusBar.ResumeLayout(false);
@@ -625,7 +646,7 @@
         private System.Windows.Forms.Label MapStat;
         private System.Windows.Forms.Label ChannelStat;
         private System.Windows.Forms.Label LevelStat;
-        private System.Windows.Forms.Label NameStat;
+        public System.Windows.Forms.Label NameStat;
         private System.Windows.Forms.Label MapLbl;
         private System.Windows.Forms.Label ChannelLbl;
         private System.Windows.Forms.Label LevelLbl;
@@ -634,7 +655,6 @@
         private System.Windows.Forms.GroupBox FeatureGroup;
         private System.Windows.Forms.TabControl Tabs;
         private System.Windows.Forms.TabPage AccountTab;
-        private System.Windows.Forms.TabPage PacketTab;
         private System.Windows.Forms.TabPage LogTab;
         private System.Windows.Forms.TabPage RushTab;
         public System.Windows.Forms.TextBox LogText;
@@ -658,5 +678,7 @@
         private System.Windows.Forms.ContextMenuStrip SendMenu;
         private System.Windows.Forms.ToolStripMenuItem SendMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SpamMenuItem;
+        private System.Windows.Forms.TabPage PacketTab;
+        public System.Windows.Forms.TextBox PacketLog;
     }
 }

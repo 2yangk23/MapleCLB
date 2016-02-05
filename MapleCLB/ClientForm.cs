@@ -9,7 +9,11 @@ namespace MapleCLB {
     public partial class ClientForm : UserControl {
         private Client Client;
         public Progress<bool> ConnectToggle;
-        public Progress<string> WriteLog; 
+        public Progress<string> WriteLog;
+        public Progress<string> WritePacketLog;
+        public Progress<string> UpdateName;
+
+
 
         public ClientForm() {
             InitializeComponent();
@@ -33,7 +37,7 @@ namespace MapleCLB {
             channel.SelectedIndex   = 0;*/
             #endif
 
-            UserInput.Text = "BL8ldo2@outlook.com";
+            UserInput.Text = "BL8ldo4@outlook.com";
             PassInput.Text = "teeworlds";
             PicInput.Text = "777000";
             CharInput.Text = "1";
@@ -57,6 +61,8 @@ namespace MapleCLB {
             });
 
             WriteLog = new Progress<string>(s => LogText.AppendText(s + Environment.NewLine));
+            WritePacketLog = new Progress<string>(s => PacketLog.AppendText(s + Environment.NewLine));
+            UpdateName = new Progress<string>(s => NameStat.Text = s);
         }
 
 
@@ -85,6 +91,8 @@ namespace MapleCLB {
             Client.SendPacket(General.ChangeChannel(0x01));
         }
 
+
+
         private void MoveBtn_Click(object sender, EventArgs e) {
             //int CRC = 0x9FF5D003;
             //  int CRC = 0x03D0F59F;
@@ -111,10 +119,10 @@ namespace MapleCLB {
         }
 
         private void CsBtn_Click(object sender, EventArgs e) {
-            Client.SendPacket(General.EnterCS());
-            Client.SendPacket(HexEncoding.GetBytes("75 02 5A E5 58 5C 00 01"));
-            Client.SendPacket(HexEncoding.GetBytes("55 01"));
-            Client.Mode = ClientMode.CASHSHOP; // this should be automatic
+            Console.WriteLine("Sup not working");
+            //Client.SendPacket(General.EnterCS());
+            //Client.SendPacket(HexEncoding.GetBytes("75 02 5A E5 58 5C 00 01"));
+            //Client.SendPacket(HexEncoding.GetBytes("55 01"));
         }
 
         private void SendSpamBtn_Click(object sender, EventArgs e) {

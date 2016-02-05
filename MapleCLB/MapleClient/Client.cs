@@ -21,6 +21,10 @@ namespace MapleCLB.MapleClient {
         private readonly ClientForm CForm;
         public readonly IProgress<bool> ConnectToggle;
         public readonly IProgress<string> WriteLog;
+        public readonly IProgress<string> WritePacketLog;
+        public readonly IProgress<string> UpdateName;
+
+
 
         public Session Session;
 
@@ -55,8 +59,11 @@ namespace MapleCLB.MapleClient {
 
         public Client(ClientForm form) {
             CForm = form;
+
             ConnectToggle = form.ConnectToggle;
             WriteLog = form.WriteLog;
+            WritePacketLog = form.WritePacketLog;
+            UpdateName = form.UpdateName;
 
             Mode = ClientMode.DISCONNECTED;
             var conn = new Connector(Program.LoginIp, Program.LoginPort);
@@ -68,7 +75,7 @@ namespace MapleCLB.MapleClient {
 
             ServerTimeout = 40000;
             ChannelTimeout = 12000;
-            autoCStime = 1000000;
+            autoCStime = 3600000;
 
             //cst = new System.Timers.Timer(autoCStime);
             //cst.Elapsed += new System.Timers.ElapsedEventHandler(AutoCS);
@@ -87,7 +94,6 @@ namespace MapleCLB.MapleClient {
         public void Connect() {
             ConnectToggle.Report(false);
             WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
-
             var conn = new Connector(Program.LoginIp, Program.LoginPort);
             conn.OnConnected += OnConnected;
             conn.OnError += OnError;
@@ -154,6 +160,7 @@ namespace MapleCLB.MapleClient {
                 SendPacket(General.ChangeChannel(0x01));
             }
         }
+
 
         void AutoCS(object sender, ElapsedEventArgs e) //AutoCS Event (Timer)
         {
