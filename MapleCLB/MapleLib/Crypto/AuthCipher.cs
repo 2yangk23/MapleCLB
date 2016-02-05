@@ -51,7 +51,7 @@ namespace MapleCLB.MapleLib.Crypto {
             pw.WriteIntBigEndian((int)seed);
             pw.WriteBytes(code);
             pw.WriteBytes(data);
-            //Program.WriteLog("Data Send: " + pw.ToString());
+            //Debug.WriteLine("Data Send: " + pw.ToString());
             return pw.ToArray();
         }
 
@@ -64,7 +64,7 @@ namespace MapleCLB.MapleLib.Crypto {
             byte[] data = pr.ReadBytes(length);
 
             Decrypt(data, (uint)seed);
-            Program.WriteLog("Data: "+data);
+            //Debug.WriteLine("Data: "+data);
             return data;
         }
     }

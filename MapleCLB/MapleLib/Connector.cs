@@ -13,8 +13,8 @@ namespace MapleCLB.MapleLib {
 
 
         public Connector(IPAddress ip, int port) {
-            this.Ip = ip;
-            this.Port = port;
+            Ip = ip;
+            Port = port;
         }
 
         public void Connect(int timeout = 13000) {
@@ -29,7 +29,7 @@ namespace MapleCLB.MapleLib {
             }
         }
 
-
+        // TODO: Try to reuse same session
         public void OnReconnect(object sender, Session s)
         {
             Debug.WriteLine("Test Reconnecting to: " + Ip + ":" + Port);
@@ -44,18 +44,15 @@ namespace MapleCLB.MapleLib {
             }
         }
 
-
-
         private void EndConnect(IAsyncResult iar) {
             var client = iar.AsyncState as TcpClient;
 
             try {
-                // ReSharper disable once PossibleNullReferenceException
                 client.EndConnect(iar);
 
                 if (client.Connected) {
                     var session = new Session(client.Client, SessionType.CLIENT);
-                    session.OnReconnect += new EventHandler<Session>(OnReconnect);
+                    session.OnReconnect += OnReconnect;
                     if (OnConnected != null) {
                         OnConnected(this, session);
                     }

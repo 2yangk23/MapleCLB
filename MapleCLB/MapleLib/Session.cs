@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using MapleCLB.MapleLib.Crypto;
 using MapleCLB.MapleLib.Packet;
@@ -29,7 +30,6 @@ namespace MapleCLB.MapleLib {
         public event EventHandler<ServerInfo> OnHandshake;
         public event EventHandler<byte[]> OnPacket;
         public event EventHandler OnDisconnected;
-
         public event EventHandler<Session> OnReconnect;
 
         internal Session(Socket socket, SessionType type) {
@@ -92,9 +92,6 @@ namespace MapleCLB.MapleLib {
             if (length == 0 || error != SocketError.Success) {
                 Console.WriteLine("Bug Testing 102");
                 Disconnect();
-                //Receive();
-                // throw new InvalidOperationException("Socket glitch");
-
             } else {
                 Append(length);
                 ManipulateBuffer();
@@ -222,22 +219,20 @@ namespace MapleCLB.MapleLib {
                 return;
             }
 
-            Connected = false;
-
             Cursor = 0;
 
             Socket.Shutdown(SocketShutdown.Both);
             Socket.Disconnect(false);
             Socket.Dispose();
 
-            if (!Encrypted && OnReconnect != null)
-            {
+            if (!Encrypted && OnReconnect != null) {
                 OnReconnect(this, null);
-                Console.WriteLine("FORCING A RECONNECT");
+                Debug.WriteLine("FORCING A RECONNECT");
                 return;
             }
 
-            Encrypted = false; 
+            Encrypted = false;
+            Connected = false;
 
             if (!finished) {
                 return;

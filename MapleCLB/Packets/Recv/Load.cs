@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Types;
@@ -114,9 +113,9 @@ namespace MapleCLB.Packets.Recv {
             try {
                 c.UidMap[uid] = ign;
                 //c.UidMap.Add(uid, ign);
-                Program.WriteLog("Added " + uid + "(" + ign + ")");
+                c.WriteLog.Report("Added " + uid + "(" + ign + ")");
             } catch (Exception) {
-                Program.WriteLog("Error adding uid to player list.");
+                c.WriteLog.Report("Error adding uid to player list.");
             }
         }
 
@@ -125,9 +124,9 @@ namespace MapleCLB.Packets.Recv {
 
             try {
                 c.UidMap.Remove(uid);
-                Program.WriteLog("Removed " + uid);
+                c.WriteLog.Report("Removed " + uid);
             } catch (Exception) {
-                Program.WriteLog("Error removing uid from player list.");
+                c.WriteLog.Report("Error removing uid from player list.");
             }
         }
 
@@ -136,7 +135,7 @@ namespace MapleCLB.Packets.Recv {
             {
                 pr.Skip(176);
                 long mapID = pr.ReadInt();
-                Program.WriteLog("In Map: " + mapID);
+                c.WriteLog.Report("In Map: " + mapID);
                 if (mapID == 910000001)
                 {
                     c.shouldCC = false;
@@ -144,7 +143,7 @@ namespace MapleCLB.Packets.Recv {
                 }
                 else
                 {
-                    Program.WriteLog("Not In FM Room 1");
+                    c.WriteLog.Report("Not In FM Room 1");
                     c.shouldCC = false;
                     c.Session.Disconnect();
                 }
@@ -167,14 +166,14 @@ namespace MapleCLB.Packets.Recv {
                 //c.IgnUid.Add(ign,uid);
                 c.IgnUid[ign] = uid;
             } catch (Exception) {
-                Program.WriteLog("Error loading mushrooms");
+                c.WriteLog.Report("Error loading mushrooms");
             }
-            Program.WriteLog("Added : "+ ign +" to UID : "+uid +" @ "+x +" " +y);
+            c.WriteLog.Report("Added : "+ ign +" to UID : "+uid +" @ "+x +" " +y);
             try
             {
              c.UidMovementPacket.Add(uid, HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid)));
             } catch (Exception) {
-                Program.WriteLog("Error adding UID to Movement Packet");
+                c.WriteLog.Report("Error adding UID to Movement Packet");
             }
                     
         }

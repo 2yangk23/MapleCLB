@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using MapleCLB.MapleLib.Crypto;
 using MapleCLB.MapleLib.Packet;
-using MapleCLB.Tools;
 
 namespace MapleCLB.MapleClient {
     internal static class Auth {
