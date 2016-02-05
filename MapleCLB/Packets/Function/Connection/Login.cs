@@ -18,10 +18,10 @@ namespace MapleCLB.Packets.Function.Connection {
                     return;
             }
             r.Skip(15);
-            r.ReadMapleStringv2();
-            r.Skip(11);
-            r.ReadMapleStringv2();
-            r.Skip(13);
+            r.ReadMapleString();
+            r.Skip(10);
+            r.ReadMapleString();
+            r.Skip(12);
             
             c.SessionId = r.ReadLong(); //Get session ID from login recieve
         }

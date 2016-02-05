@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text;
 
 namespace MapleCLB.MapleLib.Packet {
@@ -15,8 +14,13 @@ namespace MapleCLB.MapleLib.Packet {
             Buffer = packet;
         }
 
+        private void CheckLength(int length) {
+            if (Position + length > Buffer.Length || length < 0)
+                throw new IndexOutOfRangeException("Not enough space");
+        }
+
         public byte ReadByte() {
-            Debug.Assert(Position + 1 <= Buffer.Length);
+            CheckLength(1);
             return Buffer[Position++];
         }
 
@@ -25,20 +29,15 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public byte[] ReadBytes(int count) {
-            //Debug.Assert(Position + count <= Buffer.Length);
-           // Console.WriteLine("COUNT IS? " + count);
+            CheckLength(count);
             byte[] bytes = new byte[count];
-           // Console.WriteLine("POS IS? " + count);
             System.Buffer.BlockCopy(Buffer, Position, bytes, 0, count);
             Position += count;
-          //  Console.WriteLine("Pos of ReadBytes : " + Position);
-           // Console.WriteLine("Count of ReadBytes : " + count);
-
             return bytes;
         }
 
         public unsafe short ReadShort() {
-          //  Debug.Assert(Position + 2 <= Buffer.Length);
+            CheckLength(2);
             fixed (byte* ptr = Buffer) {
                 short value = *(short*)(ptr + Position);
                 Position += 2;
@@ -47,7 +46,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public unsafe short ReadShortBigEndian() {
-       //     Debug.Assert(Position + 2 <= Buffer.Length);
+            CheckLength(2);
             fixed (byte* ptr = Buffer) {
                 short value = (short)(*(ptr + Position) << 8 | *(ptr + Position + 1));
                 Position += 2;
@@ -56,7 +55,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public unsafe int ReadInt() {
-            Debug.Assert(Position + 4 <= Buffer.Length);
+            CheckLength(4);
             fixed (byte* ptr = Buffer) {
                 int value = *(int*)(ptr + Position);
                 Position += 4;
@@ -65,7 +64,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public unsafe uint ReadUInt() {
-            Debug.Assert(Position + 4 <= Buffer.Length);
+            CheckLength(4);
             fixed (byte* ptr = Buffer) {
                 uint value = *(uint*)(ptr + Position);
                 Position += 4;
@@ -74,7 +73,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public unsafe int ReadIntBigEndian() {
-            Debug.Assert(Position + 4 <= Buffer.Length);
+            CheckLength(4);
             fixed (byte* ptr = Buffer) {
                 int value = *(ptr + Position) << 24 | *(ptr + Position + 1) << 16 | *(ptr + Position + 2) << 8 | *(ptr + Position + 3);
                 Position += 4;
@@ -83,7 +82,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public unsafe long ReadLong() {
-            Debug.Assert(Position + 8 <= Buffer.Length);
+            CheckLength(8);
             fixed (byte* ptr = Buffer) {
                 long value = *(long*)(ptr + Position);
                 Position += 8;
@@ -104,27 +103,16 @@ namespace MapleCLB.MapleLib.Packet {
 
         public string ReadMapleString() {
             short count = ReadShort();
-            //Console.WriteLine("SHORT VALUE? " + count);
             return ReadString(count);
         }
-
-        public string ReadMapleStringv2()
-        {
-            byte count = ReadByte();
-        //    Console.WriteLine("BYTE VALUE? " + count);
-            return ReadString(count);
-        }
-
 
         public string ReadHexString(int count) {
             return HexEncoding.ToHexString(ReadBytes(count));
         }
 
         public void Skip(int count) {
-          //  Console.WriteLine("Pos Before: "+ Position);
-            //Debug.Assert(Position + count <= Buffer.Length);
+            CheckLength(count);
             Position += count;
-            //Console.WriteLine("Pos After: " + Position);
         }
 
         public void Next(byte b) {
