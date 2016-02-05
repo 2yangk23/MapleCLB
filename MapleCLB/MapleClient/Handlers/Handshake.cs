@@ -16,7 +16,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     string authCode = Auth.GetAuth(Client.User, Client.Pass);
                     Client.Mode = ClientMode.LOGIN;
                     Debug.WriteLine(authCode);
-                    System.Threading.Thread.Sleep(1500);
+                    System.Threading.Thread.Sleep(1000);
                     SendPacket(Login.ClientLogin(Client.Pass, authCode));
                     break;
                 case ClientMode.LOGIN:

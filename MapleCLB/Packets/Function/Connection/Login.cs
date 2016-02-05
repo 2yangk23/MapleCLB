@@ -39,6 +39,9 @@ namespace MapleCLB.Packets.Function.Connection {
                     c.WriteLog.Report("Already logged in. Restart in 2 mins...");
                     Thread.Sleep(120000);
                     break;
+                case 0x09:
+                    // End of file crash on real client
+                    break;
                 default:
                     c.SendPacket(Send.Login.acceptWorld());
                     c.SendPacket(Send.Login.SelectServer(c.World, c.Channel));
