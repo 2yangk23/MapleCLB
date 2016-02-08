@@ -12,6 +12,10 @@ namespace MapleCLB {
         public Progress<string> WriteLog;
         public Progress<string> WritePacketLog;
         public Progress<string> UpdateName;
+        public Progress<string> UpdateMap;
+        public Progress<string> UpdateCh;
+        public Progress<string> UpdateLevel;
+        public Progress<string> UpdateMesos;
 
 
 
@@ -37,8 +41,8 @@ namespace MapleCLB {
             channel.SelectedIndex   = 0;*/
             #endif
 
-            UserInput.Text = "BL8ldo4@outlook.com";
-            PassInput.Text = "teeworlds";
+            UserInput.Text = "bonybonbon1993@gmail.com";
+            PassInput.Text = "maplestory";
             PicInput.Text = "777000";
             CharInput.Text = "1";
             SelectList.SelectedIndex = 0;
@@ -63,6 +67,11 @@ namespace MapleCLB {
             WriteLog = new Progress<string>(s => LogText.AppendText(s + Environment.NewLine));
             WritePacketLog = new Progress<string>(s => PacketLog.AppendText(s + Environment.NewLine));
             UpdateName = new Progress<string>(s => NameStat.Text = s);
+
+            UpdateMap = new Progress<string>(s => MapStat.Text = s);
+            UpdateCh = new Progress<string>(s => ChannelStat.Text = s);
+            UpdateLevel = new Progress<string>(s => LevelStat.Text = s);
+            UpdateMesos = new Progress<string>(s => MesoStatus.Text = s);
         }
 
 

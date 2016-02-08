@@ -24,6 +24,12 @@ namespace MapleCLB.MapleClient {
         public readonly IProgress<string> WritePacketLog;
         public readonly IProgress<string> UpdateName;
 
+        public readonly IProgress<string> UpdateLevel;
+        public readonly IProgress<string> UpdateMap;
+        public readonly IProgress<string> UpdateChannel;
+        public readonly IProgress<string> UpdateMesos;
+
+
 
 
         public Session Session;
@@ -45,7 +51,13 @@ namespace MapleCLB.MapleClient {
         /* Login Info */
         internal string User, Pass, Pic, Name;
         internal byte Select, World, Channel, doWhat;
-        internal int UserId, MapId;
+        internal int UserId; 
+
+        internal long MapId;
+        internal int Level;
+        internal long Mesos;
+        internal int ch;
+
         internal long SessionId;
 
         public bool shouldCC;
@@ -64,6 +76,11 @@ namespace MapleCLB.MapleClient {
             WriteLog = form.WriteLog;
             WritePacketLog = form.WritePacketLog;
             UpdateName = form.UpdateName;
+            UpdateLevel = form.UpdateLevel;
+            UpdateMap = form.UpdateMap;
+            UpdateChannel = form.UpdateCh;
+            UpdateMesos = form.UpdateMesos;
+
 
             Mode = ClientMode.DISCONNECTED;
             var conn = new Connector(Program.LoginIp, Program.LoginPort);
@@ -172,6 +189,14 @@ namespace MapleCLB.MapleClient {
             // }
         }
 
+        public void clearData()
+        {
+            UpdateName.Report("Unknown");
+            UpdateLevel.Report("Unknown");
+            UpdateMap.Report("Unknown");
+            UpdateChannel.Report("Unknown");
+            UpdateMesos.Report("Unknown");
+        }
 
         public void OnDisconnected(object o, EventArgs e) {
             WriteLog.Report(("Disconnected from server."));
@@ -179,6 +204,7 @@ namespace MapleCLB.MapleClient {
             CharMap.Clear();
             IgnUid.Clear();
             UidMovementPacket.Clear();
+            clearData();
             //cst.Enabled = false;
             ccst.Enabled = false;
             if (CForm.AutoRestart.Checked) {

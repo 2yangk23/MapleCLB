@@ -94,9 +94,7 @@ namespace MapleCLB.Packets.Recv {
                         pr.Next(0xFF);
                     }
                 }
-                // charList.Add(chr);
                 // System.Diagnostics.Debug.WriteLine("" + chr.Id + " : " + chr.Job + " : " + chr.Name + Environment.NewLine);
-                c.UpdateName.Report(chr.Name.ToLower());  //SIKE DONT DO THIS HERE I R IDIOT
                 c.CharMap.Add(i, chr.Name.ToLower(), chr.Id);
             }
 
@@ -131,24 +129,98 @@ namespace MapleCLB.Packets.Recv {
             }
         }
 
-        public static void mapID(Client c, PacketReader pr){
-            if(c.shouldCC == true && c.doWhat == 1)
-            {
-                pr.Skip(176);
-                long mapID = pr.ReadInt();
-                c.WriteLog.Report("In Map: " + mapID);
-                if (mapID == 910000001)
-                {
-                    c.shouldCC = false;
-                    c.SendPacket(General.ChangeChannel(0x00));
-                }
-                else
-                {
-                    c.WriteLog.Report("Not In FM Room 1");
-                    c.shouldCC = false;
-                    c.Session.Disconnect();
-                }
+        public static void MapLoad(Client c, PacketReader pr){
+            pr.Skip(18); //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
+            int CH = pr.ReadInt(); //CH Connected To
+            pr.Skip(10); // [00 00 00 00 00 01 00 00 00 00]
+            pr.Skip(8); //Unknown 8 Bytes that change
+            pr.Skip(3); // [01 00 00]
+            pr.Skip(12);// Unknown 12 bytes something to do with connection
+            pr.Skip(8); // [FF FF FF FF FF FF FF FF]
+            pr.Skip(13); // [00 F1 FF FF FF F1 FF FF FF F1 FF FF FF] Where F1 Changes to random Fx Value
+            pr.Skip(6); // [00 00 00 00 00 00]
+            int UID = pr.ReadInt();
+            pr.Skip(4); //UID Repeated
+            pr.Skip(5); //[00 02 00 00 00]
+            //string IGN = pr.ReadHexString(12);
+            string IGN = pr.ReadString(12).TrimEnd('\0');
+            c.WriteLog.Report("Ign is "+IGN);
+               // pr.Skip(12); //IGN + 00 for fillers up to 12
+            pr.Skip(1); //[00]
+            pr.Skip(13); //[Byte Gender][Byte Skin][Int Face][Int Hair][FF 00 00]
+            int LEVEL = pr.ReadByte();
+            int JOB = pr.ReadShort();
+            pr.Skip(8); //[Short Str][Short Dex][Short Int][Short Luk]
+            int HP = pr.ReadInt();// Current HP
+            pr.Skip(4);//Max HP
+            int MP = pr.ReadInt(); //Current MP
+            pr.Skip(4);//Max MP
+            int UnUsedAP = pr.ReadShort();
+            pr.Skip(6);//Unknown Something about skills [01 01 07 00 00 00] //If Something breaks blame this
+            long EXP = pr.ReadLong();
+            pr.Skip(4); //Fame
+            pr.Skip(8); //[Int Gach EXP][00 00 00 00]
+            long MAP = pr.ReadInt();
+            pr.Skip(1); //Character Spawn Point [01]
+            pr.Skip(6);// [00 00 00 00][Short SubClass]
+            if ((JOB >= 3100 && JOB <= 3122) || (JOB >= 3600 && JOB<= 3612) || JOB== 3002 || JOB == 3001)
+            { // Demon/Xenon
+                pr.Skip(4);
             }
+            else if (JOB>= 11200 && JOB <= 11212)
+            { // Beast Tamer
+                pr.Skip(4);
+            }
+            pr.Skip(1); //Fatigue 
+            pr.Skip(4);// Current Date
+            pr.Skip(24); //Charisma, Insight, Will, Craft, Sense, Charm
+            pr.Skip(13);// [00 00 00 00 00 00 00 00 00 00 00 00 00]
+            pr.Skip(8); // [00 40 E0 FD 3B 37 4F 01] Constant
+            pr.Skip(4);//[00 00 00 00]
+            pr.Skip(1); //PVP Rank 0A
+            pr.Skip(6);// [00 00 00 00 05 06] Constant 
+            pr.Skip(5); //[00 00 00 00 00]
+            pr.Skip(8); //[3B 37 4F 01 00 40 E0 FD] Constant
+            pr.Skip(86); // 86 Bytes of Zeros wtf is this shit
+            pr.Skip(8); //Last logged in day reveresed or something
+            pr.Skip(1); // [00]
+            pr.Skip(1);//BL Size
+            if (pr.ReadByte() == 1) //Skips FairyBlessing
+            {
+                int temp = pr.ReadShort();
+                pr.Skip(temp);
+            }
+            else
+                pr.Skip(1);
+            if (pr.ReadByte() == 1) //Skips EmpressBlessing
+            {
+                int temp = pr.ReadShort();
+                pr.Skip(temp);
+            }
+            else
+                pr.Skip(1);
+            pr.Skip(1); //[00]
+
+            long MESOS = pr.ReadLong();
+            pr.Skip(12); //12 Zeros
+            pr.Skip(4); // UID again
+            pr.Skip(31); // 31 Zeros 
+            pr.Skip(5); //[#Equip Slots][#Use Slots][#Set Up Slots][#ETC Slots][#Cash Slots]
+            pr.Skip(8); //Some Weird Long time stamp
+            pr.Skip(1);// [00]
+            //Equips Start loading here
+
+            c.MapId = MAP;
+            c.Level = LEVEL;
+            c.Mesos = MESOS;
+            c.ch = CH +1;
+            c.Name = IGN;
+
+            c.UpdateName.Report(c.Name);
+            c.UpdateMap.Report("" + c.MapId);
+            c.UpdateLevel.Report("" + c.Level);
+            c.UpdateChannel.Report("" + c.ch);
+            c.UpdateMesos.Report("" + c.Mesos);
         }
 
         public static void Mushrooms(Client c, PacketReader pr){

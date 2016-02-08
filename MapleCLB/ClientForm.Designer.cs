@@ -36,6 +36,8 @@
             this.UserInput = new System.Windows.Forms.TextBox();
             this.ConnectBtn = new System.Windows.Forms.Button();
             this.StatGroup = new System.Windows.Forms.GroupBox();
+            this.MesoStatus = new System.Windows.Forms.Label();
+            this.Mesos = new System.Windows.Forms.Label();
             this.MapStat = new System.Windows.Forms.Label();
             this.ChannelStat = new System.Windows.Forms.Label();
             this.LevelStat = new System.Windows.Forms.Label();
@@ -228,6 +230,8 @@
             // 
             // StatGroup
             // 
+            this.StatGroup.Controls.Add(this.MesoStatus);
+            this.StatGroup.Controls.Add(this.Mesos);
             this.StatGroup.Controls.Add(this.MapStat);
             this.StatGroup.Controls.Add(this.ChannelStat);
             this.StatGroup.Controls.Add(this.LevelStat);
@@ -238,10 +242,28 @@
             this.StatGroup.Controls.Add(this.NameLbl);
             this.StatGroup.Location = new System.Drawing.Point(6, 199);
             this.StatGroup.Name = "StatGroup";
-            this.StatGroup.Size = new System.Drawing.Size(420, 94);
+            this.StatGroup.Size = new System.Drawing.Size(420, 101);
             this.StatGroup.TabIndex = 2;
             this.StatGroup.TabStop = false;
             this.StatGroup.Text = "Stats";
+            // 
+            // MesoStatus
+            // 
+            this.MesoStatus.AutoSize = true;
+            this.MesoStatus.Location = new System.Drawing.Point(210, 19);
+            this.MesoStatus.Name = "MesoStatus";
+            this.MesoStatus.Size = new System.Drawing.Size(53, 13);
+            this.MesoStatus.TabIndex = 16;
+            this.MesoStatus.Text = "Unknown";
+            // 
+            // Mesos
+            // 
+            this.Mesos.AutoSize = true;
+            this.Mesos.Location = new System.Drawing.Point(156, 19);
+            this.Mesos.Name = "Mesos";
+            this.Mesos.Size = new System.Drawing.Size(41, 13);
+            this.Mesos.TabIndex = 8;
+            this.Mesos.Text = "Mesos:";
             // 
             // MapStat
             // 
@@ -376,7 +398,7 @@
             this.Tabs.Location = new System.Drawing.Point(0, 0);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
-            this.Tabs.Size = new System.Drawing.Size(639, 341);
+            this.Tabs.Size = new System.Drawing.Size(639, 332);
             this.Tabs.TabIndex = 16;
             // 
             // AccountTab
@@ -389,7 +411,7 @@
             this.AccountTab.Location = new System.Drawing.Point(4, 22);
             this.AccountTab.Name = "AccountTab";
             this.AccountTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AccountTab.Size = new System.Drawing.Size(631, 318);
+            this.AccountTab.Size = new System.Drawing.Size(631, 306);
             this.AccountTab.TabIndex = 0;
             this.AccountTab.Text = "Account";
             this.AccountTab.UseVisualStyleBackColor = true;
@@ -400,7 +422,7 @@
             this.PacketTab.Location = new System.Drawing.Point(4, 22);
             this.PacketTab.Name = "PacketTab";
             this.PacketTab.Padding = new System.Windows.Forms.Padding(3);
-            this.PacketTab.Size = new System.Drawing.Size(631, 315);
+            this.PacketTab.Size = new System.Drawing.Size(631, 306);
             this.PacketTab.TabIndex = 1;
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
@@ -413,7 +435,6 @@
             this.PacketLog.Margin = new System.Windows.Forms.Padding(0);
             this.PacketLog.MaxLength = 0;
             this.PacketLog.Multiline = true;
-            //this.PacketLog.WordWrap = false;
             this.PacketLog.Name = "PacketLog";
             this.PacketLog.ReadOnly = true;
             this.PacketLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -426,7 +447,7 @@
             this.RushTab.Controls.Add(this.treeView1);
             this.RushTab.Location = new System.Drawing.Point(4, 22);
             this.RushTab.Name = "RushTab";
-            this.RushTab.Size = new System.Drawing.Size(631, 318);
+            this.RushTab.Size = new System.Drawing.Size(631, 306);
             this.RushTab.TabIndex = 3;
             this.RushTab.Text = "Rusher";
             this.RushTab.UseVisualStyleBackColor = true;
@@ -442,7 +463,7 @@
             this.RushStatus,
             this.StatusSep2,
             this.toolStripDropDownButton1});
-            this.RushStatusBar.Location = new System.Drawing.Point(0, 296);
+            this.RushStatusBar.Location = new System.Drawing.Point(0, 284);
             this.RushStatusBar.Name = "RushStatusBar";
             this.RushStatusBar.Size = new System.Drawing.Size(631, 22);
             this.RushStatusBar.TabIndex = 1;
@@ -524,7 +545,7 @@
             this.LogTab.Controls.Add(this.LogText);
             this.LogTab.Location = new System.Drawing.Point(4, 22);
             this.LogTab.Name = "LogTab";
-            this.LogTab.Size = new System.Drawing.Size(631, 318);
+            this.LogTab.Size = new System.Drawing.Size(631, 306);
             this.LogTab.TabIndex = 2;
             this.LogTab.Text = "Logs";
             this.LogTab.UseVisualStyleBackColor = true;
@@ -680,5 +701,7 @@
         private System.Windows.Forms.ToolStripMenuItem SpamMenuItem;
         private System.Windows.Forms.TabPage PacketTab;
         public System.Windows.Forms.TextBox PacketLog;
+        private System.Windows.Forms.Label Mesos;
+        private System.Windows.Forms.Label MesoStatus;
     }
 }
