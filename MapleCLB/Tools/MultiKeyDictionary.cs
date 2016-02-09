@@ -8,7 +8,7 @@ namespace MapleCLB.Tools {
         internal readonly Dictionary<TL, TK> SubDictionary = new Dictionary<TL, TK>();
         internal readonly Dictionary<TK, TL> PrimaryToSubkeyMapping = new Dictionary<TK, TL>();
 
-        ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();
+        readonly ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();
 
         public TV this[TL subKey] {
             get {

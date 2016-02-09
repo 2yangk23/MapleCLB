@@ -54,17 +54,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientForm.cs">
+    <Compile Include="Forms\ClientForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ClientForm.Designer.cs">
+    <Compile Include="Forms\ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PacketView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\PacketView.Designer.cs">
+      <DependentUpon>PacketView.cs</DependentUpon>
     </Compile>
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
@@ -97,7 +103,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\MultiKeyDictionary.cs" />
     <Compile Include="Tools\HexEncoding.cs" />
-    <Compile Include="Tools\SplitButton.cs">
+    <Compile Include="Forms\SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Tools\win32.cs" />
@@ -105,11 +111,14 @@
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
     <Compile Include="Types\Character.cs" />
-    <EmbeddedResource Include="ClientForm.resx">
+    <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PacketView.resx">
+      <DependentUpon>PacketView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

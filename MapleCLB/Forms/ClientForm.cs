@@ -5,23 +5,22 @@ using MapleCLB.MapleClient;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 
-namespace MapleCLB {
+namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
-        private Client Client;
+        private readonly Client Client;
         public Progress<bool> ConnectToggle;
         public Progress<string> WriteLog;
-        public Progress<string> WritePacketLog;
+        public Progress<byte[]> WriteSend, WriteRecv;
         public Progress<string> UpdateName;
         public Progress<string> UpdateMap;
         public Progress<string> UpdateCh;
         public Progress<string> UpdateLevel;
         public Progress<string> UpdateMesos;
 
-
-
         public ClientForm() {
             InitializeComponent();
             InitializeProgress();
+            PacketView.SetInput(PacketInput);
             Win32.SendMessage(UserInput.Handle, Win32.EM_SETCUEBANNER, 0, "Username");
             Win32.SendMessage(PassInput.Handle, Win32.EM_SETCUEBANNER, 0, "Password");
             Win32.SendMessage(PicInput.Handle, Win32.EM_SETCUEBANNER, 0, "PIC");
@@ -64,8 +63,12 @@ namespace MapleCLB {
                 ModeList.Enabled = b;
             });
 
+            /* Writers */
             WriteLog = new Progress<string>(s => LogText.AppendText(s + Environment.NewLine));
-            WritePacketLog = new Progress<string>(s => PacketLog.AppendText(s + Environment.NewLine));
+            WriteSend = PacketView.WriteSend;
+            WriteRecv = PacketView.WriteRecv;
+
+            /* Stats */
             UpdateName = new Progress<string>(s => NameStat.Text = s);
 
             UpdateMap = new Progress<string>(s => MapStat.Text = s);
@@ -74,6 +77,9 @@ namespace MapleCLB {
             UpdateMesos = new Progress<string>(s => MesoStatus.Text = s);
         }
 
+        public bool IsLogSend() {
+            return PacketView.LogSend;
+        }
 
         /* Temporary stuff*/
         private async void ConnectBtn_Click(object sender, EventArgs e) {
@@ -99,8 +105,6 @@ namespace MapleCLB {
             Client.shouldCC = true;
             Client.SendPacket(General.ChangeChannel(0x01));
         }
-
-
 
         private void MoveBtn_Click(object sender, EventArgs e) {
             //int CRC = 0x9FF5D003;
@@ -135,6 +139,8 @@ namespace MapleCLB {
         }
 
         private void SendSpamBtn_Click(object sender, EventArgs e) {
+            if (PacketInput.Text.Length == 0) return;
+
             Client.SendPacket(HexEncoding.GetBytes(PacketInput.Text));
             /*if (!sMenuSpam.Checked) {
                 C.SendPacket(sendPacket.Text);
@@ -180,6 +186,8 @@ namespace MapleCLB {
 
         private void SendMenuItem_Click(object sender, EventArgs e) {
             Console.WriteLine("Sup not working");
+            SendMenuItem.Checked = true;
+            SpamMenuItem.Checked = false;
             //Stop spam if currently spamming!
             /*if (sendSpam.Text.Equals("Stop")) {
                 Bw.CancelAsync();
@@ -189,15 +197,15 @@ namespace MapleCLB {
 
             sendPacket.Width = 505;
             delay.Visible = false;
-            sMenuSpam.Checked = false;
             sendSpam.Text = "Send";*/
         }
 
         private void SpamMenuItem_Click(object sender, EventArgs e) {
             Console.WriteLine("Sup not working");
+            SendMenuItem.Checked = false;
+            SpamMenuItem.Checked = true;
             /*delay.Visible = true;
             sendPacket.Width = 455;
-            sMenuSend.Checked = false;
             sendSpam.Text = "Spam";*/
         }
     }

@@ -15,8 +15,10 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         private void CheckLength(int length) {
-            if (Position + length > Buffer.Length || length < 0)
-                throw new IndexOutOfRangeException("Not enough space");
+            if (Position + length > Buffer.Length || length < 0) {
+                throw new IndexOutOfRangeException("Not enough space in packet: " + ToString() + 
+                    "\n" + Position + length + " > " + Buffer.Length + " OR " + length + " < 0");
+            }
         }
 
         public byte ReadByte() {

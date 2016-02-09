@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Function.Connection;
@@ -11,9 +10,8 @@ namespace MapleCLB.MapleClient.Handlers {
         private readonly Dictionary<short, EventHandler<PacketReader>> HeaderMap;
 
         internal Packet(Client client) : base(client) {
-
             HeaderMap = new Dictionary<short, EventHandler<PacketReader>>();
-            //Register(RecvOps.LOGIN_STATUS, Login.LoginSecond);
+
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
             Register(RecvOps.CHANNEL_IP, PortIp.ChannelIp);
@@ -26,18 +24,16 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.REMOVE_PLAYER, Player.RemovePlayer);
 
             Register(RecvOps.LOAD_MUSHY,  Mushrooms.loadMushrooms);
-            Register(RecvOps.MAP_LOAD, MapCheck.mapCheck);
+            Register(RecvOps.MAP_LOAD, MapCheck.Check);
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
-
         }
 
-        internal override void Handle(object session, byte[] packet)
-        {
-            Client.WritePacketLog.Report(HexEncoding.ToHexString(packet));
+        internal override void Handle(object session, byte[] packet) {
+            Client.WriteRecv.Report(packet);
+
             var pr = new PacketReader(packet);
             short header = pr.ReadShort();
-            if (HeaderMap.ContainsKey(header))
-            {
+            if (HeaderMap.ContainsKey(header)) {
                 HeaderMap[header](Client, pr);
             }
         }

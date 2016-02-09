@@ -70,9 +70,7 @@ namespace MapleCLB.MapleLib {
         }
 
         private void Receive() {
-            if (!Connected) {
-                return;
-            }
+            if (!Connected) return;
 
             SocketError error;
             Socket.BeginReceive(RecvBuffer, 0, RECEIVE_SIZE, SocketFlags.None, out error, PacketCallback, null);
@@ -83,9 +81,7 @@ namespace MapleCLB.MapleLib {
         }
 
         private void PacketCallback(IAsyncResult iar) {
-            if (!Connected) {
-                return;
-            }
+            if (!Connected) return;
 
             SocketError error;
             int length = Socket.EndReceive(iar, out error);
@@ -142,9 +138,7 @@ namespace MapleCLB.MapleLib {
 
         private void ProcessHandshake() {
             short packetSize = BitConverter.ToInt16(PacketBuffer, 0);
-            if (Cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) {
-                return;
-            }
+            if (Cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) return;
 
             byte[] buffer = new byte[packetSize];
             Buffer.BlockCopy(PacketBuffer, HANDSHAKE_HEADER_SIZE, buffer, 0, packetSize);
@@ -215,9 +209,7 @@ namespace MapleCLB.MapleLib {
         }
 
         public void Disconnect(bool finished = true) {
-            if (!Connected) {
-                return;
-            }
+            if (!Connected) return;
 
             Cursor = 0;
 
@@ -234,9 +226,7 @@ namespace MapleCLB.MapleLib {
             Encrypted = false;
             Connected = false;
 
-            if (!finished) {
-                return;
-            }
+            if (!finished) return;
 
             ClientCipher = null;
             ServerCipher = null;

@@ -57,16 +57,16 @@ namespace MapleCLB.Tools {
         const long PRF_CHILDREN = 0x00000010L;
         const long PRF_OWNED = 0x00000020L;
 
-        public static bool CaptureWindow(System.Windows.Forms.Control control, ref System.Drawing.Bitmap bitmap) {
+        public static bool CaptureWindow(System.Windows.Forms.Control control, ref Bitmap bitmap) {
             //This function captures the contents of a window or control
-            Graphics g2 = Graphics.FromImage(bitmap);
+            var g2 = Graphics.FromImage(bitmap);
 
             //PRF_CHILDREN // PRF_NONCLIENT
-            int meint = (int)(PRF_CLIENT | PRF_ERASEBKGND); //| PRF_OWNED ); //  );
-            System.IntPtr meptr = new System.IntPtr(meint);
+            const int meint = (int)(PRF_CLIENT | PRF_ERASEBKGND); //| PRF_OWNED ); //  );
+            var meptr = new IntPtr(meint);
 
-            System.IntPtr hdc = g2.GetHdc();
-            Win32.SendMessage(control.Handle, Win32.WM_PRINT, hdc, meptr);
+            var hdc = g2.GetHdc();
+            SendMessage(control.Handle, WM_PRINT, hdc, meptr);
 
             g2.ReleaseHdc(hdc);
             g2.Dispose();

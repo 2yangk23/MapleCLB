@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Timers;
+using MapleCLB.Forms;
 using MapleCLB.MapleLib;
 using MapleCLB.Tools;
 
@@ -21,16 +22,13 @@ namespace MapleCLB.MapleClient {
         private readonly ClientForm CForm;
         public readonly IProgress<bool> ConnectToggle;
         public readonly IProgress<string> WriteLog;
-        public readonly IProgress<string> WritePacketLog;
-        public readonly IProgress<string> UpdateName;
+        public readonly IProgress<byte[]> WriteSend, WriteRecv; 
 
+        public readonly IProgress<string> UpdateName;
         public readonly IProgress<string> UpdateLevel;
         public readonly IProgress<string> UpdateMap;
         public readonly IProgress<string> UpdateChannel;
         public readonly IProgress<string> UpdateMesos;
-
-
-
 
         public Session Session;
 
@@ -70,11 +68,13 @@ namespace MapleCLB.MapleClient {
         public Dictionary<int, string> UidMovementPacket; //UID -> MovementPacket
 
         public Client(ClientForm form) {
+            /* Initialize Form */
             CForm = form;
 
             ConnectToggle = form.ConnectToggle;
             WriteLog = form.WriteLog;
-            WritePacketLog = form.WritePacketLog;
+            WriteSend = form.WriteSend;
+            WriteRecv = form.WriteRecv;
             UpdateName = form.UpdateName;
             UpdateLevel = form.UpdateLevel;
             UpdateMap = form.UpdateMap;
@@ -82,6 +82,7 @@ namespace MapleCLB.MapleClient {
             UpdateMesos = form.UpdateMesos;
 
 
+            /* Initialize Client */
             Mode = ClientMode.DISCONNECTED;
             var conn = new Connector(Program.LoginIp, Program.LoginPort);
             HandshakeHandler = new Handlers.Handshake(this);
@@ -148,6 +149,11 @@ namespace MapleCLB.MapleClient {
 
         public void SendPacket(byte[] packet) {
             try {
+                if (CForm.IsLogSend()) {
+                    byte[] copy = new byte[packet.Length];
+                    Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
+                    WriteSend.Report(copy);
+                }
                 Session.SendPacket(packet);
             } catch (Exception) {
                 WriteLog.Report("An error occured when attempting to send packet.");
@@ -168,19 +174,16 @@ namespace MapleCLB.MapleClient {
             ConnectToggle.Report(false);
         }
 
-        void AutoCC(object sender, ElapsedEventArgs e)
-        {
-            if (doWhat == 1)
-            {
+        void AutoCC(object sender, ElapsedEventArgs e) {
+            if (doWhat == 1) {
                 WriteLog.Report("Changing to Ch 2");
                 shouldCC = true;
                 SendPacket(General.ChangeChannel(0x01));
             }
         }
 
-
-        void AutoCS(object sender, ElapsedEventArgs e) //AutoCS Event (Timer)
-        {
+        //AutoCS Event (Timer)
+        void AutoCS(object sender, ElapsedEventArgs e) {
             //if (Program.Gui.aCS.Checked)
             //{
             //    WriteLog.Report(("Auto CS time!"));

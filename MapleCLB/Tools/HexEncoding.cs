@@ -2,14 +2,13 @@
 
 namespace MapleCLB.Tools {
     public class HexEncoding {
-        private static Random rng = new Random();
+        private static readonly Random Rng = new Random();
 
-        public static bool IsHexDigit(Char c) {
-            int numChar;
+        public static bool IsHexDigit(char c) {
             int numA = Convert.ToInt32('A');
             int num1 = Convert.ToInt32('0');
-            c = Char.ToUpper(c);
-            numChar = Convert.ToInt32(c);
+            c = char.ToUpper(c);
+            int numChar = Convert.ToInt32(c);
             if (numChar >= numA && numChar < (numA + 6))
                 return true;
             if (numChar >= num1 && numChar < (num1 + 10))
@@ -26,10 +25,9 @@ namespace MapleCLB.Tools {
 
         public static byte[] GetBytes(string hexString) {
             string newString = string.Empty;
-            char c;
             // remove all none A-F, 0-9, characters
             for (int i = 0; i < hexString.Length; i++) {
-                c = hexString[i];
+                char c = hexString[i];
                 if (IsHexDigit(c))
                     newString += c;
             }
@@ -40,46 +38,45 @@ namespace MapleCLB.Tools {
 
             int byteLength = newString.Length / 2;
             byte[] bytes = new byte[byteLength];
-            string hex;
             int j = 0;
             for (int i = 0; i < bytes.Length; i++) {
-                hex = new String(new Char[] { newString[j], newString[j + 1] });
+                string hex = new string(new[] { newString[j], newString[j + 1] });
                 bytes[i] = HexToByte(hex);
                 j = j + 2;
             }
             return bytes;
         }
 
-        public static String ToStringFromAscii(byte[] bytes) {
+        public static string ToStringFromAscii(byte[] bytes) {
             char[] ret = new char[bytes.Length];
             for (int x = 0; x < bytes.Length; x++) {
-                if (bytes[x] < 32 && bytes[x] >= 0) {
+                if (bytes[x] < 32) {
                     ret[x] = '.';
                 } else {
-                    int chr = ((short)bytes[x]) & 0xFF;
+                    int chr = bytes[x] & 0xFF;
                     ret[x] = (char)chr;
                 }
             }
-            return new String(ret);
+            return new string(ret);
         }
 
         public static string ByteArrayToString(byte[] array) {
             string temp = "";
             foreach (byte bit in array) {
-                temp += String.Format("{0:X2} ", bit);
+                temp += string.Format("{0:X2} ", bit);
             }
             return temp;
         }
 
         public static string ToHex(byte b) {
-            return String.Format("{0:X2}", b);
+            return string.Format("{0:X2}", b);
         }
 
         public static string GetRandomHexString(int digits, string spacer = "") {
             string toreturn = string.Empty;
-            toreturn += ToHex((byte)rng.Next(0xFF));
+            toreturn += ToHex((byte)Rng.Next(0xFF));
             for (int i = 0; i < digits - 1; i++)
-                toreturn += spacer + HexEncoding.ToHex((byte)rng.Next(0xFF));
+                toreturn += spacer + ToHex((byte)Rng.Next(0xFF));
             return toreturn;
         }
 
@@ -88,7 +85,7 @@ namespace MapleCLB.Tools {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards
                 {
                     if (pch[i] == '*') {
-                        pch[i] = String.Format("{0:X}", rng.Next(16))[0];
+                        pch[i] = string.Format("{0:X}", Rng.Next(16))[0];
                     }
                 }
             }
