@@ -84,6 +84,9 @@ namespace MapleCLB.MapleLib {
             if (!Connected) return;
 
             SocketError error;
+            // TODO: Fix Diposed Socket Bug
+            // If client is in process of receiving packet right when you disconnect
+            // Socket will be disposed, and throw exception
             int length = Socket.EndReceive(iar, out error);
             if (length == 0 || error != SocketError.Success) {
                 Console.WriteLine("Bug Testing 102");

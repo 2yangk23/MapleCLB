@@ -252,9 +252,9 @@
             this.MesoStatus.AutoSize = true;
             this.MesoStatus.Location = new System.Drawing.Point(210, 19);
             this.MesoStatus.Name = "MesoStatus";
-            this.MesoStatus.Size = new System.Drawing.Size(53, 13);
+            this.MesoStatus.Size = new System.Drawing.Size(16, 13);
             this.MesoStatus.TabIndex = 16;
-            this.MesoStatus.Text = "Unknown";
+            this.MesoStatus.Text = "-1";
             // 
             // Mesos
             // 
@@ -270,27 +270,27 @@
             this.MapStat.AutoSize = true;
             this.MapStat.Location = new System.Drawing.Point(64, 73);
             this.MapStat.Name = "MapStat";
-            this.MapStat.Size = new System.Drawing.Size(53, 13);
+            this.MapStat.Size = new System.Drawing.Size(16, 13);
             this.MapStat.TabIndex = 7;
-            this.MapStat.Text = "Unknown";
+            this.MapStat.Text = "-1";
             // 
             // ChannelStat
             // 
             this.ChannelStat.AutoSize = true;
             this.ChannelStat.Location = new System.Drawing.Point(64, 55);
             this.ChannelStat.Name = "ChannelStat";
-            this.ChannelStat.Size = new System.Drawing.Size(53, 13);
+            this.ChannelStat.Size = new System.Drawing.Size(16, 13);
             this.ChannelStat.TabIndex = 6;
-            this.ChannelStat.Text = "Unknown";
+            this.ChannelStat.Text = "-1";
             // 
             // LevelStat
             // 
             this.LevelStat.AutoSize = true;
             this.LevelStat.Location = new System.Drawing.Point(64, 37);
             this.LevelStat.Name = "LevelStat";
-            this.LevelStat.Size = new System.Drawing.Size(53, 13);
+            this.LevelStat.Size = new System.Drawing.Size(13, 13);
             this.LevelStat.TabIndex = 5;
-            this.LevelStat.Text = "Unknown";
+            this.LevelStat.Text = "0";
             // 
             // NameStat
             // 

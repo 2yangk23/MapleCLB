@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Timers;
 using MapleCLB.Forms;
+using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleLib;
 using MapleCLB.Tools;
 
@@ -25,15 +26,15 @@ namespace MapleCLB.MapleClient {
         public readonly IProgress<byte[]> WriteSend, WriteRecv; 
 
         public readonly IProgress<string> UpdateName;
-        public readonly IProgress<string> UpdateLevel;
-        public readonly IProgress<string> UpdateMap;
-        public readonly IProgress<string> UpdateChannel;
-        public readonly IProgress<string> UpdateMesos;
+        public readonly IProgress<byte> UpdateLevel;
+        public readonly IProgress<int> UpdateMap;
+        public readonly IProgress<int> UpdateChannel;
+        public readonly IProgress<long> UpdateMesos;
 
         public Session Session;
 
-        private readonly Handlers.Handshake HandshakeHandler;
-        private readonly Handlers.Packet PacketHandler;
+        private readonly Handshake HandshakeHandler;
+        private readonly Packet PacketHandler;
 
         internal ClientMode Mode { get; set; }
 
@@ -51,8 +52,8 @@ namespace MapleCLB.MapleClient {
         internal byte Select, World, Channel, doWhat;
         internal int UserId; 
 
-        internal long MapId;
-        internal int Level;
+        internal int MapId;
+        internal byte Level;
         internal long Mesos;
         internal int ch;
 
@@ -71,25 +72,20 @@ namespace MapleCLB.MapleClient {
             /* Initialize Form */
             CForm = form;
 
-            ConnectToggle = form.ConnectToggle;
-            WriteLog = form.WriteLog;
-            WriteSend = form.WriteSend;
-            WriteRecv = form.WriteRecv;
-            UpdateName = form.UpdateName;
-            UpdateLevel = form.UpdateLevel;
-            UpdateMap = form.UpdateMap;
-            UpdateChannel = form.UpdateCh;
-            UpdateMesos = form.UpdateMesos;
-
+            ConnectToggle   = form.ConnectToggle;
+            WriteLog        = form.WriteLog;
+            WriteSend       = form.WriteSend;
+            WriteRecv       = form.WriteRecv;
+            UpdateName      = form.UpdateName;
+            UpdateLevel     = form.UpdateLevel;
+            UpdateMap       = form.UpdateMap;
+            UpdateChannel   = form.UpdateCh;
+            UpdateMesos     = form.UpdateMesos;
 
             /* Initialize Client */
             Mode = ClientMode.DISCONNECTED;
-            var conn = new Connector(Program.LoginIp, Program.LoginPort);
-            HandshakeHandler = new Handlers.Handshake(this);
-            PacketHandler = new Handlers.Packet(this);
-
-            conn.OnConnected += OnConnected;
-            conn.OnError += OnError;
+            HandshakeHandler = new Handshake(this);
+            PacketHandler = new Packet(this);
 
             ServerTimeout = 40000;
             ChannelTimeout = 12000;
@@ -103,10 +99,11 @@ namespace MapleCLB.MapleClient {
 
             shouldCC = false;
 
-            UidMap = new Dictionary<int, string>();
-            CharMap = new MultiKeyDictionary<byte, string, int>();
-            IgnUid = new Dictionary<string, int>();
-            UidMovementPacket = new Dictionary<int, string>();  
+            /* Initialize Dictionaries */
+            UidMap              = new Dictionary<int, string>();
+            CharMap             = new MultiKeyDictionary<byte, string, int>();
+            IgnUid              = new Dictionary<string, int>();
+            UidMovementPacket   = new Dictionary<int, string>();  
         }
 
         public void Connect() {
@@ -192,13 +189,13 @@ namespace MapleCLB.MapleClient {
             // }
         }
 
-        public void clearData()
+        public void ClearStats()
         {
             UpdateName.Report("Unknown");
-            UpdateLevel.Report("Unknown");
-            UpdateMap.Report("Unknown");
-            UpdateChannel.Report("Unknown");
-            UpdateMesos.Report("Unknown");
+            UpdateLevel.Report(0);
+            UpdateMap.Report(-1);
+            UpdateChannel.Report(-1);
+            UpdateMesos.Report(-1);
         }
 
         public void OnDisconnected(object o, EventArgs e) {
@@ -207,7 +204,7 @@ namespace MapleCLB.MapleClient {
             CharMap.Clear();
             IgnUid.Clear();
             UidMovementPacket.Clear();
-            clearData();
+            ClearStats();
             //cst.Enabled = false;
             ccst.Enabled = false;
             if (CForm.AutoRestart.Checked) {

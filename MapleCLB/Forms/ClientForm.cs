@@ -12,10 +12,10 @@ namespace MapleCLB.Forms {
         public Progress<string> WriteLog;
         public Progress<byte[]> WriteSend, WriteRecv;
         public Progress<string> UpdateName;
-        public Progress<string> UpdateMap;
-        public Progress<string> UpdateCh;
-        public Progress<string> UpdateLevel;
-        public Progress<string> UpdateMesos;
+        public Progress<int> UpdateMap;
+        public Progress<int> UpdateCh;
+        public Progress<byte> UpdateLevel;
+        public Progress<long> UpdateMesos;
 
         public ClientForm() {
             InitializeComponent();
@@ -69,12 +69,11 @@ namespace MapleCLB.Forms {
             WriteRecv = PacketView.WriteRecv;
 
             /* Stats */
-            UpdateName = new Progress<string>(s => NameStat.Text = s);
-
-            UpdateMap = new Progress<string>(s => MapStat.Text = s);
-            UpdateCh = new Progress<string>(s => ChannelStat.Text = s);
-            UpdateLevel = new Progress<string>(s => LevelStat.Text = s);
-            UpdateMesos = new Progress<string>(s => MesoStatus.Text = s);
+            UpdateName  = new Progress<string>(s => NameStat.Text = s);
+            UpdateMap   = new Progress<int>(d => MapStat.Text = d.ToString());
+            UpdateCh    = new Progress<int>(d => ChannelStat.Text = d.ToString());
+            UpdateLevel = new Progress<byte>(d => LevelStat.Text = d.ToString());
+            UpdateMesos = new Progress<long>(d => MesoStatus.Text = d.ToString());
         }
 
         public bool IsLogSend() {
