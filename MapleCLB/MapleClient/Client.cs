@@ -9,9 +9,10 @@ using MapleCLB.MapleLib;
 using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
+using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient {
-    enum ClientMode {
+    enum ClientMode : byte {
         DISCONNECTED,
         CONNECTED,
         LOGIN,
@@ -20,17 +21,16 @@ namespace MapleCLB.MapleClient {
     }
 
     public class Client {
+        /* UI Info */
         private readonly ClientForm CForm;
         public readonly IProgress<bool> ConnectToggle;
         public readonly IProgress<string> WriteLog;
-        public readonly IProgress<byte[]> WriteSend, WriteRecv; 
+        public readonly IProgress<byte[]> WriteSend, WriteRecv;
 
-        public readonly IProgress<string> UpdateName;
-        public readonly IProgress<byte> UpdateLevel;
-        public readonly IProgress<int> UpdateMap;
-        public readonly IProgress<int> UpdateChannel;
-        public readonly IProgress<long> UpdateMesos;
+        public readonly IProgress<Mapler> UpdateMapler; 
+        public readonly IProgress<byte> UpdateChannel;
 
+        /* Client Info */
         public Session Session;
 
         private readonly Handshake HandshakeHandler;
@@ -46,16 +46,11 @@ namespace MapleCLB.MapleClient {
         public Timer ccst;
         public int autoCCtime;
 
-
-        /* Login Info */
-        internal string User, Pass, Pic, Name;
-        internal byte Select, World, Channel, doWhat;
+        /* User Info */
+        internal string User, Pass, Pic, Selection;
+        internal Mapler Mapler;
         internal int UserId; 
-
-        internal int MapId;
-        internal byte Level;
-        internal long Mesos;
-        internal int ch;
+        internal byte World, Channel, Select, doWhat;
 
         internal long SessionId;
 
@@ -65,7 +60,7 @@ namespace MapleCLB.MapleClient {
         public Dictionary<int, string> UidMap; //uid -> ign
         public MultiKeyDictionary<byte, string, int> CharMap; //slot/ign -> uid
 
-        public Dictionary<string, int> IgnUid;        //IGN -> UID
+        public Dictionary<string, int> IgnUid;            //IGN -> UID
         public Dictionary<int, string> UidMovementPacket; //UID -> MovementPacket
 
         public Client(ClientForm form) {
@@ -76,11 +71,8 @@ namespace MapleCLB.MapleClient {
             WriteLog        = form.WriteLog;
             WriteSend       = form.WriteSend;
             WriteRecv       = form.WriteRecv;
-            UpdateName      = form.UpdateName;
-            UpdateLevel     = form.UpdateLevel;
-            UpdateMap       = form.UpdateMap;
+            UpdateMapler    = form.UpdateMapler;
             UpdateChannel   = form.UpdateCh;
-            UpdateMesos     = form.UpdateMesos;
 
             /* Initialize Client */
             Mode = ClientMode.DISCONNECTED;
@@ -189,13 +181,9 @@ namespace MapleCLB.MapleClient {
             // }
         }
 
-        public void ClearStats()
-        {
-            UpdateName.Report("Unknown");
-            UpdateLevel.Report(0);
-            UpdateMap.Report(-1);
-            UpdateChannel.Report(-1);
-            UpdateMesos.Report(-1);
+        public void ClearStats() {
+            UpdateMapler.Report(null);
+            UpdateChannel.Report(0);
         }
 
         public void OnDisconnected(object o, EventArgs e) {

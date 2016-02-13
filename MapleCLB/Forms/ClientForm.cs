@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
+using MapleCLB.Types;
 
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
@@ -11,11 +12,8 @@ namespace MapleCLB.Forms {
         public Progress<bool> ConnectToggle;
         public Progress<string> WriteLog;
         public Progress<byte[]> WriteSend, WriteRecv;
-        public Progress<string> UpdateName;
-        public Progress<int> UpdateMap;
-        public Progress<int> UpdateCh;
-        public Progress<byte> UpdateLevel;
-        public Progress<long> UpdateMesos;
+        public Progress<Mapler> UpdateMapler; 
+        public Progress<byte> UpdateCh;
 
         public ClientForm() {
             InitializeComponent();
@@ -69,11 +67,20 @@ namespace MapleCLB.Forms {
             WriteRecv = PacketView.WriteRecv;
 
             /* Stats */
-            UpdateName  = new Progress<string>(s => NameStat.Text = s);
-            UpdateMap   = new Progress<int>(d => MapStat.Text = d.ToString());
-            UpdateCh    = new Progress<int>(d => ChannelStat.Text = d.ToString());
-            UpdateLevel = new Progress<byte>(d => LevelStat.Text = d.ToString());
-            UpdateMesos = new Progress<long>(d => MesoStatus.Text = d.ToString());
+            UpdateMapler = new Progress<Mapler>(m => {
+                if (m != null) {
+                    NameStat.Text = m.Name;
+                    MapStat.Text = m.Map.ToString();
+                    LevelStat.Text = m.Level.ToString();
+                    MesoStatus.Text = m.Meso.ToString();
+                } else {
+                    NameStat.Text = "Unknown";
+                    MapStat.Text = "-1";
+                    LevelStat.Text = "0";
+                    MesoStatus.Text = "-1";
+                }
+            });
+            UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
         }
 
         public bool IsLogSend() {
@@ -86,7 +93,7 @@ namespace MapleCLB.Forms {
                 Client.User = UserInput.Text;
                 Client.Pass = PassInput.Text;
                 Client.Pic = PicInput.Text;
-                Client.Name = CharInput.Text;
+                Client.Selection = CharInput.Text;
 
                 Client.Select = (byte) SelectList.SelectedIndex;
                 Client.Channel = (byte) ChannelList.SelectedIndex;

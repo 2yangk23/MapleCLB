@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets.Recv;
@@ -60,20 +61,21 @@ namespace MapleCLB.Packets.Function.Connection {
                 switch (c.Select) {
                     case 0:
                         byte n;
-                        byte.TryParse(c.Name, out n);
+                        byte.TryParse(c.Selection, out n);
                         c.UserId = c.CharMap[--n];
                         break;
                     case 1:
-                        c.UserId = c.CharMap[c.Name.ToLower()];
+                        c.UserId = c.CharMap[c.Selection.ToLower()];
                         break;
+                    default:
+                        throw new InvalidOperationException("Selection mode " + c.Select + " is not valid.");
                 }
+                c.SendPacket(Send.Login.SelectCharacter(c.UserId, c.Pic));
             } catch {
                 c.WriteLog.Report("Error selecting character. Restart in 1 min...");
                 Thread.Sleep(60000);
                 c.Session.Disconnect();
-                return;
             }
-            c.SendPacket(Send.Login.SelectCharacter(c.UserId, c.Pic));
         }
     }
 }

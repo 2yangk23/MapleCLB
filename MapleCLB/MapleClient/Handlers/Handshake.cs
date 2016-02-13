@@ -12,7 +12,6 @@ namespace MapleCLB.MapleClient.Handlers {
                 case ClientMode.CONNECTED:
                     Debug.WriteLine(("Validating login for MapleStory v" + info.Version + "." + info.Subversion));
                     SendPacket(Login.Validate(info.Locale, info.Version, short.Parse(info.Subversion)));
-                    //SendPacket(0x66, 0x00, 0x08);
                     string authCode = Auth.GetAuth(Client.User, Client.Pass);
                     Client.Mode = ClientMode.LOGIN;
                     Debug.WriteLine(authCode);
@@ -21,14 +20,12 @@ namespace MapleCLB.MapleClient.Handlers {
                     break;
                 case ClientMode.LOGIN:
                     Debug.WriteLine("Logged in!");
-                    // Client.cst.Enabled = true;
                     Client.ccst.Enabled = true;
                     SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
                     Client.Mode = ClientMode.GAME;
                     break;
                 case ClientMode.GAME:
                     SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
-                    
                     break;
                 case ClientMode.CASHSHOP:
                     System.Threading.Thread.Sleep(2000);

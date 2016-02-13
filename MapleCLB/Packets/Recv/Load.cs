@@ -3,6 +3,7 @@ using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Types;
 using MapleCLB.Packets.Send;
+using MapleCLB.Types.Items;
 
 namespace MapleCLB.Packets.Recv {
     class Load {
@@ -20,9 +21,9 @@ namespace MapleCLB.Packets.Recv {
 
             for (byte i = 0; i < count; ++i) {
                 /* Character Stats */
-                var chr = Types.Character.Parse(pr, 8);
+                var m = Mapler.Parse(pr, 8);
 
-                /* Character Appearance */
+                /* AddPlayer Appearance */
                 pr.Skip(15); // [Gender (1)] [Skin (1)] [Face (4)] [Job (2)] [SubJob (2)] [Mega (1)] [Hair (4)]
                 for (int j = 0; j < 3; ++j) { // Skips the Equipment
                     pr.Next(0xFF);
@@ -30,9 +31,9 @@ namespace MapleCLB.Packets.Recv {
                 pr.Skip(4); // [00 00 00 00]
 
                 pr.Skip(24); // [Weapon (4)] [Shield (4)] [Mercedes Ears (1)] [Zeros (15)]
-                if ((chr.Job >= 3100 && chr.Job <= 3122) || (chr.Job >= 3600 && chr.Job <= 3612) || chr.Job == 3002 || chr.Job == 3001) { // Demon/Xenon
+                if ((m.Job >= 3100 && m.Job <= 3122) || (m.Job >= 3600 && m.Job <= 3612) || m.Job == 3002 || m.Job == 3001) { // Demon/Xenon
                     pr.Skip(4); // [FaceMark (4)]
-                } else if (chr.Job >= 11200 && chr.Job <= 11212) { // Beast Tamer
+                } else if (m.Job >= 11200 && m.Job <= 11212) { // Beast Tamer
                     pr.Skip(14); // [FaceMark (4)] [Ears (1)] [EarType (4)] [Tail (1)] [TailType (4)]
                 }
 
@@ -41,17 +42,17 @@ namespace MapleCLB.Packets.Recv {
                     pr.Skip(16); // [Rank (4)] [Rank Move (4)] [JobRank (4)] [JobRank Move (4)]
                 }
 
-                if (chr.Job >= 10100 && chr.Job <= 10112) { // Zero
+                if (m.Job >= 10100 && m.Job <= 10112) { // Zero
                     for (int j = 0; j < 6; ++j) { // I guess Zero has 2 extra appearance?
                         pr.Next(0xFF);
                     }
                 }
                 // System.Diagnostics.Debug.WriteLine("" + chr.Id + " : " + chr.Job + " : " + chr.Name + Environment.NewLine);
-                c.CharMap.Add(i, chr.Name.ToLower(), chr.Id);
+                c.CharMap.Add(i, m.Name.ToLower(), m.Id);
             }
         }
 
-        public static void Player(Client c, PacketReader pr) {
+        public static void AddPlayer(Client c, PacketReader pr) {
             int uid = pr.ReadInt();
             pr.ReadByte();
             string ign = pr.ReadMapleString();
@@ -68,19 +69,19 @@ namespace MapleCLB.Packets.Recv {
         }
 
         public static void MapLoad(Client c, PacketReader pr){
-            pr.Skip(18); //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
+            pr.Skip(18);    //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
             int channel = pr.ReadInt(); //CH Connected To
-            pr.Skip(10); // [00 00 00 00 00 01 00 00 00 00]
-            pr.Skip(8); //Unknown 8 Bytes that change
-            pr.Skip(3); // [01 00 00]
-            pr.Skip(12);// Unknown 12 bytes something to do with connection
-            pr.Skip(8); // [FF FF FF FF FF FF FF FF]
-            pr.Skip(13); // [00 F1 FF FF FF F1 FF FF FF F1 FF FF FF] Where F1 Changes to random Fx Value
-            pr.Skip(6); // [00 00 00 00 00 00]
-            pr.ReadInt(); // [uid (4)]
+            pr.Skip(10);    // [00 00 00 00 00 01 00 00 00 00]
+            pr.Skip(8);     // Unknown 8 Bytes that change
+            pr.Skip(3);     // [01 00 00]
+            pr.Skip(12);    // Unknown 12 bytes something to do with connection
+            pr.Skip(8);     // [FF FF FF FF FF FF FF FF]
+            pr.Skip(13);    // [00 F1 FF FF FF F1 FF FF FF F1 FF FF FF] Where F1 Changes to random Fx Value
+            pr.Skip(6);     // [00 00 00 00 00 00]
+            pr.ReadInt();   // [uid (4)]
 
             /* Character Stats */
-            var chr = Types.Character.Parse(pr, 5);
+            var m = Mapler.Parse(pr, 5);
 
             /* Char Info */
             pr.Skip(1); // BL Size
@@ -95,7 +96,7 @@ namespace MapleCLB.Packets.Recv {
             }
 
             /* Inventory Info */
-            long MESOS = pr.ReadLong();
+            m.Meso = pr.ReadLong();
             pr.Skip(12);    // [Zero (12)]
             pr.Skip(4);     // [uid (4)]
             pr.Skip(31);    // [Zero (28)] 00 00 00
@@ -104,65 +105,56 @@ namespace MapleCLB.Packets.Recv {
             pr.Skip(1);     // [00]
 
             /* Equipped Items */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            short slot;
+            while ((slot = pr.ReadShort()) != 0) {
+                var itemTest = Equip.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
-            pr.Skip(1); //Skip Extra Zero
             /* Equipped CS Items */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            while ((slot = pr.ReadShort()) != 0) {
+                var itemTest = Equip.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
-            pr.Skip(1);
             /* Equip Inventory */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            while ((slot = pr.ReadShort()) != 0) {
+                var itemTest = Equip.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
-            pr.Skip(25);
+            /* [Zero (24)] */
+            pr.Skip(24);
             /* Use Inventory */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType +" Quantity: " + itemTest.Quantity);
+            while ((slot = pr.ReadByte()) != 0) {
+                var itemTest = Other.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
             }
             /* Set-up Inventory */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            while ((slot = pr.ReadByte()) != 0) {
+                var itemTest = Other.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Etc Inventory */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            while ((slot = pr.ReadByte()) != 0) {
+                var itemTest = Other.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Cash Inventory */
-            while (pr.ReadByte() != 0) //Skip First Extra Zero 
-            {
-                var itemTest = Types.Items.Parse(pr);
-                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            while ((slot = pr.ReadByte()) != 0) {
+                var itemTest = Other.Parse(pr);
+                itemTest.Slot = slot;
+                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
 
-            c.MapId = chr.Map;
-            c.Level = chr.Level;
-            c.Mesos = MESOS;
-            c.ch = channel + 1;
-            c.Name = chr.Name;
+            c.Mapler = m;
+            c.Channel = (byte) (channel + 1);
 
-            c.UpdateName.Report(c.Name);
-            c.UpdateMap.Report(c.MapId);
-            c.UpdateLevel.Report(c.Level);
-            c.UpdateChannel.Report(c.ch);
-            c.UpdateMesos.Report(c.Mesos);
+            c.UpdateMapler.Report(m);
+            c.UpdateChannel.Report(c.Channel);
         }
 
         public static void Mushrooms(Client c, PacketReader pr) {
