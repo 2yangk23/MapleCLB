@@ -103,15 +103,54 @@ namespace MapleCLB.Packets.Recv {
             pr.Skip(8);     // [Timestamp (8)]
             pr.Skip(1);     // [00]
 
-            /* Equipped Items & Equipped CS Items */
+            /* Equipped Items */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            }
+            pr.Skip(1); //Skip Extra Zero
+            /* Equipped CS Items */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            }
+            pr.Skip(1);
             /* Equip Inventory */
-
-            /* So much random shit */
-
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                pr.Skip(1); //Skip the extra byte until the extra zeros between next items
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity + " Potential: " + itemTest.PotentialLevel);
+            }
+            pr.Skip(25);
             /* Use Inventory */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType +" Quantity: " + itemTest.Quantity);
+            }
             /* Set-up Inventory */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            }
             /* Etc Inventory */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            }
             /* Cash Inventory */
+            while (pr.ReadByte() != 0) //Skip First Extra Zero 
+            {
+                var itemTest = Types.Items.Parse(pr);
+                c.WriteLog.Report("Item: " + itemTest.Id + " Item Type: " + itemTest.itemType + " Quantity: " + itemTest.Quantity);
+            }
 
             c.MapId = chr.Map;
             c.Level = chr.Level;

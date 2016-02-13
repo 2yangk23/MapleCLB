@@ -110,6 +110,7 @@
     <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
+    <Compile Include="Types\Items.cs" />
     <Compile Include="Types\Character.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
