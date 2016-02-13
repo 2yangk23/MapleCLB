@@ -16,20 +16,23 @@ namespace MapleCLB.MapleClient.Handlers {
                     Client.Mode = ClientMode.LOGIN;
                     Debug.WriteLine(authCode);
                     System.Threading.Thread.Sleep(1000);
-                    SendPacket(Login.ClientLogin(Client.Pass, authCode));
+                    SendPacket(Login.ClientLogin(Client.Pass, authCode, Client.Hwid1, Client.Hwid2));
                     break;
+
                 case ClientMode.LOGIN:
                     Debug.WriteLine("Logged in!");
                     Client.ccst.Enabled = true;
-                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
+                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId, Client.Hwid1, Client.Hwid2));
                     Client.Mode = ClientMode.GAME;
                     break;
+
                 case ClientMode.GAME:
-                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
+                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId, Client.Hwid1, Client.Hwid2));
                     break;
+
                 case ClientMode.CASHSHOP:
                     System.Threading.Thread.Sleep(2000);
-                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId));
+                    SendPacket(Login.EnterServer(Client.World, Client.UserId, Client.SessionId, Client.Hwid1, Client.Hwid2));
                     System.Threading.Thread.Sleep(2000);
                     SendPacket(General.ExitCS());
                     Client.Mode = ClientMode.GAME;

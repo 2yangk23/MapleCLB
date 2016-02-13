@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 
-namespace MapleCLB.Packets.Function.Connection {
+namespace MapleCLB.Packets.Recv.Connection {
     class PortIp {
         public static void ServerIp(object o, PacketReader r) {
             var c = o as Client;

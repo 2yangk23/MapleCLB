@@ -2,9 +2,8 @@
 using System.Threading;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
-using MapleCLB.Packets.Recv;
 
-namespace MapleCLB.Packets.Function.Connection {
+namespace MapleCLB.Packets.Recv.Connection {
     class Login {
         public static void LoginSecond(object o, PacketReader r) {
             var c = o as Client;
@@ -44,7 +43,7 @@ namespace MapleCLB.Packets.Function.Connection {
                     // End of file crash on real client
                     break;
                 default:
-                    c.SendPacket(Send.Login.acceptWorld());
+                    c.SendPacket(Send.Login.GetServers());
                     c.SendPacket(Send.Login.SelectServer(c.World, c.Channel));
                     return;
             }
@@ -55,7 +54,7 @@ namespace MapleCLB.Packets.Function.Connection {
             var c = o as Client;
             c.WriteLog.Report("Selecting Character...");
             //no new thread here, MUST finish loading chars
-            Load.Character(c, r);
+            Load.Charlist(c, r);
 
             try {
                 switch (c.Select) {

@@ -23,8 +23,6 @@ namespace MapleCLB {
         public static readonly AesCipher AesCipher = new AesCipher(UserKey);
         
         private static MainForm gui;
-        public static string Hwid1 = Tools.HexEncoding.GetRandomHexString(4);
-        public static string Hwid2 = Tools.HexEncoding.GetRandomHexString(4);
 
         [STAThread]
         private static void Main() {

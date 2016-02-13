@@ -2,7 +2,7 @@
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets.Send;
 
-namespace MapleCLB.Packets.Function.MapInfo {
+namespace MapleCLB.Packets.Recv.Map {
     class FMMovement {
         public static void moveFM1(object o, PacketReader r) {
             var c = o as Client;

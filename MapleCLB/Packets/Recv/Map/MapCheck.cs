@@ -1,12 +1,11 @@
 ﻿using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
-using MapleCLB.Packets.Recv;
 
-namespace MapleCLB.Packets.Function.MapInfo {
+namespace MapleCLB.Packets.Recv.Map {
     class MapCheck {
         public static void Check(object o, PacketReader r) {
             var c = o as Client;
-            Load.MapLoad(c, r);
+            Load.CharInfo(c, r);
             FMMovement.shouldCC(c);
         }
     }

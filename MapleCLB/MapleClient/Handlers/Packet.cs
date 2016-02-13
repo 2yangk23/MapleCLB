@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets;
-using MapleCLB.Packets.Function.Connection;
-using MapleCLB.Packets.Function.MapInfo;
+using MapleCLB.Packets.Recv.Connection;
+using MapleCLB.Packets.Recv.Map;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {
@@ -23,8 +23,8 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.SPAWN_PLAYER, Player.SpawnPlayer);
             Register(RecvOps.REMOVE_PLAYER, Player.RemovePlayer);
 
-            Register(RecvOps.LOAD_MUSHY,  Mushrooms.loadMushrooms);
-            Register(RecvOps.MAP_LOAD, MapCheck.Check);
+            Register(RecvOps.LOAD_MUSHY,  Shop.SpawnMushy);
+            Register(RecvOps.CHAR_INFO, MapCheck.Check);
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
         }
 

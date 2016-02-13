@@ -8,7 +8,7 @@ using MapleCLB.Types.Items;
 namespace MapleCLB.Packets.Recv {
     class Load {
         //[Header (2)] 00 [Char count (1)] [UID (4)] [IGN (13)] ...
-        public static void Character(Client c, PacketReader pr) {
+        public static void Charlist(Client c, PacketReader pr) {
             pr.Skip(1);
             pr.ReadMapleString(); // v170?
             pr.Skip(18);
@@ -52,23 +52,7 @@ namespace MapleCLB.Packets.Recv {
             }
         }
 
-        public static void AddPlayer(Client c, PacketReader pr) {
-            int uid = pr.ReadInt();
-            pr.ReadByte();
-            string ign = pr.ReadMapleString();
-
-            c.UidMap[uid] = ign;
-            c.WriteLog.Report("Added " + uid + "(" + ign + ")");
-        }
-
-        public static void RemovePlayer(Client c, PacketReader pr) {
-            int uid = pr.ReadInt();
-
-            c.UidMap.Remove(uid);
-            c.WriteLog.Report("Removed " + uid);
-        }
-
-        public static void MapLoad(Client c, PacketReader pr){
+        public static void CharInfo(Client c, PacketReader pr){
             pr.Skip(18);    //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
             int channel = pr.ReadInt(); //CH Connected To
             pr.Skip(10);    // [00 00 00 00 00 01 00 00 00 00]
@@ -155,33 +139,6 @@ namespace MapleCLB.Packets.Recv {
 
             c.UpdateMapler.Report(m);
             c.UpdateChannel.Report(c.Channel);
-        }
-
-        public static void Mushrooms(Client c, PacketReader pr) {
-            int uid = pr.ReadInt();
-            pr.Skip(4);
-            short x = pr.ReadShort();
-            short y = pr.ReadShort();
-            short pid = pr.ReadShort();
-            string ign = pr.ReadMapleString();
-
-            int FM1CRC = 0x28C27A2A;
-
-            //IGN -> UID 
-            try {
-                //c.IgnUid.Add(ign,uid);
-                c.IgnUid[ign] = uid;
-            } catch (Exception) {
-                c.WriteLog.Report("Error loading mushrooms");
-            }
-            c.WriteLog.Report("Added : "+ ign +" to UID : "+uid +" @ "+x +" " +y);
-            try {
-                c.UidMovementPacket[uid] = HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid));
-                // c.UidMovementPacket.Add(uid, HexEncoding.ToHexString(Movement.Teleport(FM1CRC, x, y, pid)));
-            } catch (Exception) {
-                c.WriteLog.Report("Error adding UID to Movement Packet");
-            }
-                    
         }
     }
 }

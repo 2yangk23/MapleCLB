@@ -11,8 +11,7 @@ namespace MapleCLB.Packets.Send {
         }
 
 
-        public static byte[] RandomChannel()
-        {
+        public static byte[] RandomChannel() {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.CHANGE_CHANNEL);
             pw.WriteByte(0x03);//fix later so its acutally random :D

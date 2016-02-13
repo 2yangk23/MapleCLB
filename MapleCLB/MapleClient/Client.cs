@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
@@ -10,6 +11,7 @@ using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
 using MapleCLB.Types;
+using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
     enum ClientMode : byte {
@@ -21,6 +23,9 @@ namespace MapleCLB.MapleClient {
     }
 
     public class Client {
+        private static int seed = Environment.TickCount;
+        private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+
         /* UI Info */
         private readonly ClientForm CForm;
         public readonly IProgress<bool> ConnectToggle;
@@ -32,6 +37,8 @@ namespace MapleCLB.MapleClient {
 
         /* Client Info */
         public Session Session;
+        public int Hwid1 = Rng.Value.Next(0, int.MaxValue);
+        public short Hwid2 = (short) Rng.Value.Next(0, short.MaxValue);
 
         private readonly Handshake HandshakeHandler;
         private readonly Packet PacketHandler;
@@ -57,11 +64,11 @@ namespace MapleCLB.MapleClient {
         public bool shouldCC;
 
         /* Dictionaries */  
-        public Dictionary<int, string> UidMap; //uid -> ign
-        public MultiKeyDictionary<byte, string, int> CharMap; //slot/ign -> uid
+        public Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
+        public MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
-        public Dictionary<string, int> IgnUid;            //IGN -> UID
-        public Dictionary<int, string> UidMovementPacket; //UID -> MovementPacket
+        public Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
+        public Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
 
         public Client(ClientForm form) {
             /* Initialize Form */
@@ -90,12 +97,6 @@ namespace MapleCLB.MapleClient {
             ccst.Elapsed += AutoCC;
 
             shouldCC = false;
-
-            /* Initialize Dictionaries */
-            UidMap              = new Dictionary<int, string>();
-            CharMap             = new MultiKeyDictionary<byte, string, int>();
-            IgnUid              = new Dictionary<string, int>();
-            UidMovementPacket   = new Dictionary<int, string>();  
         }
 
         public void Connect() {

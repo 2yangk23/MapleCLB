@@ -1,5 +1,4 @@
-﻿namespace MapleCLB.Packets
-{
+﻿namespace MapleCLB.Packets {
     /***************SEND**************
         PONG            - Client response to every PING
          * 
@@ -8,6 +7,7 @@
         SERVER_LOGIN    - Sent when selecting the channel
         CHAR_SELECT     - Sent after entering PIC
         PLAYER_LOGGEDIN - Sent immediately after handshake (rest of the time)
+        GET_SERVERS     - Sending this causes server to respond with SERVERLIST
          * 
         CHANGE_MAP      - Sent when using portal or exiting cash shop
         CHANGE_CHANNEL  - Sent when changing channels
@@ -32,6 +32,7 @@
             SERVER_LOGIN = 0x6A,
             CHAR_SELECT = 0x6B,
             PLAYER_LOGGEDIN = 0x6E,
+            GET_SERVERS = 0x82,
             CHANGE_MAP = 0xAA,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
             TRADE = 0x0196,
@@ -70,15 +71,10 @@
             SERVER_IP = 0x0D,
             CHANNEL_IP = 0x17,
             LOAD_MUSHY = 0x03AD,
-            MAP_LOAD = 0x019B,
+            CHAR_INFO = 0x019B,
             FINISH_LOAD = 0x0045,
             LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
             SPAWN_PLAYER = 0x01EB, //0x01D3
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01; //0x01D4
-            
-           
-
-
-
     }
 }
