@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.Packets.Send;
@@ -39,7 +38,9 @@ namespace MapleCLB.Forms {
             channel.SelectedIndex   = 0;*/
             #endif
 
-            UserInput.Text = "bonybonbon1993@gmail.com";
+            string[] users = {"themapleblc@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com"};
+
+            UserInput.Text = users[Environment.TickCount % users.Length];
             PassInput.Text = "maplestory";
             PicInput.Text = "777000";
             CharInput.Text = "1";

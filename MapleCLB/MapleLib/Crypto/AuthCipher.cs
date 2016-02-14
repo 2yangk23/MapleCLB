@@ -18,7 +18,7 @@ namespace MapleCLB.MapleLib.Crypto {
         private unsafe static void Encrypt(byte[] buffer, uint seed) {
             uint prev = 0;
             fixed (byte* ptr = buffer) {
-                for (int i = 0; i < buffer.Length; i += 4) {
+                for (int i = 0; i < buffer.Length - 3; i += 4) {
                     uint temp = seed ^ prev ^ XorTable[i / 4 % 16];
                     prev = *(uint*)(ptr + i);
                     *(uint*)(ptr + i) ^= temp;
@@ -29,7 +29,7 @@ namespace MapleCLB.MapleLib.Crypto {
         private unsafe static void Decrypt(byte[] buffer, uint seed) {
             uint prev = 0;
             fixed (byte* ptr = buffer) {
-                for (int i = 0; i < buffer.Length; i += 4) {
+                for (int i = 0; i < buffer.Length - 3; i += 4) {
                     *(uint*)(ptr + i) ^= seed ^ prev ^ XorTable[i / 4 % 16];
                     prev = *(uint*)(ptr + i);
                 }

@@ -17,7 +17,13 @@ namespace MapleCLB.MapleClient {
         private static readonly byte[] AuthKey2 = { 0xEB, 0x29, 0x72, 0x30 }; // { 0xEB, 0x29, 0x72, 0x31 };
         private static readonly byte[] AuthKey3 = { 0xF7, 0xDD, 0xB1, 0x35 }; // { 0xF7, 0xDD, 0xB0, 0x35 };
 
-        private static readonly IPAddress AuthIp = IPAddress.Parse("208.85.110.166");
+        private static readonly IPAddress[] AuthIps = {
+            IPAddress.Parse("208.85.110.164"),
+            IPAddress.Parse("208.85.110.166"),
+            IPAddress.Parse("208.85.110.169"),
+            IPAddress.Parse("208.85.110.170"),
+            IPAddress.Parse("208.85.110.171")
+        };
         private const ushort AUTH_PORT = 47611;
         private static int seed = Environment.TickCount;
         private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
@@ -27,7 +33,7 @@ namespace MapleCLB.MapleClient {
             string auth = string.Empty;
             for (int i = 1; i <= 3; ++i) {
                 var authSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                authSocket.Connect(AuthIp, AUTH_PORT);
+                authSocket.Connect(AuthIps, AUTH_PORT);
                 switch (i) {
                     case 1:
                         authSocket.Send(AuthFirst(user, pass));
@@ -69,7 +75,8 @@ namespace MapleCLB.MapleClient {
             data.WriteBytes(0x00, 0x00, 0x13, 0x22, 0x00, 0x02, 0x01, 0x00);
             data.WriteZero(10);
             data.WriteUnicodeString(GetRandomString(23)); // 23 Random characters (Length 46 as unicode)
-            data.WriteZero(6);
+            data.WriteInt(1);
+            data.WriteZero(2);
 
             return AuthCipher.WriteHeader(AUTH_1, AuthKey1, data.ToArray());
         }
@@ -85,7 +92,7 @@ namespace MapleCLB.MapleClient {
             var data = new PacketWriter();
             data.WriteInt(2);
             data.WriteUnicodeString(auth);
-            data.WriteBytes(0x12, 0x22, 0x00, 0x02);
+            data.WriteBytes(0x13, 0x22, 0x00, 0x02);
 
             return AuthCipher.WriteHeader(AUTH_3, AuthKey3, data.ToArray());
         }
@@ -100,7 +107,7 @@ namespace MapleCLB.MapleClient {
 
         // Generates a random alphanumeric string
         private static string GetRandomString(int length) {
-            const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_";
+            const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_~";
             var result = new StringBuilder(length);
             for (int i = 0; i < length; i++) {
                 result.Append(characters[Rng.Value.Next(characters.Length)]);
