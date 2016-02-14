@@ -10,8 +10,9 @@ namespace MapleCLB.MapleLib.Packet {
             get { return Buffer.Length - Position; }
         }
 
-        public PacketReader(byte[] packet) {
+        public PacketReader(byte[] packet, int skip = 0) {
             Buffer = packet;
+            Position = skip;
         }
 
         private void CheckLength(int length) {

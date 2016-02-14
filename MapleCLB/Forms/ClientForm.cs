@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
@@ -88,7 +89,7 @@ namespace MapleCLB.Forms {
         }
 
         /* Temporary stuff*/
-        private async void ConnectBtn_Click(object sender, EventArgs e) {
+        private void ConnectBtn_Click(object sender, EventArgs e) {
             if (ConnectBtn.Text.Equals("Connect")) {
                 Client.User = UserInput.Text;
                 Client.Pass = PassInput.Text;
@@ -100,9 +101,11 @@ namespace MapleCLB.Forms {
                 Client.World = (byte) WorldList.SelectedIndex;
                 Client.doWhat = (byte) ModeList.SelectedIndex;
 
-                await Task.Factory.StartNew(() => Client.Connect(), TaskCreationOptions.LongRunning);
+                new Thread(Client.Connect) {
+                    IsBackground = true
+                }.Start();
             } else {
-                Client.Session.Disconnect();
+                Client.Disconnect();
             }
         }
 

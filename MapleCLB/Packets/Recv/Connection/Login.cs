@@ -14,7 +14,7 @@ namespace MapleCLB.Packets.Recv.Connection {
                 case 0x07:
                     c.WriteLog.Report("Already logged in. Restart in 1 min...");
                     Thread.Sleep(60000);
-                    c.Session.Disconnect();
+                    c.Disconnect();
                     return;
             }
             r.Skip(15);
@@ -47,7 +47,7 @@ namespace MapleCLB.Packets.Recv.Connection {
                     c.SendPacket(Send.Login.SelectServer(c.World, c.Channel));
                     return;
             }
-            c.Session.Disconnect();
+            c.Disconnect();
         }
 
         public static void SelectCharacter(object o, PacketReader r) {
@@ -73,7 +73,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             } catch {
                 c.WriteLog.Report("Error selecting character. Restart in 1 min...");
                 Thread.Sleep(60000);
-                c.Session.Disconnect();
+                c.Disconnect();
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleLib;
+using MapleCLB.MapleLib.Packet;
 using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
@@ -25,28 +26,31 @@ namespace MapleCLB.MapleClient {
     public class Client {
         private static int seed = Environment.TickCount;
         private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+        private const int SERVER_TIMEOUT = 20000;
+        private const int CHANNEL_TIMEOUT = 10000;
 
         /* UI Info */
         private readonly ClientForm CForm;
-        public readonly IProgress<bool> ConnectToggle;
-        public readonly IProgress<string> WriteLog;
-        public readonly IProgress<byte[]> WriteSend, WriteRecv;
+        internal readonly IProgress<bool> ConnectToggle;
+        internal readonly IProgress<string> WriteLog;
+        internal readonly IProgress<byte[]> WriteSend, WriteRecv;
 
-        public readonly IProgress<Mapler> UpdateMapler; 
-        public readonly IProgress<byte> UpdateChannel;
+        internal readonly IProgress<Mapler> UpdateMapler;
+        internal readonly IProgress<byte> UpdateChannel;
 
         /* Client Info */
-        public Session Session;
-        public int Hwid1 = Rng.Value.Next(0, int.MaxValue);
-        public short Hwid2 = (short) Rng.Value.Next(0, short.MaxValue);
-
         private readonly Handshake HandshakeHandler;
         private readonly Packet PacketHandler;
 
-        internal ClientMode Mode { get; set; }
+        private Session Session;
+        internal ClientMode Mode;
+        internal readonly int Hwid1 = Rng.Value.Next(0, int.MaxValue);
+        internal readonly short Hwid2 = (short)Rng.Value.Next(0, short.MaxValue);
 
-        /* Settings */
-        public int ServerTimeout, ChannelTimeout;
+        internal IProgress<Tuple<short, IProgress<PacketReader>>> WaitHandler;
+        internal IProgress<Tuple<short, EventWaitHandle>> WaitRecv;
+
+        /* Timers */
         public Timer cst;
         public int autoCStime;
 
@@ -61,16 +65,24 @@ namespace MapleCLB.MapleClient {
 
         internal long SessionId;
 
-        public bool shouldCC;
+        internal bool shouldCC;
 
-        /* Dictionaries */  
-        public Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
-        public MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
+        /* Dictionaries */
+        internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
+        internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
-        public Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
-        public Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
+        internal readonly Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
+        internal readonly Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
 
-        public Client(ClientForm form) {
+        internal Client(ClientForm form) {
+            /* Initialize Progress (For Scripts) */
+            WaitHandler = new Progress<Tuple<short, IProgress<PacketReader>>>(t => {
+                PacketHandler.RegisterHandler(t.Item1, t.Item2);
+            });
+            WaitRecv = new Progress<Tuple<short, EventWaitHandle>>(t => {
+                PacketHandler.RegisterWait(t.Item1, t.Item2);
+            });
+
             /* Initialize Form */
             CForm = form;
 
@@ -82,12 +94,9 @@ namespace MapleCLB.MapleClient {
             UpdateChannel   = form.UpdateCh;
 
             /* Initialize Client */
-            Mode = ClientMode.DISCONNECTED;
             HandshakeHandler = new Handshake(this);
             PacketHandler = new Packet(this);
 
-            ServerTimeout = 40000;
-            ChannelTimeout = 12000;
             autoCStime = 3600000;
 
             //cst = new System.Timers.Timer(autoCStime);
@@ -97,9 +106,11 @@ namespace MapleCLB.MapleClient {
             ccst.Elapsed += AutoCC;
 
             shouldCC = false;
+
+            //new SampleScript(this).Run();
         }
 
-        public void Connect() {
+        internal void Connect() {
             ConnectToggle.Report(false);
             WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
             var conn = new Connector(Program.LoginIp, Program.LoginPort);
@@ -107,9 +118,9 @@ namespace MapleCLB.MapleClient {
             conn.OnError += OnError;
 
             try {
-                conn.Connect(ServerTimeout);
+                conn.Connect(SERVER_TIMEOUT);
                 Mode = ClientMode.CONNECTED;
-            } catch (Exception) {
+            } catch {
                 WriteLog.Report("Failed to connect.");
                 if (CForm.AutoRestart.Checked) {
                     Connect(); //Start connection again
@@ -120,7 +131,7 @@ namespace MapleCLB.MapleClient {
         }
 
         // TODO: Try to reuse same session
-        public void Reconnect(string ip, short port) {
+        internal void Reconnect(string ip, short port) {
             WriteLog.Report("Reconnecting to " + ip + ":" + port);
             Session.Disconnect(false);
 
@@ -130,14 +141,18 @@ namespace MapleCLB.MapleClient {
             conn.OnError += OnError;
 
             try {
-                conn.Connect(ChannelTimeout);
-            } catch (Exception) {
+                conn.Connect(CHANNEL_TIMEOUT);
+            } catch {
                 WriteLog.Report("Bug Hunting 3");
                 Session.Disconnect();
             }
         }
 
-        public void SendPacket(byte[] packet) {
+        internal void Disconnect() {
+            Session.Disconnect();
+        }
+
+        internal void SendPacket(byte[] packet) {
             try {
                 if (CForm.IsLogSend()) {
                     byte[] copy = new byte[packet.Length];
@@ -145,25 +160,17 @@ namespace MapleCLB.MapleClient {
                     WriteSend.Report(copy);
                 }
                 Session.SendPacket(packet);
-            } catch (Exception) {
+            } catch {
                 WriteLog.Report("An error occured when attempting to send packet.");
             }
         }
 
-        /* Event Handlers */
-        void OnConnected(object o, Session s) {
-            WriteLog.Report(("Connected to server."));
-            Session = s;
-            s.OnHandshake += HandshakeHandler.Handle;
-            s.OnPacket += PacketHandler.Handle;
-            s.OnDisconnected += OnDisconnected;
+        internal void ClearStats() {
+            UpdateMapler.Report(null);
+            UpdateChannel.Report(0);
         }
 
-        void OnError(object c, SocketError e) {
-            WriteLog.Report(("Connection error code " + e));
-            ConnectToggle.Report(false);
-        }
-
+        /* Timer Handlers */
         void AutoCC(object sender, ElapsedEventArgs e) {
             if (doWhat == 1) {
                 WriteLog.Report("Changing to Ch 2");
@@ -182,12 +189,21 @@ namespace MapleCLB.MapleClient {
             // }
         }
 
-        public void ClearStats() {
-            UpdateMapler.Report(null);
-            UpdateChannel.Report(0);
+        /* Event Handlers */
+        void OnConnected(object o, Session s) {
+            WriteLog.Report(("Connected to server."));
+            Session = s;
+            s.OnHandshake += HandshakeHandler.Handle;
+            s.OnPacket += PacketHandler.Handle;
+            s.OnDisconnected += OnDisconnected;
         }
 
-        public void OnDisconnected(object o, EventArgs e) {
+        void OnError(object c, SocketError e) {
+            WriteLog.Report(("Connection error code " + e));
+            ConnectToggle.Report(false);
+        }
+
+        void OnDisconnected(object o, EventArgs e) {
             WriteLog.Report(("Disconnected from server."));
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();

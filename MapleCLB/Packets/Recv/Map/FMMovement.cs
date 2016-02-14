@@ -16,7 +16,7 @@ namespace MapleCLB.Packets.Recv.Map {
             {
                 c.WriteLog.Report("Not in FM Room 1, Disconnecting");
                 c.shouldCC = false;
-                c.Session.Disconnect();
+                c.Disconnect();
             }
         }
 
@@ -34,7 +34,7 @@ namespace MapleCLB.Packets.Recv.Map {
                 {
                     c.WriteLog.Report("Not In FM Room 1, Disconnecting");
                     c.shouldCC = false;
-                    c.Session.Disconnect();
+                    c.Disconnect();
                 }
             }
         }

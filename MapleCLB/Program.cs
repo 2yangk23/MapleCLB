@@ -20,6 +20,7 @@ namespace MapleCLB {
             0x22, 0x00, 0x00, 0x00,
             0x1F, 0x00, 0x00, 0x00
         };
+
         public static readonly AesCipher AesCipher = new AesCipher(UserKey);
         
         private static MainForm gui;

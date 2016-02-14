@@ -1,6 +1,6 @@
 ﻿namespace MapleCLB.MapleClient.Handlers {
     abstract class Handler<T> {
-        protected Client Client;// { get; private set; }
+        protected Client Client;
 
         protected Handler(Client client) {
             Client = client;

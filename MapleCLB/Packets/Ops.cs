@@ -75,6 +75,8 @@
             FINISH_LOAD = 0x0045,
             LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
             SPAWN_PLAYER = 0x01EB, //0x01D3
-            REMOVE_PLAYER = SPAWN_PLAYER + 0x01; //0x01D4
+            REMOVE_PLAYER = SPAWN_PLAYER + 0x01, //0x01D4
+
+            ALL_CHAT = 0x01ED;
     }
 }

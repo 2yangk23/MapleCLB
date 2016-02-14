@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MapleCLB.MapleLib.Packet;
+﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     class Chat {
