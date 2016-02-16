@@ -15,7 +15,7 @@ namespace MapleCLB.MapleLib.Crypto {
                                                     0x0CCAB704B, 0x07B5A8C0F, 0x0AA13B891, 0x0DE419807,
                                                     0x012FFBCAE, 0x05F5FBA34, 0x010F5AC99, 0x0B1C1DD01 };
 
-        private unsafe static void Encrypt(byte[] buffer, uint seed) {
+        private static unsafe void Encrypt(byte[] buffer, uint seed) {
             uint prev = 0;
             fixed (byte* ptr = buffer) {
                 for (int i = 0; i < buffer.Length - 3; i += 4) {
@@ -26,7 +26,7 @@ namespace MapleCLB.MapleLib.Crypto {
             }
         }
 
-        private unsafe static void Decrypt(byte[] buffer, uint seed) {
+        private static unsafe void Decrypt(byte[] buffer, uint seed) {
             uint prev = 0;
             fixed (byte* ptr = buffer) {
                 for (int i = 0; i < buffer.Length - 3; i += 4) {
@@ -54,7 +54,7 @@ namespace MapleCLB.MapleLib.Crypto {
             return pw.ToArray();
         }
 
-        public unsafe static byte[] ReadHeader(byte[] packet) {
+        public static unsafe byte[] ReadHeader(byte[] packet) {
             fixed (byte* ptr = packet) {
                 // 10 useless bytes
                 short length = (short)(*(ptr + 10) << 8 | *(ptr + 11));

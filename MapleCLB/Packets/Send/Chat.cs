@@ -37,8 +37,8 @@ namespace MapleCLB.Packets.Send {
             pw.WriteShort();//SendOps.SEND_CHAT);
             pw.WriteByte(type);
             pw.WriteByte((byte)uid.Length);
-            for (int i = 0; i < uid.Length; ++i) {
-                pw.WriteInt(uid[i]);
+            foreach (int u in uid) {
+                pw.WriteInt(u);
             }
             pw.WriteMapleString(msg);
 

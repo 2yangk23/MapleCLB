@@ -10,7 +10,7 @@ namespace MapleCLB.MapleClient.Handlers {
             Debug.WriteLine("HANDSHAKEEEEE");
             switch (Client.Mode) {
                 case ClientMode.CONNECTED:
-                    Debug.WriteLine(("Validating login for MapleStory v" + info.Version + "." + info.Subversion));
+                    Debug.WriteLine("Validating login for MapleStory v" + info.Version + "." + info.Subversion);
                     SendPacket(Login.Validate(info.Locale, info.Version, short.Parse(info.Subversion)));
                     string authCode = Auth.GetAuth(Client.User, Client.Pass);
                     Client.Mode = ClientMode.LOGIN;
@@ -36,7 +36,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     System.Threading.Thread.Sleep(2000);
                     SendPacket(General.ExitCS());
                     Client.Mode = ClientMode.GAME;
-                    Client.WriteLog.Report(("Left CS!"));
+                    Client.WriteLog.Report("Left CS!");
                     break;
             }
         }

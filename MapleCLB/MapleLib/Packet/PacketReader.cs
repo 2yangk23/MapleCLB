@@ -3,12 +3,10 @@ using System.Text;
 
 namespace MapleCLB.MapleLib.Packet {
     public class PacketReader {
-        public byte[] Buffer { get; private set; }
+        public byte[] Buffer { get; }
         public int Position { get; private set; }
 
-        public int Available {
-            get { return Buffer.Length - Position; }
-        }
+        public int Available => Buffer.Length - Position;
 
         public PacketReader(byte[] packet, int skip = 0) {
             Buffer = packet;

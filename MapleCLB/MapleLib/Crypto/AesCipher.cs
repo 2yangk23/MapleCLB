@@ -6,13 +6,15 @@ namespace MapleCLB.MapleLib.Crypto {
         private readonly ICryptoTransform Crypto;
 
         public AesCipher(byte[] aesKey) {
-            if (aesKey == null)
-                throw new ArgumentNullException("key");
+            if (aesKey == null) {
+                throw new ArgumentNullException(nameof(aesKey));
+            }
 
-            if (aesKey.Length != 32)
-                throw new ArgumentOutOfRangeException("Key length needs to be 32", "key");
+            if (aesKey.Length != 32) {
+                throw new ArgumentOutOfRangeException(nameof(aesKey), "Key length needs to be 32");
+            }
 
-            RijndaelManaged aes = new RijndaelManaged {
+            var aes = new RijndaelManaged {
                 Key = aesKey,
                 Mode = CipherMode.ECB,
                 Padding = PaddingMode.PKCS7
@@ -36,7 +38,7 @@ namespace MapleCLB.MapleLib.Crypto {
                 if (remaining < length)
                     length = remaining;
 
-                for (int index = start; index < (start + length); index++) {
+                for (int index = start; index < start + length; index++) {
                     if ((index - start) % 16 == 0)
                         Crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
 

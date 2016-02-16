@@ -22,8 +22,8 @@ namespace MapleCLB.Packets.Recv.Map {
 
         public static void shouldCC(object o) //Temp until rusher works
         {
-        var c = o as Client;
-            if (c.shouldCC == true && c.doWhat == 1)
+            var c = o as Client;
+            if (c.shouldCC && c.doWhat == 1)
             {
                 if (c.Mapler.Map == 910000001)
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.Packets.Send;
@@ -102,12 +103,17 @@ namespace MapleCLB.Forms {
                 Client.World = (byte) WorldList.SelectedIndex;
                 Client.doWhat = (byte) ModeList.SelectedIndex;
 
-                new Thread(Client.Connect) {
-                    IsBackground = true
-                }.Start();
+                Task.Factory.StartNew(() => {
+                    Client.Initialize();
+                    Client.Connect();
+                }, TaskCreationOptions.LongRunning);
             } else {
                 Client.Disconnect();
             }
+        }
+
+        private void InitTestBtn_Click(object sender, EventArgs e) {
+            Task.Factory.StartNew(Client.Initialize, TaskCreationOptions.LongRunning);
         }
 
         private void CcBtn_Click(object sender, EventArgs e) {

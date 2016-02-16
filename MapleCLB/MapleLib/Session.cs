@@ -17,7 +17,7 @@ namespace MapleCLB.MapleLib {
         public bool Connected { get; private set; }
         public bool Encrypted { get; private set; }
 
-        public SessionType SessionType { get; private set; }
+        public SessionType SessionType { get; }
 
         private MapleCipher ClientCipher;
         private MapleCipher ServerCipher;
@@ -175,7 +175,7 @@ namespace MapleCLB.MapleLib {
                 throw new InvalidOperationException("Handshake has not been received yet");
             }
             if (packet.Length < 2) {
-                throw new ArgumentOutOfRangeException("packet", @"Packet length must be greater than 2");
+                throw new ArgumentOutOfRangeException(nameof(packet), @"Packet length must be greater than 2");
             }
 
             lock (SendLock) {

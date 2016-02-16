@@ -9,9 +9,9 @@ namespace MapleCLB.Tools {
             int num1 = Convert.ToInt32('0');
             c = char.ToUpper(c);
             int numChar = Convert.ToInt32(c);
-            if (numChar >= numA && numChar < (numA + 6))
+            if (numChar >= numA && numChar < numA + 6)
                 return true;
-            if (numChar >= num1 && numChar < (num1 + 10))
+            if (numChar >= num1 && numChar < num1 + 10)
                 return true;
             return false;
         }
@@ -26,8 +26,7 @@ namespace MapleCLB.Tools {
         public static byte[] GetBytes(string hexString) {
             string newString = string.Empty;
             // remove all none A-F, 0-9, characters
-            for (int i = 0; i < hexString.Length; i++) {
-                char c = hexString[i];
+            foreach (char c in hexString) {
                 if (IsHexDigit(c))
                     newString += c;
             }
@@ -63,13 +62,13 @@ namespace MapleCLB.Tools {
         public static string ByteArrayToString(byte[] array) {
             string temp = "";
             foreach (byte bit in array) {
-                temp += string.Format("{0:X2} ", bit);
+                temp += $"{bit:X2} ";
             }
             return temp;
         }
 
         public static string ToHex(byte b) {
-            return string.Format("{0:X2}", b);
+            return $"{b:X2}";
         }
 
         public static string GetRandomHexString(int digits, string spacer = "") {
@@ -85,7 +84,7 @@ namespace MapleCLB.Tools {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards
                 {
                     if (pch[i] == '*') {
-                        pch[i] = string.Format("{0:X}", Rng.Next(16))[0];
+                        pch[i] = $"{Rng.Next(16):X}"[0];
                     }
                 }
             }

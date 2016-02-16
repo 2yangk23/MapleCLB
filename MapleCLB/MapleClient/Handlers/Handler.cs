@@ -10,6 +10,6 @@
             Client.SendPacket(packet);
         }
 
-        abstract internal void Handle(object o1, T o2);
+        internal abstract void Handle(object o1, T o2);
     }
 }

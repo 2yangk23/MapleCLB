@@ -58,7 +58,7 @@ namespace MapleCLB.MapleLib.Packet {
             EnsureCapacity(2);
             fixed (byte* ptr = Buffer) {
                 *(ptr + Position) = (byte)(value >> 8);
-                *(ptr + Position + 1) = (byte)(value);
+                *(ptr + Position + 1) = (byte)value;
                 Position += 2;
             }
         }
@@ -77,7 +77,7 @@ namespace MapleCLB.MapleLib.Packet {
                 *(ptr + Position) = (byte)(value >> 24);
                 *(ptr + Position + 1) = (byte)(value >> 16);
                 *(ptr + Position + 2) = (byte)(value >> 8);
-                *(ptr + Position + 3) = (byte)(value);
+                *(ptr + Position + 3) = (byte)value;
                 Position += 4;
             }
         }

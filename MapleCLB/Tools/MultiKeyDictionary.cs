@@ -37,7 +37,7 @@ namespace MapleCLB.Tools {
 
             try {
                 if (!BaseDictionary.ContainsKey(primaryKey))
-                    throw new KeyNotFoundException(string.Format("The base dictionary does not contain the key '{0}'", primaryKey));
+                    throw new KeyNotFoundException($"The base dictionary does not contain the key '{primaryKey}'");
 
                 if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) // Remove the old mapping first
                 {
@@ -64,11 +64,10 @@ namespace MapleCLB.Tools {
         public bool TryGetValue(TL subKey, out TV val) {
             val = default(TV);
 
-            TK primaryKey;
-
             ReaderWriterLock.EnterReadLock();
 
             try {
+                TK primaryKey;
                 if (SubDictionary.TryGetValue(subKey, out primaryKey)) {
                     return BaseDictionary.TryGetValue(primaryKey, out val);
                 }

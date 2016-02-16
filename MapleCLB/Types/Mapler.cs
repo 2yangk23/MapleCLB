@@ -88,6 +88,8 @@ namespace MapleCLB.Types {
             return m;
         }
 
+        //public bool IsDemon => Job == 3001 || Job / 100 == 31;
+
         public void Print() {
             Console.WriteLine("Id: {0}, Name: {1}, Job: {2}, Level: {3}", Id, Name, Job, Level);
             Console.WriteLine("Str[{0}] Dex[{1}] Int[{2}] Luk[{3}], {4} / {5} Hp, {6} / {7} Mp", Str, Dex, Int, Luk, Hp, MaxHp, Mp, MaxMp);

@@ -71,7 +71,7 @@ namespace MapleCLB.MapleLib.Packet {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards
                 {
                     if (pch[i] == '*') {
-                        pch[i] = string.Format("{0:X}", Rng.Value.Next(16))[0];
+                        pch[i] = $"{Rng.Value.Next(16):X}"[0];
                     }
                 }
             }

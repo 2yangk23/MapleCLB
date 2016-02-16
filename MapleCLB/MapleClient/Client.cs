@@ -6,8 +6,10 @@ using System.Threading;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
+using MapleCLB.MapleClient.Scripts;
 using MapleCLB.MapleLib;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Packets;
 using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
@@ -15,7 +17,7 @@ using MapleCLB.Types;
 using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
-    enum ClientMode : byte {
+    internal enum ClientMode : byte {
         DISCONNECTED,
         CONNECTED,
         LOGIN,
@@ -43,12 +45,12 @@ namespace MapleCLB.MapleClient {
         private readonly Packet PacketHandler;
 
         private Session Session;
+        private ScriptManager ScriptManager;
         internal ClientMode Mode;
         internal readonly int Hwid1 = Rng.Value.Next(0, int.MaxValue);
         internal readonly short Hwid2 = (short)Rng.Value.Next(0, short.MaxValue);
 
-        internal IProgress<Tuple<short, IProgress<PacketReader>>> WaitHandler;
-        internal IProgress<Tuple<short, EventWaitHandle>> WaitRecv;
+        private IProgress<byte[]> SendPacketProgress;
 
         /* Timers */
         public Timer cst;
@@ -75,14 +77,6 @@ namespace MapleCLB.MapleClient {
         internal readonly Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
 
         internal Client(ClientForm form) {
-            /* Initialize Progress (For Scripts) */
-            WaitHandler = new Progress<Tuple<short, IProgress<PacketReader>>>(t => {
-                PacketHandler.RegisterHandler(t.Item1, t.Item2);
-            });
-            WaitRecv = new Progress<Tuple<short, EventWaitHandle>>(t => {
-                PacketHandler.RegisterWait(t.Item1, t.Item2);
-            });
-
             /* Initialize Form */
             CForm = form;
 
@@ -94,6 +88,7 @@ namespace MapleCLB.MapleClient {
             UpdateChannel   = form.UpdateCh;
 
             /* Initialize Client */
+            ScriptManager = new ScriptManager(this);
             HandshakeHandler = new Handshake(this);
             PacketHandler = new Packet(this);
 
@@ -106,8 +101,15 @@ namespace MapleCLB.MapleClient {
             ccst.Elapsed += AutoCC;
 
             shouldCC = false;
+        }
 
-            //new SampleScript(this).Run();
+        // This must be called in client's thread
+        internal void Initialize() {
+            /* Initialize Progress */
+            SendPacketProgress = new Progress<byte[]>(SendBytePacket);
+
+            /* Start Scripts */
+            //ScriptManager.Get<SampleScript>().Start();
         }
 
         internal void Connect() {
@@ -152,7 +154,11 @@ namespace MapleCLB.MapleClient {
             Session.Disconnect();
         }
 
-        internal void SendPacket(byte[] packet) {
+        public void SendPacket(byte[] packet) {
+            SendPacketProgress.Report(packet);
+        }
+
+        private void SendBytePacket(byte[] packet) {
             try {
                 if (CForm.IsLogSend()) {
                     byte[] copy = new byte[packet.Length];
@@ -170,17 +176,30 @@ namespace MapleCLB.MapleClient {
             UpdateChannel.Report(0);
         }
 
+        /* Script Packet Funcs (Concurrent) */
+        internal bool AddScriptRecv(short header, IProgress<PacketReader> progress) {
+            return PacketHandler.RegisterHandler(header, progress);
+        }
+
+        internal void RemoveScriptRecv(short header) {
+            PacketHandler.UnregisterHandler(header);
+        }
+
+        internal void WaitScriptRecv(short header, AutoResetEvent handle) {
+            PacketHandler.RegisterWait(header, handle);
+        }
+
         /* Timer Handlers */
-        void AutoCC(object sender, ElapsedEventArgs e) {
+        private void AutoCC(object sender, ElapsedEventArgs e) {
             if (doWhat == 1) {
                 WriteLog.Report("Changing to Ch 2");
                 shouldCC = true;
-                SendPacket(General.ChangeChannel(0x01));
+                SendBytePacket(General.ChangeChannel(0x01));
             }
         }
 
         //AutoCS Event (Timer)
-        void AutoCS(object sender, ElapsedEventArgs e) {
+        private void AutoCS(object sender, ElapsedEventArgs e) {
             //if (Program.Gui.aCS.Checked)
             //{
             //    WriteLog.Report(("Auto CS time!"));
@@ -190,21 +209,21 @@ namespace MapleCLB.MapleClient {
         }
 
         /* Event Handlers */
-        void OnConnected(object o, Session s) {
-            WriteLog.Report(("Connected to server."));
+        private void OnConnected(object o, Session s) {
+            WriteLog.Report("Connected to server.");
             Session = s;
             s.OnHandshake += HandshakeHandler.Handle;
             s.OnPacket += PacketHandler.Handle;
             s.OnDisconnected += OnDisconnected;
         }
 
-        void OnError(object c, SocketError e) {
-            WriteLog.Report(("Connection error code " + e));
+        private void OnError(object c, SocketError e) {
+            WriteLog.Report("Connection error code " + e);
             ConnectToggle.Report(false);
         }
 
-        void OnDisconnected(object o, EventArgs e) {
-            WriteLog.Report(("Disconnected from server."));
+        private void OnDisconnected(object o, EventArgs e) {
+            WriteLog.Report("Disconnected from server.");
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
             IgnUid.Clear();

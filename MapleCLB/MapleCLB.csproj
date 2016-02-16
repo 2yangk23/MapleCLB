@@ -75,7 +75,9 @@
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
-    <Compile Include="MapleClient\Scripts\Script.cs" />
+    <Compile Include="MapleClient\ScriptManager.cs" />
+    <Compile Include="MapleClient\Scripts\ScriptLib\ComplexScript.cs" />
+    <Compile Include="MapleClient\Scripts\ScriptLib\Script.cs" />
     <Compile Include="MapleClient\Scripts\SampleScript.cs" />
     <Compile Include="MapleLib\Connector.cs" />
     <Compile Include="MapleLib\Crypto\AesCipher.cs" />
@@ -109,7 +111,7 @@
     <Compile Include="Forms\SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Tools\win32.cs" />
+    <Compile Include="Tools\Win32.cs" />
     <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />

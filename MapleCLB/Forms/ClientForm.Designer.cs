@@ -74,7 +74,8 @@
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SendSpamBtn = new MapleCLB.Tools.SplitButton();
+            this.SendSpamBtn = new SplitButton();
+            this.InitTestBtn = new System.Windows.Forms.Button();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
             this.FeatureGroup.SuspendLayout();
@@ -403,6 +404,7 @@
             // 
             // AccountTab
             // 
+            this.AccountTab.Controls.Add(this.InitTestBtn);
             this.AccountTab.Controls.Add(this.AccountGroup);
             this.AccountTab.Controls.Add(this.FeatureGroup);
             this.AccountTab.Controls.Add(this.ConnectBtn);
@@ -611,6 +613,16 @@
             this.SendSpamBtn.UseVisualStyleBackColor = true;
             this.SendSpamBtn.Click += new System.EventHandler(this.SendSpamBtn_Click);
             // 
+            // InitTestBtn
+            // 
+            this.InitTestBtn.Location = new System.Drawing.Point(532, 265);
+            this.InitTestBtn.Name = "InitTestBtn";
+            this.InitTestBtn.Size = new System.Drawing.Size(84, 35);
+            this.InitTestBtn.TabIndex = 16;
+            this.InitTestBtn.Text = "Init Test";
+            this.InitTestBtn.UseVisualStyleBackColor = true;
+            this.InitTestBtn.Click += new System.EventHandler(this.InitTestBtn_Click);
+            // 
             // ClientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -687,7 +699,7 @@
         private System.Windows.Forms.Button CsBtn;
         private System.Windows.Forms.TextBox DelayInput;
         private System.Windows.Forms.TextBox PacketInput;
-        private Tools.SplitButton SendSpamBtn;
+        private SplitButton SendSpamBtn;
         private System.Windows.Forms.ContextMenuStrip SendMenu;
         private System.Windows.Forms.ToolStripMenuItem SendMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SpamMenuItem;
@@ -695,5 +707,6 @@
         private System.Windows.Forms.Label Mesos;
         private System.Windows.Forms.Label MesoStatus;
         private Forms.PacketView PacketView;
+        private System.Windows.Forms.Button InitTestBtn;
     }
 }

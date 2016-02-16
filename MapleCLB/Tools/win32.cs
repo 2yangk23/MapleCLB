@@ -37,7 +37,7 @@ namespace MapleCLB.Tools {
         public const int EM_GETCUEBANNER = 0x1502;
 
         [DllImport("USER32.DLL", CharSet = CharSet.Auto)]
-        public static extern Int32 SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         [DllImport("USER32.DLL", EntryPoint = "PostMessage")]
         public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -48,14 +48,8 @@ namespace MapleCLB.Tools {
         [DllImport("USER32.DLL", EntryPoint = "GetCaretBlinkTime")]
         public static extern uint GetCaretBlinkTime();
 
-        const int WM_PRINTCLIENT = 0x0318;
-
-        const long PRF_CHECKVISIBLE = 0x00000001L;
-        const long PRF_NONCLIENT = 0x00000002L;
-        const long PRF_CLIENT = 0x00000004L;
-        const long PRF_ERASEBKGND = 0x00000008L;
-        const long PRF_CHILDREN = 0x00000010L;
-        const long PRF_OWNED = 0x00000020L;
+        public const long PRF_CLIENT = 0x00000004L;
+        public const long PRF_ERASEBKGND = 0x00000008L;
 
         public static bool CaptureWindow(System.Windows.Forms.Control control, ref Bitmap bitmap) {
             //This function captures the contents of a window or control

@@ -4,24 +4,28 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
-namespace MapleCLB.Tools {
+namespace MapleCLB.Forms {
     public class SplitButton : Button {
-        PushButtonState _state;
+        private PushButtonState _state;
 
-        const int SPLIT_SECTION_WIDTH = 18;
+        private const int SPLIT_SECTION_WIDTH = 18;
 
-        static int borderSize = SystemInformation.Border3DSize.Width * 2;
-        bool SkipNextOpen;
-        Rectangle DropDownRectangle;
-        bool showSplit;
+        private static readonly int BorderSize = SystemInformation.Border3DSize.Width * 2;
+        private bool SkipNextOpen;
+        private Rectangle DropDownRectangle;
+        private bool showSplit;
 
-        bool IsSplitMenuVisible;
+        private bool IsSplitMenuVisible;
 
+        private ContextMenuStrip MSplitMenuStrip;
+        private ContextMenu MSplitMenu;
 
-        ContextMenuStrip MSplitMenuStrip;
-        ContextMenu MSplitMenu;
+        private TextFormatFlags TextFormatFlags = TextFormatFlags.Default;
 
-        TextFormatFlags TextFormatFlags = TextFormatFlags.Default;
+        public sealed override bool AutoSize {
+            get { return base.AutoSize; }
+            set { base.AutoSize = value; }
+        }
 
         public SplitButton() {
             AutoSize = true;
@@ -87,13 +91,14 @@ namespace MapleCLB.Tools {
         [DefaultValue(false)]
         public bool ShowSplit {
             set {
-                if (value != showSplit) {
-                    showSplit = value;
-                    Invalidate();
+                if (value == showSplit)
+                    return;
+                
+                showSplit = value;
+                Invalidate();
 
-                    if (Parent != null)
-                        Parent.PerformLayout();
-                }
+                if (Parent != null)
+                    Parent.PerformLayout();
             }
         }
 
@@ -172,7 +177,7 @@ namespace MapleCLB.Tools {
             }
         }
 
-        bool IsMouseEntered;
+        private bool IsMouseEntered;
 
         protected override void OnMouseEnter(EventArgs e) {
             if (!showSplit) {
@@ -242,12 +247,12 @@ namespace MapleCLB.Tools {
             if (!showSplit)
                 return;
 
-            Graphics g = pevent.Graphics;
-            Rectangle bounds = ClientRectangle;
+            var g = pevent.Graphics;
+            var bounds = ClientRectangle;
 
             // draw the button background as according to the current state.
             if (State != PushButtonState.Pressed && IsDefault && !Application.RenderWithVisualStyles) {
-                Rectangle backgroundBounds = bounds;
+                var backgroundBounds = bounds;
                 backgroundBounds.Inflate(-1, -1);
                 ButtonRenderer.DrawButton(g, backgroundBounds, State);
 
@@ -260,14 +265,14 @@ namespace MapleCLB.Tools {
             // calculate the current dropdown rectangle.
             DropDownRectangle = new Rectangle(bounds.Right - SPLIT_SECTION_WIDTH, 0, SPLIT_SECTION_WIDTH, bounds.Height);
 
-            int internalBorder = borderSize;
-            Rectangle focusRect =
+            int internalBorder = BorderSize;
+            var focusRect =
                 new Rectangle(internalBorder - 1,
                               internalBorder - 1,
                               bounds.Width - DropDownRectangle.Width - internalBorder,
-                              bounds.Height - (internalBorder * 2) + 2);
+                              bounds.Height - internalBorder * 2 + 2);
 
-            bool drawSplitLine = (State == PushButtonState.Hot || State == PushButtonState.Pressed || !Application.RenderWithVisualStyles);
+            bool drawSplitLine = State == PushButtonState.Hot || State == PushButtonState.Pressed || !Application.RenderWithVisualStyles;
 
 
             if (RightToLeft == RightToLeft.Yes) {
@@ -276,14 +281,14 @@ namespace MapleCLB.Tools {
 
                 if (drawSplitLine) {
                     // draw two lines at the edge of the dropdown button
-                    g.DrawLine(SystemPens.ButtonShadow, bounds.Left + SPLIT_SECTION_WIDTH, borderSize, bounds.Left + SPLIT_SECTION_WIDTH, bounds.Bottom - borderSize);
-                    g.DrawLine(SystemPens.ButtonFace, bounds.Left + SPLIT_SECTION_WIDTH + 1, borderSize, bounds.Left + SPLIT_SECTION_WIDTH + 1, bounds.Bottom - borderSize);
+                    g.DrawLine(SystemPens.ButtonShadow, bounds.Left + SPLIT_SECTION_WIDTH, BorderSize, bounds.Left + SPLIT_SECTION_WIDTH, bounds.Bottom - BorderSize);
+                    g.DrawLine(SystemPens.ButtonFace, bounds.Left + SPLIT_SECTION_WIDTH + 1, BorderSize, bounds.Left + SPLIT_SECTION_WIDTH + 1, bounds.Bottom - BorderSize);
                 }
             } else {
                 if (drawSplitLine) {
                     // draw two lines at the edge of the dropdown button
-                    g.DrawLine(SystemPens.ButtonShadow, bounds.Right - SPLIT_SECTION_WIDTH, borderSize, bounds.Right - SPLIT_SECTION_WIDTH, bounds.Bottom - borderSize);
-                    g.DrawLine(SystemPens.ButtonFace, bounds.Right - SPLIT_SECTION_WIDTH - 1, borderSize, bounds.Right - SPLIT_SECTION_WIDTH - 1, bounds.Bottom - borderSize);
+                    g.DrawLine(SystemPens.ButtonShadow, bounds.Right - SPLIT_SECTION_WIDTH, BorderSize, bounds.Right - SPLIT_SECTION_WIDTH, bounds.Bottom - BorderSize);
+                    g.DrawLine(SystemPens.ButtonFace, bounds.Right - SPLIT_SECTION_WIDTH - 1, BorderSize, bounds.Right - SPLIT_SECTION_WIDTH - 1, bounds.Bottom - BorderSize);
                 }
             }
 
@@ -330,38 +335,36 @@ namespace MapleCLB.Tools {
         }
 
         private void PaintArrow(Graphics g, Rectangle dropDownRect) {
-            Point middle = new Point(Convert.ToInt32(dropDownRect.Left + dropDownRect.Width / 2), Convert.ToInt32(dropDownRect.Top + dropDownRect.Height / 2));
+            var middle = new Point(Convert.ToInt32(dropDownRect.Left + dropDownRect.Width / 2), Convert.ToInt32(dropDownRect.Top + dropDownRect.Height / 2));
 
             //if the width is odd - favor pushing it over one pixel right.
-            middle.X += (dropDownRect.Width % 2);
+            middle.X += dropDownRect.Width % 2;
 
-            Point[] arrow = new[] { new Point(middle.X - 2, middle.Y - 1), new Point(middle.X + 3, middle.Y - 1), new Point(middle.X, middle.Y + 2) };
+            Point[] arrow = { new Point(middle.X - 2, middle.Y - 1), new Point(middle.X + 3, middle.Y - 1), new Point(middle.X, middle.Y + 2) };
 
-            if (Enabled)
-                g.FillPolygon(SystemBrushes.ControlText, arrow);
-            else
-                g.FillPolygon(SystemBrushes.ButtonShadow, arrow);
+            g.FillPolygon(Enabled ? SystemBrushes.ControlText : SystemBrushes.ButtonShadow, arrow);
         }
 
         public override Size GetPreferredSize(Size proposedSize) {
-            Size preferredSize = base.GetPreferredSize(proposedSize);
+            var preferredSize = base.GetPreferredSize(proposedSize);
 
             //autosize correctly for splitbuttons
-            if (showSplit) {
-                if (AutoSize)
-                    return CalculateButtonAutoSize();
+            if (!showSplit)
+                return preferredSize;
 
-                if (!string.IsNullOrEmpty(Text) && TextRenderer.MeasureText(Text, Font).Width + SPLIT_SECTION_WIDTH > preferredSize.Width)
-                    return preferredSize + new Size(SPLIT_SECTION_WIDTH + borderSize * 2, 0);
-            }
+            if (AutoSize)
+                return CalculateButtonAutoSize();
+
+            if (!string.IsNullOrEmpty(Text) && TextRenderer.MeasureText(Text, Font).Width + SPLIT_SECTION_WIDTH > preferredSize.Width)
+                return preferredSize + new Size(SPLIT_SECTION_WIDTH + BorderSize * 2, 0);
 
             return preferredSize;
         }
 
         private Size CalculateButtonAutoSize() {
-            Size retSize = Size.Empty;
-            Size textSize = TextRenderer.MeasureText(Text, Font);
-            Size imageSize = Image == null ? Size.Empty : Image.Size;
+            var retSize = Size.Empty;
+            var textSize = TextRenderer.MeasureText(Text, Font);
+            var imageSize = Image == null ? Size.Empty : Image.Size;
 
             // Pad the text size
             if (Text.Length != 0) {
@@ -387,8 +390,8 @@ namespace MapleCLB.Tools {
             }
 
             // Pad the result
-            retSize.Height += (Padding.Vertical + 6);
-            retSize.Width += (Padding.Horizontal + 6);
+            retSize.Height += Padding.Vertical + 6;
+            retSize.Width += Padding.Horizontal + 6;
 
             //pad the splitButton arrow region
             if (showSplit)
@@ -404,8 +407,8 @@ namespace MapleCLB.Tools {
         //then modified to fit the context of this splitButton
 
         private void CalculateButtonTextAndImageLayout(ref Rectangle contentRect, out Rectangle textRectangle, out Rectangle imageRectangle) {
-            Size textSize = TextRenderer.MeasureText(Text, Font, contentRect.Size, TextFormatFlags);
-            Size imageSize = Image == null ? Size.Empty : Image.Size;
+            var textSize = TextRenderer.MeasureText(Text, Font, contentRect.Size, TextFormatFlags);
+            var imageSize = Image == null ? Size.Empty : Image.Size;
 
             textRectangle = Rectangle.Empty;
             imageRectangle = Rectangle.Empty;
@@ -511,8 +514,8 @@ namespace MapleCLB.Tools {
             Rectangle finalTextRect;
             Rectangle finalImageRect;
 
-            HorizontalAlignment hText = GetHorizontalAlignment(TextAlign);
-            HorizontalAlignment hImage = GetHorizontalAlignment(ImageAlign);
+            var hText = GetHorizontalAlignment(TextAlign);
+            var hImage = GetHorizontalAlignment(ImageAlign);
 
             if (hImage == HorizontalAlignment.Left)
                 offset = 0;
@@ -557,8 +560,8 @@ namespace MapleCLB.Tools {
             Rectangle finalTextRect;
             Rectangle finalImageRect;
 
-            VerticalAlignment vText = GetVerticalAlignment(TextAlign);
-            VerticalAlignment vImage = GetVerticalAlignment(ImageAlign);
+            var vText = GetVerticalAlignment(TextAlign);
+            var vImage = GetVerticalAlignment(ImageAlign);
 
             if (vImage == VerticalAlignment.Top)
                 offset = 0;
@@ -626,18 +629,40 @@ namespace MapleCLB.Tools {
             int x = 0;
             int y = 0;
 
-            if (align == System.Drawing.ContentAlignment.BottomLeft || align == System.Drawing.ContentAlignment.MiddleLeft || align == System.Drawing.ContentAlignment.TopLeft)
-                x = outer.X;
-            else if (align == System.Drawing.ContentAlignment.BottomCenter || align == System.Drawing.ContentAlignment.MiddleCenter || align == System.Drawing.ContentAlignment.TopCenter)
-                x = Math.Max(outer.X + ((outer.Width - inner.Width) / 2), outer.Left);
-            else if (align == System.Drawing.ContentAlignment.BottomRight || align == System.Drawing.ContentAlignment.MiddleRight || align == System.Drawing.ContentAlignment.TopRight)
-                x = outer.Right - inner.Width;
-            if (align == System.Drawing.ContentAlignment.TopCenter || align == System.Drawing.ContentAlignment.TopLeft || align == System.Drawing.ContentAlignment.TopRight)
-                y = outer.Y;
-            else if (align == System.Drawing.ContentAlignment.MiddleCenter || align == System.Drawing.ContentAlignment.MiddleLeft || align == System.Drawing.ContentAlignment.MiddleRight)
-                y = outer.Y + (outer.Height - inner.Height) / 2;
-            else if (align == System.Drawing.ContentAlignment.BottomCenter || align == System.Drawing.ContentAlignment.BottomRight || align == System.Drawing.ContentAlignment.BottomLeft)
-                y = outer.Bottom - inner.Height;
+            switch (align) {
+                case System.Drawing.ContentAlignment.BottomLeft:
+                case System.Drawing.ContentAlignment.MiddleLeft:
+                case System.Drawing.ContentAlignment.TopLeft:
+                    x = outer.X;
+                    break;
+                case System.Drawing.ContentAlignment.BottomCenter:
+                case System.Drawing.ContentAlignment.MiddleCenter:
+                case System.Drawing.ContentAlignment.TopCenter:
+                    x = Math.Max(outer.X + (outer.Width - inner.Width) / 2, outer.Left);
+                    break;
+                case System.Drawing.ContentAlignment.BottomRight:
+                case System.Drawing.ContentAlignment.MiddleRight:
+                case System.Drawing.ContentAlignment.TopRight:
+                    x = outer.Right - inner.Width;
+                    break;
+            }
+            switch (align) {
+                case System.Drawing.ContentAlignment.TopCenter:
+                case System.Drawing.ContentAlignment.TopLeft:
+                case System.Drawing.ContentAlignment.TopRight:
+                    y = outer.Y;
+                    break;
+                case System.Drawing.ContentAlignment.MiddleCenter:
+                case System.Drawing.ContentAlignment.MiddleLeft:
+                case System.Drawing.ContentAlignment.MiddleRight:
+                    y = outer.Y + (outer.Height - inner.Height) / 2;
+                    break;
+                case System.Drawing.ContentAlignment.BottomCenter:
+                case System.Drawing.ContentAlignment.BottomRight:
+                case System.Drawing.ContentAlignment.BottomLeft:
+                    y = outer.Bottom - inner.Height;
+                    break;
+            }
 
             return new Rectangle(x, y, Math.Min(inner.Width, outer.Width), Math.Min(inner.Height, outer.Height));
         }
@@ -662,22 +687,21 @@ namespace MapleCLB.Tools {
             }
         }
 
-        void SplitMenuStrip_Opening(object sender, CancelEventArgs e) {
+        private void SplitMenuStrip_Opening(object sender, CancelEventArgs e) {
             IsSplitMenuVisible = true;
         }
 
-        void SplitMenuStrip_Closing(object sender, ToolStripDropDownClosingEventArgs e) {
+        private void SplitMenuStrip_Closing(object sender, ToolStripDropDownClosingEventArgs e) {
             IsSplitMenuVisible = false;
 
             SetButtonDrawState();
 
             if (e.CloseReason == ToolStripDropDownCloseReason.AppClicked) {
-                SkipNextOpen = (DropDownRectangle.Contains(PointToClient(Cursor.Position))) && MouseButtons == MouseButtons.Left;
+                SkipNextOpen = DropDownRectangle.Contains(PointToClient(Cursor.Position)) && MouseButtons == MouseButtons.Left;
             }
         }
 
-
-        void SplitMenu_Popup(object sender, EventArgs e) {
+        private void SplitMenu_Popup(object sender, EventArgs e) {
             IsSplitMenuVisible = true;
         }
 

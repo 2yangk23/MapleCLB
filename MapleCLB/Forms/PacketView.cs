@@ -15,6 +15,9 @@ namespace MapleCLB.Forms {
             InitializeComponent();
             InitializeProgress();
 
+            SendTree.NodeMouseClick += (sender, args) => SendTree.SelectedNode = args.Node;
+            RecvTree.NodeMouseClick += (sender, args) => RecvTree.SelectedNode = args.Node;
+
             UsedTree = SendTree;
         }
 
