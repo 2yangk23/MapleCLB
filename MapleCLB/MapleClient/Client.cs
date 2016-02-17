@@ -69,12 +69,24 @@ namespace MapleCLB.MapleClient {
 
         internal bool shouldCC;
 
+        internal bool ShowInformation;
+
         /* Dictionaries */
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
         internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
         internal readonly Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
         internal readonly Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
+
+        internal readonly Dictionary<int, string> EquipToString;// Dictionary of ALL Data, ID -> Name
+        internal readonly Dictionary<int, string> UseToString;
+        internal readonly Dictionary<int, string> SetUpToString;
+        internal readonly Dictionary<int, string> EtcToString;
+
+        internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>(); //Dictionary of CLIENTS Data, Name -> Quantity
+        internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
+        internal readonly Dictionary<string, int> currentSetUpInventory = new Dictionary<string, int>();
+        internal readonly Dictionary<string, int> currentEtcInventory = new Dictionary<string, int>();
 
         internal Client(ClientForm form) {
             /* Initialize Form */
@@ -101,6 +113,13 @@ namespace MapleCLB.MapleClient {
             ccst.Elapsed += AutoCC;
 
             shouldCC = false;
+
+            ShowInformation = false;
+
+            EquipToString = Tools.ItemParse.Parsing_Data("Equip");
+            UseToString = Tools.ItemParse.Parsing_Data("Use");
+            SetUpToString = Tools.ItemParse.Parsing_Data("SetUp");
+            EtcToString = Tools.ItemParse.Parsing_Data("Etc");
         }
 
         // This must be called in client's thread
@@ -110,6 +129,7 @@ namespace MapleCLB.MapleClient {
 
             /* Start Scripts */
             //ScriptManager.Get<SampleScript>().Start();
+            //new SampleScript(this).Run();
         }
 
         internal void Connect() {

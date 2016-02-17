@@ -16,6 +16,8 @@ namespace MapleCLB.Forms {
         public Progress<Mapler> UpdateMapler; 
         public Progress<byte> UpdateCh;
 
+        public Information test = new Information();
+
         public ClientForm() {
             InitializeComponent();
             InitializeProgress();
@@ -41,7 +43,7 @@ namespace MapleCLB.Forms {
 
             string[] users = {"themapleblc@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com"};
 
-            UserInput.Text = users[Environment.TickCount % users.Length];
+            UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
             PassInput.Text = "maplestory";
             PicInput.Text = "777000";
             CharInput.Text = "1";
@@ -49,6 +51,10 @@ namespace MapleCLB.Forms {
             WorldList.SelectedIndex = 2;
             ChannelList.SelectedIndex = 6;
             ModeList.SelectedIndex = 0;
+
+            test.TopMost = true;
+            test.ControlBox = false;
+
         }
 
         private void InitializeProgress() {
@@ -133,18 +139,21 @@ namespace MapleCLB.Forms {
             //int Y = 0xFEB4;
             //int CRC = 0x5104F9C5;
             //int PID = 0xE005;
-
-            // C.SendPacket(HexEncoding.GetBytes("7502EFDF6B060000"));
-            //  C.SendPacket(HexEncoding.GetBytes("7502EFDF6B060000"));
             Client.SendPacket(HexEncoding.GetBytes("75 0 23D DE 77 42 00 00"));
             Client.SendPacket(HexEncoding.GetBytes("75 0 23D DE 77 42 00 00"));
-
-            // System.Threading.Thread.Sleep(1000);
             Client.SendPacket(HexEncoding.GetBytes("B9 00 01 28 C2 7A 2A 1D E0 77 42 00 00 00 00 00 75 01 15 FE 00 00 00 00 07 0C 01 00 75 01 16 FE 00 00 3C 00 00 00 00 00 00 00 06 1E 00 00 0C 02 00 75 01 5E FE 00 00 1C 02 00 00 00 00 00 00 06 F0 00 00 0C 03 00 75 01 60 FE 00 00 00 00 00 00 00 00 00 00 06 03 00 00 00 75 01 60 FE 00 00 00 00 0F 00 00 00 00 00 04 ED 00 00 11 00 00 00 00 00 00 00 00 00"));
-            //For Adventure Map //C.SendPacket(HexEncoding.GetBytes("B900019FF5D003FD9D7206000000000025FFBD0000000000070C010C020025FFCB000000F000000000000000067800000C030025FF050100001C02000000000000069600000025FF130100000000000000000000061600000025FF1301000000000E000000000004DA000011000000000000000000"));
-            //For BW first train map?
-            //C.SendPacket(HexEncoding.GetBytes("B9 00 01 C5 F9 04 51 DD 57 1E 33 00 00 00 00 00 34 F4 0E FF 00 00 00 00 06 0C 01 00 34 F4 25 FF 00 00 2C 01 00 00 00 00 00 00 06 96 00 00 00 34 F4 2C FF 00 00 00 00 00 00 00 00 00 00 06 17 00 00 00 34 F4 2C FF 00 00 00 00 28 00 00 00 00 00 04 BB 00 00 0C 02 00 34 F4 2C FF 00 00 00 00 28 00 00 00 00 00 04 96 00 00 11 00 00 00 00 00 00 00 00 00"));
             //C.SendPacket(Movement.Teleport(CRC,(short)X,(short)Y,(short)PID));
+        }
+
+        private void Information_Click(object sender, EventArgs e){
+            if (Client.ShowInformation == false) {
+                test.updateInventory(Client.currentEquipInventory, Client.currentUseInventory, Client.currentSetUpInventory, Client.currentEtcInventory);
+                test.Show();
+                Client.ShowInformation = true;}
+            else{
+                test.Clear();
+                test.Hide();
+                Client.ShowInformation = false;}
         }
 
         private void CsBtn_Click(object sender, EventArgs e) {

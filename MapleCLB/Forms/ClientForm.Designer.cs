@@ -76,6 +76,8 @@
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SendSpamBtn = new SplitButton();
             this.InitTestBtn = new System.Windows.Forms.Button();
+            this.SendSpamBtn = new MapleCLB.Forms.SplitButton();
+            this.Information = new System.Windows.Forms.Button();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
             this.FeatureGroup.SuspendLayout();
@@ -405,6 +407,7 @@
             // AccountTab
             // 
             this.AccountTab.Controls.Add(this.InitTestBtn);
+            this.AccountTab.Controls.Add(this.Information);
             this.AccountTab.Controls.Add(this.AccountGroup);
             this.AccountTab.Controls.Add(this.FeatureGroup);
             this.AccountTab.Controls.Add(this.ConnectBtn);
@@ -622,6 +625,15 @@
             this.InitTestBtn.Text = "Init Test";
             this.InitTestBtn.UseVisualStyleBackColor = true;
             this.InitTestBtn.Click += new System.EventHandler(this.InitTestBtn_Click);
+            // Information
+            // 
+            this.Information.Location = new System.Drawing.Point(451, 25);
+            this.Information.Name = "Information";
+            this.Information.Size = new System.Drawing.Size(114, 34);
+            this.Information.TabIndex = 16;
+            this.Information.Text = "Information";
+            this.Information.UseVisualStyleBackColor = true;
+            this.Information.Click += new System.EventHandler(this.Information_Click);
             // 
             // ClientForm
             // 
@@ -708,5 +720,6 @@
         private System.Windows.Forms.Label MesoStatus;
         private Forms.PacketView PacketView;
         private System.Windows.Forms.Button InitTestBtn;
+        private System.Windows.Forms.Button Information;
     }
 }

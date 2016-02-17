@@ -6,7 +6,7 @@ namespace MapleCLB.MapleLib.Packet {
         public byte[] Buffer { get; }
         public int Position { get; private set; }
 
-        public int Available => Buffer.Length - Position;
+         public int Available => Buffer.Length - Position;
 
         public PacketReader(byte[] packet, int skip = 0) {
             Buffer = packet;

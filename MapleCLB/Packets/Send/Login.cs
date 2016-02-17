@@ -55,7 +55,8 @@ namespace MapleCLB.Packets.Send {
             pw.WriteMapleString(pic);
             pw.WriteInt(uid);
             pw.WriteByte();
-            pw.WriteMapleString(Tools.HexEncoding.GetRandomHexString(6, "-")); //Blank works too! (MAC address)
+            pw.WriteHexString("11 00 37 41 2D 37 39 2D 31 39 2D 41 46 2D 41 38 2D 44 44");
+            //pw.WriteMapleString(Tools.HexEncoding.GetRandomHexString(6, "-")); //Blank works too! (MAC address)
             pw.WriteMapleString(Tools.HexEncoding.GetRandomHexString(6) + "_" + Tools.HexEncoding.GetRandomHexString(4)); //Blank works too! (HWID)
 
             return pw.ToArray();
