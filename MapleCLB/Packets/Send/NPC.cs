@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class Npc {
         public static byte[] Talk(int id, short x = 0, short y = 0) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK);
+            var pw = new PacketWriter(SendOps.NPC_TALK);
             pw.WriteInt(id);
             pw.WriteShort(x);
             pw.WriteShort(y);
@@ -13,8 +12,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] Select(int n) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK_MORE);
+            var pw = new PacketWriter(SendOps.NPC_TALK_MORE);
             pw.WriteByte(5);
             pw.WriteByte(1);
             pw.WriteInt(n);
@@ -23,8 +21,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] Yes() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK_MORE);
+            var pw = new PacketWriter(SendOps.NPC_TALK_MORE);
             pw.WriteByte(2);
             pw.WriteByte(1);
 
@@ -32,8 +29,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] No() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK_MORE);
+            var pw = new PacketWriter(SendOps.NPC_TALK_MORE);
             pw.WriteByte(2);
             pw.WriteByte();
 
@@ -41,8 +37,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] Next() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK_MORE);
+            var pw = new PacketWriter(SendOps.NPC_TALK_MORE);
             pw.WriteByte();
             pw.WriteByte(1);
 
@@ -50,8 +45,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] End() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.NPC_TALK_MORE);
+            var pw = new PacketWriter(SendOps.NPC_TALK_MORE);
             pw.WriteByte(5);
             pw.WriteByte();
 

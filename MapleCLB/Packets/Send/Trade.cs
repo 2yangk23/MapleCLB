@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class Trade {
         public static byte[] Close() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.TRADE);
+            var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(0x1C);
 
             return pw.ToArray();
@@ -21,8 +20,7 @@ namespace MapleCLB.Packets.Send {
 
         /* type: 05 = permit, 06 = mushy */
         public static byte[] CreateShop(byte type, string title, short slot, int id) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.TRADE);
+            var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(0x10);
             pw.WriteByte(type);
             pw.WriteMapleString(title);
@@ -34,8 +32,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] PutItem(byte inventory, short slot, short amount, short stacks, long price) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.TRADE);
+            var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(0x21);
             pw.WriteByte(inventory);
             pw.WriteShort(slot);
@@ -48,15 +45,14 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] OpenShop() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.TRADE);
+            var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteBytes(0x1A, 0x01);
 
             return pw.ToArray();
         }
 
         public static byte[] CloseShop() {
-            var pw = new PacketWriter();
+            var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(0x34);
 
             return pw.ToArray();

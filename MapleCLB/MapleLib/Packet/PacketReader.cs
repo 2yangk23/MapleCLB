@@ -20,6 +20,14 @@ namespace MapleCLB.MapleLib.Packet {
             }
         }
 
+        private void CheckRange(int length) {
+            int seek = Position + length;
+            if (seek > Buffer.Length || seek < 0) {
+                throw new IndexOutOfRangeException("Not enough space in packet: " + ToString() +
+                    "\n" + seek + " > " + Buffer.Length + " OR " + seek + " < 0");
+            }
+        }
+
         public byte ReadByte() {
             CheckLength(1);
             return Buffer[Position++];
@@ -41,6 +49,15 @@ namespace MapleCLB.MapleLib.Packet {
             CheckLength(2);
             fixed (byte* ptr = Buffer) {
                 short value = *(short*)(ptr + Position);
+                Position += 2;
+                return value;
+            }
+        }
+
+        public unsafe ushort ReadUShort() {
+            CheckLength(2);
+            fixed (byte* ptr = Buffer) {
+                ushort value = *(ushort*)(ptr + Position);
                 Position += 2;
                 return value;
             }
@@ -112,7 +129,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public void Skip(int count) {
-            CheckLength(count);
+            CheckRange(count);
             Position += count;
         }
 

@@ -8,11 +8,11 @@ using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.ScriptLib {
     internal abstract class ComplexScript : Script {
-        private readonly List<short> Headers;
+        private readonly List<ushort> Headers;
         private BlockingCollection<Action> Scheduler;
 
         internal ComplexScript(Client client) : base(client) {
-            Headers = new List<short>();
+            Headers = new List<ushort>();
         }
 
         internal new bool Start() {
@@ -62,7 +62,7 @@ namespace MapleCLB.ScriptLib {
         }
 
         /* Scripting Functions */
-        protected void RegisterRecv(short header, Action<PacketReader> handler) {
+        protected void RegisterRecv(ushort header, Action<PacketReader> handler) {
             Progress<PacketReader> progress = new Progress<PacketReader>(r => {
                 Scheduler.Add(() => handler(r));
             });
@@ -73,7 +73,7 @@ namespace MapleCLB.ScriptLib {
             }
         }
 
-        protected void UnregisterRecv(short header) {
+        protected void UnregisterRecv(ushort header) {
             Headers.Remove(header);
             Client.RemoveScriptRecv(header);
         }

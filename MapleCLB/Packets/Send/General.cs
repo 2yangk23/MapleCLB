@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class General {
         public static byte[] Pong() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.PONG);
+            var pw = new PacketWriter(SendOps.PONG);
             pw.Timestamp(); //Is this actually timestamp?
 
             return pw.ToArray();
@@ -12,8 +11,7 @@ namespace MapleCLB.Packets.Send {
 
 
         public static byte[] RandomChannel() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CHANGE_CHANNEL);
+            var pw = new PacketWriter(SendOps.CHANGE_CHANNEL);
             pw.WriteByte(0x03);//fix later so its acutally random :D
             pw.Timestamp();
 
@@ -21,8 +19,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] ChangeChannel(byte channel) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CHANGE_CHANNEL);
+            var pw = new PacketWriter(SendOps.CHANGE_CHANNEL);
             pw.WriteByte(channel);
             pw.Timestamp();
 
@@ -30,8 +27,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] EnterCS() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.ENTER_CASHSHOP);
+            var pw = new PacketWriter(SendOps.ENTER_CASHSHOP);
             pw.Timestamp();
             pw.WriteByte();
 
@@ -40,8 +36,7 @@ namespace MapleCLB.Packets.Send {
 
 
         public static byte[] ExitCS() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CHANGE_MAP);
+            var pw = new PacketWriter(SendOps.CHANGE_MAP);
 
             return pw.ToArray();
         }

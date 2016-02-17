@@ -19,7 +19,7 @@ namespace MapleCLB.MapleClient.Scripts {
         protected override void Execute() {
             WaitRecv(RecvOps.CHAR_INFO);
             SendPacket(Chat.All("I have arrived"));
-            WaitRecv(-1); // Wait forever
+            WaitRecv(0xFFFF); // Wait forever
         }
 
         private void Respond(PacketReader r) {
@@ -30,10 +30,16 @@ namespace MapleCLB.MapleClient.Scripts {
             byte type = r.ReadByte();
 
             string ign;
-            if (type == 0xFF && PlayerLoader.UidMap.TryGetValue(uid, out ign)) {
-                WriteLog(ign + ": " + msg);
-                SendPacket(Chat.All(msg));
+            if (type != 0xFF || !PlayerLoader.UidMap.TryGetValue(uid, out ign)) {
+                return;
             }
+            // Don't respond to self
+            if (ign.Equals(Client.Mapler.Name)) {
+                return;
+            }
+
+            WriteLog(ign + ": " + msg);
+            SendPacket(Chat.All(msg));
         }
     }
 }

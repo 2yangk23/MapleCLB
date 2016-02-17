@@ -40,7 +40,7 @@ namespace MapleCLB.Forms {
             channel.SelectedIndex   = 0;*/
             #endif
 
-            string[] users = {"themapleblc@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com"};
+            string[] users = {"themapleblc@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com", "t.h.e.mapleblc@gmail.com" };
 
             UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
             PassInput.Text = "maplestory";

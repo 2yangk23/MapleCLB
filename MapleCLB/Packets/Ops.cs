@@ -23,7 +23,7 @@
          ********************************/
 
     internal class SendOps {
-        public const short
+        public const ushort
             PONG = 0x9E,
 
             /* login */
@@ -64,7 +64,7 @@
     ********************************/
 
     internal class RecvOps {
-        public const short
+        public const ushort
             PING = 0x18,
 
             /* server */

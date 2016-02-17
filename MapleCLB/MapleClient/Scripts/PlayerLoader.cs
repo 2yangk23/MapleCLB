@@ -17,7 +17,7 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         protected override void Execute() {
-            WaitRecv(-1); // Wait forever
+            WaitRecv(0xFFFF); // Wait forever
         }
 
         /* Handlers */

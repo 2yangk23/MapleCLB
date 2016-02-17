@@ -175,7 +175,7 @@ namespace MapleCLB.MapleClient {
         }
 
         public void SendPacket(byte[] packet) {
-            SendPacketProgress.Report(packet);
+            SendPacketProgress?.Report(packet);
         }
 
         private void SendBytePacket(byte[] packet) {
@@ -197,15 +197,15 @@ namespace MapleCLB.MapleClient {
         }
 
         /* Script Packet Funcs (Concurrent) */
-        internal bool AddScriptRecv(short header, IProgress<PacketReader> progress) {
+        internal bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
             return PacketHandler.RegisterHandler(header, progress);
         }
 
-        internal void RemoveScriptRecv(short header) {
+        internal void RemoveScriptRecv(ushort header) {
             PacketHandler.UnregisterHandler(header);
         }
 
-        internal void WaitScriptRecv(short header, AutoResetEvent handle) {
+        internal void WaitScriptRecv(ushort header, AutoResetEvent handle) {
             PacketHandler.RegisterWait(header, handle);
         }
 

@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class Movement {
         public static byte[] Teleport(int crc, short x, short y, short pid) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.MOVE_PLAYER);
+            var pw = new PacketWriter(SendOps.MOVE_PLAYER);
             pw.WriteByte(Portal.Count);
             pw.WriteInt(crc);
             pw.Timestamp();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Types.Items {
@@ -34,7 +35,7 @@ namespace MapleCLB.Types.Items {
                         Id = id
                     };
                 default:
-                    throw new InvalidOperationException("Unsupported item type:" + type);
+                    throw new InvalidOperationException("Unsupported item type: " + type);
             }
         }
     }

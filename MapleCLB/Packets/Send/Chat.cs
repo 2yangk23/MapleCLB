@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class Chat {
         public static byte[] All(string msg) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.GENERAL_CHAT);
+            var pw = new PacketWriter(SendOps.GENERAL_CHAT);
             pw.Timestamp();
             pw.WriteMapleString(msg);
             pw.WriteByte();
@@ -15,8 +14,7 @@ namespace MapleCLB.Packets.Send {
         // whisper header is used for find?? function = 5 no message
         // [Func 05 (1)] [Timestamp (4)] [IGN]
         public static byte[] Whisper(string ign, string msg) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.WHISPER);
+            var pw = new PacketWriter(SendOps.WHISPER);
             pw.WriteByte(6);
             pw.Timestamp();
             pw.WriteMapleString(ign);
@@ -33,8 +31,7 @@ namespace MapleCLB.Packets.Send {
          * 06 = Expedition
          */
         public static byte[] Send(byte type, int[] uid, string msg) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.SEND_CHAT);
+            var pw = new PacketWriter(SendOps.SEND_CHAT);
             pw.WriteByte(type);
             pw.WriteByte((byte)uid.Length);
             foreach (int u in uid) {

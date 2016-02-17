@@ -26,7 +26,12 @@ namespace MapleCLB.Types.Items {
             }
 
             pr.Next(0xFF); // Skip item stats
-            pr.Skip(4); // [00 11 00 00] Unknown
+            // [00 11 00 00] Unknown
+            if (pr.ReadShort() != 0) {
+                pr.Skip(2);
+            } else {
+                pr.Skip(-2);
+            }
             // [Other Creator] [Potential (1)] [Enhancements (1)]
             pr.ReadMapleString();
             e.Potential = (Potential)pr.ReadByte();

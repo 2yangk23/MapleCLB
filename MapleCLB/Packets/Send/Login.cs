@@ -3,8 +3,7 @@
 namespace MapleCLB.Packets.Send {
     internal class Login {
         public static byte[] Validate(byte locale, short mapleversion, short subversion) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CLIENT_HELLO);
+            var pw = new PacketWriter(SendOps.CLIENT_HELLO);
             pw.WriteByte(locale);
             pw.WriteShort(mapleversion);
             pw.WriteShort(subversion);
@@ -14,15 +13,13 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] GetServers() {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.GET_SERVERS);
+            var pw = new PacketWriter(SendOps.GET_SERVERS);
 
             return pw.ToArray();
         }
 
         public static byte[] ClientLogin(string password, string auth, int hwid1, short hwid2) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CLIENT_LOGIN);
+            var pw = new PacketWriter(SendOps.CLIENT_LOGIN);
             pw.WriteMapleString(password);
             pw.WriteMapleString(auth);
             pw.WriteZero(6);
@@ -38,8 +35,7 @@ namespace MapleCLB.Packets.Send {
 
         // Select world + channel
         public static byte[] SelectServer(byte world, byte channel) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.SERVER_LOGIN);
+            var pw = new PacketWriter(SendOps.SERVER_LOGIN);
             pw.WriteByte(0x02);
             pw.WriteByte(world);
             pw.WriteByte(channel);
@@ -49,9 +45,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] SelectCharacter(int uid, string pic) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.CHAR_SELECT);
-
+            var pw = new PacketWriter(SendOps.CHAR_SELECT);
             pw.WriteMapleString(pic);
             pw.WriteInt(uid);
             pw.WriteByte();
@@ -63,8 +57,7 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] EnterServer(int worldId, int uid, long sessionId, int hwid1, short hwid2) {
-            var pw = new PacketWriter();
-            pw.WriteShort(SendOps.PLAYER_LOGGEDIN);
+            var pw = new PacketWriter(SendOps.PLAYER_LOGGEDIN);
             pw.WriteInt(worldId);
             pw.WriteInt(uid);
             pw.WriteZero(6);

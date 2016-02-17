@@ -12,9 +12,9 @@ namespace MapleCLB.MapleLib.Packet {
             Buffer = new byte[DEFAULT_SIZE];
         }
 
-        public PacketWriter(short opcode, int size = DEFAULT_SIZE) {
+        public PacketWriter(ushort opcode, int size = DEFAULT_SIZE) {
             Buffer = new byte[size];
-            WriteShort(opcode);
+            WriteUShort(opcode);
         }
 
         private void EnsureCapacity(int length) {
@@ -54,6 +54,14 @@ namespace MapleCLB.MapleLib.Packet {
             }
         }
 
+        public unsafe void WriteUShort(ushort value = 0) {
+            EnsureCapacity(2);
+            fixed (byte* ptr = Buffer) {
+                *(ushort*)(ptr + Position) = value;
+                Position += 2;
+            }
+        }
+
         public unsafe void WriteShortBigEndian(short value = 0) {
             EnsureCapacity(2);
             fixed (byte* ptr = Buffer) {
@@ -67,6 +75,14 @@ namespace MapleCLB.MapleLib.Packet {
             EnsureCapacity(4);
             fixed (byte* ptr = Buffer) {
                 *(int*)(ptr + Position) = value;
+                Position += 4;
+            }
+        }
+
+        public unsafe void WriteUInt(uint value = 0) {
+            EnsureCapacity(4);
+            fixed (byte* ptr = Buffer) {
+                *(uint*)(ptr + Position) = value;
                 Position += 4;
             }
         }

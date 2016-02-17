@@ -55,7 +55,7 @@ namespace MapleCLB.ScriptLib {
         }
 
         /* Scripting Functions */
-        protected void WaitRecv(short header) {
+        protected void WaitRecv(ushort header) {
             Client.WaitScriptRecv(header, Waiter);
             Waiter.WaitOne();
         }

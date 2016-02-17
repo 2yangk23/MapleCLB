@@ -1,4 +1,5 @@
-﻿using MapleCLB.MapleClient;
+﻿using System;
+using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
@@ -92,51 +93,52 @@ namespace MapleCLB.Packets.Recv {
                 var itemTest = Equip.Parse(pr);
                 itemTest.Slot = slot;
                 //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
+                c.WriteLog.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
             /* Equipped CS Items */
             while ((slot = pr.ReadShort()) != 0) {
                 var itemTest = Equip.Parse(pr);
                 itemTest.Slot = slot;
                 //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
+                c.WriteLog.Report("Cash Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
+            
             /* Equip Inventory */
             while ((slot = pr.ReadShort()) != 0) {
                 var itemTest = Equip.Parse(pr);
                 itemTest.Slot = slot;
                 c.currentEquipInventory[c.EquipToString[itemTest.Id]] = 1;
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
+                c.WriteLog.Report("Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
-            /* [Zero (24)] */
+            // [Zero (24)]
             pr.Skip(24);
             /* Use Inventory */
             while ((slot = pr.ReadByte()) != 0) {
                 var itemTest = Other.Parse(pr);
                 itemTest.Slot = slot;
                 c.currentUseInventory[c.UseToString[itemTest.Id]] = itemTest.Quantity;
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
+                c.WriteLog.Report("Use: " + itemTest.Id + " Item Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
             }
             /* Set-up Inventory */
             while ((slot = pr.ReadByte()) != 0) {
                 var itemTest = Other.Parse(pr);
                 itemTest.Slot = slot;
                 c.currentSetUpInventory[c.SetUpToString[itemTest.Id]] = itemTest.Quantity;
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
+                c.WriteLog.Report("Setup: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Etc Inventory */
             while ((slot = pr.ReadByte()) != 0) {
                 var itemTest = Other.Parse(pr);
                 itemTest.Slot = slot;
                 c.currentEtcInventory[c.EtcToString[itemTest.Id]] = itemTest.Quantity;
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
+                c.WriteLog.Report("Etc: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Cash Inventory */
             while ((slot = pr.ReadByte()) != 0) {
                 var itemTest = Other.Parse(pr);
                 itemTest.Slot = slot;
                 c.currentEquipInventory[c.EquipToString[itemTest.Id]] = itemTest.Quantity;
-                c.WriteLog.Report("Other: " + itemTest.Id + " Other Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
+                c.WriteLog.Report("Cash: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
 
             c.Mapler = m;

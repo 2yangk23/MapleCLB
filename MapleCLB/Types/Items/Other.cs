@@ -21,6 +21,7 @@ namespace MapleCLB.Types.Items {
 
         KARMA_USE = 0x2,
     }
+
     public class Other : Item {
         public short Quantity { get; set; }
         public Flag Flag { get; set; }
@@ -34,11 +35,22 @@ namespace MapleCLB.Types.Items {
             o.Quantity = pr.ReadShort();
             pr.ReadMapleString();
             o.Flag = (Flag) pr.ReadShort();
-            if (o.Id / 10000 == 207 || o.Id / 10000 == 287 || o.Id / 10000 == 233) {
+            if (o.IsThrowingStar || o.IsFamiliar || o.IsBullet) {
                 pr.Skip(8);
             }
 
             return o;
         }
+
+        public int IdBase => Id / 10000;
+
+        public bool IsAmmo => IsThrowingStar || IsBullet;
+        public bool IsBowArrow => Id >= 2060000 && Id < 2061000;
+        public bool IsXbowArrow => Id >= 2061000 && Id < 2062000;
+        public bool IsThrowingStar => IdBase == 207;
+        public bool IsSummonSack => IdBase == 210;
+        public bool IsBullet => IdBase == 233;
+        public bool IsMonsterCard => IdBase == 238;
+        public bool IsFamiliar => IdBase == 287;
     }
 }

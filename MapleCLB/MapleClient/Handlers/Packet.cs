@@ -10,15 +10,15 @@ using MapleCLB.Packets.Recv.Map;
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {
         /* Client Headers */
-        private readonly Dictionary<short, EventHandler<PacketReader>> HeaderMap;
+        private readonly Dictionary<ushort, EventHandler<PacketReader>> HeaderMap;
         /* Script Headers */
-        private readonly ConcurrentDictionary<short, IProgress<PacketReader>> ScriptHandler;
-        private readonly ConcurrentDictionary<short, List<AutoResetEvent>> ScriptWait;
+        private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> ScriptHandler;
+        private readonly ConcurrentDictionary<ushort, List<AutoResetEvent>> ScriptWait;
 
         internal Packet(Client client) : base(client) {
-            HeaderMap = new Dictionary<short, EventHandler<PacketReader>>();
-            ScriptWait = new ConcurrentDictionary<short, List<AutoResetEvent>>();
-            ScriptHandler = new ConcurrentDictionary<short, IProgress<PacketReader>>();
+            HeaderMap = new Dictionary<ushort, EventHandler<PacketReader>>();
+            ScriptWait = new ConcurrentDictionary<ushort, List<AutoResetEvent>>();
+            ScriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
 
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
@@ -37,7 +37,7 @@ namespace MapleCLB.MapleClient.Handlers {
         }
 
         internal override void Handle(object session, byte[] packet) {
-            short header = (short)(packet[1] << 8 | packet[0]);
+            ushort header = (ushort)(packet[1] << 8 | packet[0]);
             Client.WriteRecv.Report(packet);
 
             if (HeaderMap.ContainsKey(header)) {
@@ -54,15 +54,15 @@ namespace MapleCLB.MapleClient.Handlers {
             }
         }
 
-        internal void Register(short header, EventHandler<PacketReader> handler) {
+        internal void Register(ushort header, EventHandler<PacketReader> handler) {
             HeaderMap[header] = handler;
         }
 
-        internal void Unregister(short header) {
+        internal void Unregister(ushort header) {
             HeaderMap.Remove(header);
         }
 
-        internal bool RegisterHandler(short header, IProgress<PacketReader> progress) {
+        internal bool RegisterHandler(ushort header, IProgress<PacketReader> progress) {
             if (ScriptHandler.ContainsKey(header)) {
                 return false;
             }
@@ -70,12 +70,12 @@ namespace MapleCLB.MapleClient.Handlers {
             return true;
         }
 
-        internal void UnregisterHandler(short header) {
+        internal void UnregisterHandler(ushort header) {
             IProgress<PacketReader> trash;
             ScriptHandler.TryRemove(header, out trash);
         }
 
-        internal void RegisterWait(short header, AutoResetEvent handle) {
+        internal void RegisterWait(ushort header, AutoResetEvent handle) {
             if (!ScriptWait.ContainsKey(header)) {
                 ScriptWait[header] = new List<AutoResetEvent>(2);
             }
