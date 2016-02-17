@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Npc {
+    internal class Npc {
         public static byte[] Talk(int id, short x = 0, short y = 0) {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.NPC_TALK);

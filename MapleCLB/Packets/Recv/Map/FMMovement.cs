@@ -3,7 +3,7 @@ using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets.Send;
 
 namespace MapleCLB.Packets.Recv.Map {
-    class FMMovement {
+    internal class FMMovement {
         public static void moveFM1(object o, PacketReader r) {
             var c = o as Client;
             if (c.doWhat == 1 && c.Mapler.Map == 910000001) {//check map id toos

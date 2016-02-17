@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Trade {
+    internal class Trade {
         public static byte[] Close() {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.TRADE);

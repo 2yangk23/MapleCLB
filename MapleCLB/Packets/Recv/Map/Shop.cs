@@ -3,7 +3,7 @@ using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets.Send;
 
 namespace MapleCLB.Packets.Recv.Map {
-    class Shop {
+    internal class Shop {
         public static void SpawnMushy(object o, PacketReader r) {
             var c = o as Client;
             int uid = r.ReadInt();

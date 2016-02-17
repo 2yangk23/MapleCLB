@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Login {
+    internal class Login {
         public static byte[] Validate(byte locale, short mapleversion, short subversion) {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.CLIENT_HELLO);

@@ -9,10 +9,10 @@ using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleClient.Scripts;
 using MapleCLB.MapleLib;
 using MapleCLB.MapleLib.Packet;
-using MapleCLB.Packets;
 using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
+using MapleCLB.ScriptLib;
 using MapleCLB.Types;
 using Timer = System.Timers.Timer;
 
@@ -45,7 +45,7 @@ namespace MapleCLB.MapleClient {
         private readonly Packet PacketHandler;
 
         private Session Session;
-        private ScriptManager ScriptManager;
+        internal ScriptManager ScriptManager;
         internal ClientMode Mode;
         internal readonly int Hwid1 = Rng.Value.Next(0, int.MaxValue);
         internal readonly short Hwid2 = (short)Rng.Value.Next(0, short.MaxValue);
@@ -128,8 +128,8 @@ namespace MapleCLB.MapleClient {
             SendPacketProgress = new Progress<byte[]>(SendBytePacket);
 
             /* Start Scripts */
-            //ScriptManager.Get<SampleScript>().Start();
-            //new SampleScript(this).Run();
+            //ScriptManager.Get<PlayerLoader>().Start();
+            ScriptManager.Get<ChatBot>().Start();
         }
 
         internal void Connect() {

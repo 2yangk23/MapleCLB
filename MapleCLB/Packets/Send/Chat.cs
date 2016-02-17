@@ -1,10 +1,10 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Chat {
+    internal class Chat {
         public static byte[] All(string msg) {
             var pw = new PacketWriter();
-            pw.WriteShort();//SendOps.GENERAL_CHAT);
+            pw.WriteShort(SendOps.GENERAL_CHAT);
             pw.Timestamp();
             pw.WriteMapleString(msg);
             pw.WriteByte();
@@ -16,7 +16,7 @@ namespace MapleCLB.Packets.Send {
         // [Func 05 (1)] [Timestamp (4)] [IGN]
         public static byte[] Whisper(string ign, string msg) {
             var pw = new PacketWriter();
-            pw.WriteShort();//SendOps.WHISPER);
+            pw.WriteShort(SendOps.WHISPER);
             pw.WriteByte(6);
             pw.Timestamp();
             pw.WriteMapleString(ign);
@@ -34,7 +34,7 @@ namespace MapleCLB.Packets.Send {
          */
         public static byte[] Send(byte type, int[] uid, string msg) {
             var pw = new PacketWriter();
-            pw.WriteShort();//SendOps.SEND_CHAT);
+            pw.WriteShort(SendOps.SEND_CHAT);
             pw.WriteByte(type);
             pw.WriteByte((byte)uid.Length);
             foreach (int u in uid) {

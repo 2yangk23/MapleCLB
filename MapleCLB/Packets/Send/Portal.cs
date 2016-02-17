@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Portal {
+    internal class Portal {
         public static byte Count = 1;
 
         public static byte[] Enter(int crc, string command, short x, short y) {

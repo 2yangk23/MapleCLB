@@ -36,6 +36,10 @@
             CHANGE_MAP = 0xAA,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
             TRADE = 0x0196,
+            /* Chat */
+            GENERAL_CHAT = 0xC5,
+            WHISPER = 0x0193,
+            SEND_CHAT = 0x00,
             /* cashshop */
             ENTER_CASHSHOP = 0xAF,
             MOVE_PLAYER = 0xB9,

@@ -3,24 +3,24 @@ using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Types {
     public sealed class Mapler {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public byte Level { get; set; }
-        public short Job { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
+        public byte Level { get; private set; }
+        public short Job { get; private set; }
 
-        public short Str { get; set; }
-        public short Dex { get; set; }
-        public short Int { get; set; }
-        public short Luk { get; set; }
-        public int Hp { get; set; }
-        public int MaxHp { get; set; }
-        public int Mp { get; set; }
-        public int MaxMp { get; set; }
+        public short Str { get; private set; }
+        public short Dex { get; private set; }
+        public short Int { get; private set; }
+        public short Luk { get; private set; }
+        public int Hp { get; private set; }
+        public int MaxHp { get; private set; }
+        public int Mp { get; private set; }
+        public int MaxMp { get; private set; }
 
-        public int Ap { get; set; }
-        public long Exp { get; set; }
-        public int Fame { get; set; }
-        public int Map { get; set; }
+        public int Ap { get; private set; }
+        public long Exp { get; private set; }
+        public int Fame { get; private set; }
+        public int Map { get; private set; }
 
         public long Meso { get; set; }
 
@@ -69,9 +69,9 @@ namespace MapleCLB.Types {
             m.Map = pr.ReadInt();
 
             pr.Skip(7); // [SpawnPoint (1)] 00 00 00 00 [SubJob (2)] [(Demon, Xenon, Beast Tamer) ? FaceMark (4)]
-            if ((m.Job >= 3100 && m.Job <= 3122) || (m.Job >= 3600 && m.Job <= 3612) || m.Job == 3002 || m.Job == 3001) { // Demon/Xenon
+            if (m.IsDemon || m.IsXenon) { // Demon/Xenon
                 pr.Skip(4);
-            } else if (m.Job >= 11200 && m.Job <= 11212) { // Beast Tamer
+            } else if (m.IsBeastTamer) { // Beast Tamer
                 pr.Skip(4);
             }
 
@@ -88,7 +88,9 @@ namespace MapleCLB.Types {
             return m;
         }
 
-        //public bool IsDemon => Job == 3001 || Job / 100 == 31;
+        public bool IsDemon => Job == 3001 || Job / 100 == 31;
+        public bool IsXenon => Job == 3002 || Job / 100 == 36;
+        public bool IsBeastTamer => Job == 11000 || Job / 100 == 112;
 
         public void Print() {
             Console.WriteLine("Id: {0}, Name: {1}, Job: {2}, Level: {3}", Id, Name, Job, Level);

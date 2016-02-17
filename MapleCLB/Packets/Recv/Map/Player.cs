@@ -2,7 +2,7 @@
 using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv.Map {
-    class Player {
+    internal class Player {
         public static void SpawnPlayer(object o, PacketReader r) {
             var c = o as Client;
             int uid = r.ReadInt();

@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class Movement {
+    internal class Movement {
         public static byte[] Teleport(int crc, short x, short y, short pid) {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.MOVE_PLAYER);

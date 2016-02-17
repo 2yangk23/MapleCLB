@@ -1,7 +1,7 @@
 ﻿using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
-    class General {
+    internal class General {
         public static byte[] Pong() {
             var pw = new PacketWriter();
             pw.WriteShort(SendOps.PONG);

@@ -4,7 +4,7 @@ using MapleCLB.Types;
 using MapleCLB.Types.Items;
 
 namespace MapleCLB.Packets.Recv {
-    class Load {
+    internal class Load {
         //[Header (2)] 00 [Char count (1)] [UID (4)] [IGN (13)] ...
         public static void Charlist(Client c, PacketReader pr) {
             pr.Skip(1);

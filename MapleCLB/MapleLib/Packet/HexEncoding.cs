@@ -57,7 +57,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public static string RandomHexString(int length, string spacer = "") {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(ToHex((byte)Rng.Value.Next(0xFF)));
             for (int i = 0; i < length - 1; i++) {
                 sb.Append(spacer);

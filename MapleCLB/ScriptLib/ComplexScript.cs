@@ -3,9 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 
-namespace MapleCLB.MapleClient.Scripts.ScriptLib {
+namespace MapleCLB.ScriptLib {
     internal abstract class ComplexScript : Script {
         private readonly List<short> Headers;
         private BlockingCollection<Action> Scheduler;
@@ -14,12 +15,12 @@ namespace MapleCLB.MapleClient.Scripts.ScriptLib {
             Headers = new List<short>();
         }
 
-        internal new void Start() {
-            ScriptTask = Task.Run(() => Run());
+        internal new bool Start() {
+            return Start(Run);
         }
 
         /* Script Managing Functions */
-        private new void Run() {
+        private void Run() {
             Scheduler = new BlockingCollection<Action>();
             CancellationTokenSource source = null;
             try {
@@ -29,11 +30,13 @@ namespace MapleCLB.MapleClient.Scripts.ScriptLib {
                 Task.Run(() => StartHandler(source.Token), source.Token);
                 // Execute script body
                 Execute();
-            } catch (InvalidOperationException) {
+            } catch (InvalidOperationException ex) {
                 WriteLog("Error running script. Terminated.");
+                Console.WriteLine(ex.ToString());
             }
             // Clean-up script
             Release(source);
+            Running = false;
         }
 
         // TODO: Find better way to clear Scheduler

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using MapleCLB.MapleClient.Scripts.ScriptLib;
+using MapleCLB.MapleClient;
 
-namespace MapleCLB.MapleClient {
+namespace MapleCLB.ScriptLib {
     internal class ScriptManager {
         private readonly ConcurrentDictionary<Type, Lazy<Script>> Scripts = new ConcurrentDictionary<Type, Lazy<Script>>();
         private readonly Client Client;

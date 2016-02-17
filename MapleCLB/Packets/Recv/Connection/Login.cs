@@ -4,7 +4,7 @@ using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv.Connection {
-    class Login {
+    internal class Login {
         public static void LoginSecond(object o, PacketReader r) {
             var c = o as Client;
             switch (r.ReadByte()) {

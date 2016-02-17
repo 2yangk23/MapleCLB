@@ -2,7 +2,7 @@
 using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv.Connection {
-    class PortIp {
+    internal class PortIp {
         public static void ServerIp(object o, PacketReader r) {
             var c = o as Client;
             r.ReadShort();
