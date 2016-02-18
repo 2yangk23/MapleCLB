@@ -26,8 +26,8 @@ namespace MapleCLB.Types.Items {
         public short Quantity { get; set; }
         public Flag Flag { get; set; }
 
-        public new static Other Parse(PacketReader pr) {
-            var o = Item.Parse(pr) as Other;
+        public new static Other Parse(PacketReader pr, byte temp) {
+            var o = Item.Parse(pr,temp) as Other;
             if (o == null) {
                 throw new InvalidCastException("Error casting item-type Other.");
             }

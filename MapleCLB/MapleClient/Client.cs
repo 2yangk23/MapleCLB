@@ -82,6 +82,7 @@ namespace MapleCLB.MapleClient {
         internal readonly Dictionary<int, string> UseToString;
         internal readonly Dictionary<int, string> SetUpToString;
         internal readonly Dictionary<int, string> EtcToString;
+        internal readonly Dictionary<int, string> CashToString;
 
         internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>(); //Dictionary of CLIENTS Data, Name -> Quantity
         internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
@@ -116,10 +117,12 @@ namespace MapleCLB.MapleClient {
 
             ShowInformation = false;
 
+
             EquipToString = Tools.ItemParse.Parsing_Data("Equip");
             UseToString = Tools.ItemParse.Parsing_Data("Use");
             SetUpToString = Tools.ItemParse.Parsing_Data("SetUp");
             EtcToString = Tools.ItemParse.Parsing_Data("Etc");
+            CashToString = Tools.ItemParse.Parsing_Data("Cash");
         }
 
         // This must be called in client's thread

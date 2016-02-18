@@ -79,6 +79,18 @@ namespace MapleCLB.Tools {
             return toreturn;
         }
 
+        public static string MacAddress(int uid){
+            string toreturn = string.Empty;
+            int hash = uid.GetHashCode();
+            string temp = hash.ToString("X8");
+            toreturn = temp + temp + temp;
+            for (int i = 4; i <= 28; i = i + 6){
+                toreturn = toreturn.Insert(i, "2D");
+            }
+            toreturn = toreturn.Insert(0, "1100");
+            return toreturn;
+        }
+
         public static unsafe string FillRandom(string packet) {
             fixed (char* pch = packet) {
                 for (int i = 0; i < packet.Length; i++) //randomizes wildcards

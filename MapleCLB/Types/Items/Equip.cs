@@ -19,8 +19,8 @@ namespace MapleCLB.Types.Items {
         public byte Enhancements { get; set; }
         // TODO: Add all the stats :D
 
-        public new static Equip Parse(PacketReader pr) {
-            var e =  Item.Parse(pr) as Equip;
+        public new static Equip Parse(PacketReader pr, byte temp) {
+            var e =  Item.Parse(pr, temp) as Equip;
             if (e == null) {
                 throw new InvalidCastException("Error casting item-type Equip.");
             }

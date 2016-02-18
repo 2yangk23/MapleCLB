@@ -138,6 +138,7 @@
     <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
+    <Compile Include="Types\Items\Pet.cs" />
     <Compile Include="Types\Items\Equip.cs" />
     <Compile Include="Types\Items\Item.cs" />
     <Compile Include="Types\Items\Other.cs" />

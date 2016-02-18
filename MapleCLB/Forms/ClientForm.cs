@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
@@ -80,7 +81,7 @@ namespace MapleCLB.Forms {
                     NameStat.Text = m.Name;
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
-                    MesoStatus.Text = m.Meso.ToString();
+                    MesoStatus.Text = m.Meso.ToString("N0");
                 } else {
                     NameStat.Text = "Unknown";
                     MapStat.Text = "-1";
