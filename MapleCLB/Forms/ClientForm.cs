@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
@@ -99,18 +98,20 @@ namespace MapleCLB.Forms {
         /* Temporary stuff*/
         private void ConnectBtn_Click(object sender, EventArgs e) {
             if (ConnectBtn.Text.Equals("Connect")) {
-                Client.User = UserInput.Text;
-                Client.Pass = PassInput.Text;
-                Client.Pic = PicInput.Text;
-                Client.Selection = CharInput.Text;
+                var account = new Account {
+                    Username    = UserInput.Text,
+                    Password    = PassInput.Text,
+                    Pic         = PicInput.Text,
+                    Select      = CharInput.Text,
+                    Mode        = (SelectMode) SelectList.SelectedIndex,
+                    Channel     = (byte) ChannelList.SelectedIndex,
+                    World       = (byte) WorldList.SelectedIndex
+                };
 
-                Client.Select = (byte) SelectList.SelectedIndex;
-                Client.Channel = (byte) ChannelList.SelectedIndex;
-                Client.World = (byte) WorldList.SelectedIndex;
                 Client.doWhat = (byte) ModeList.SelectedIndex;
 
                 Task.Factory.StartNew(() => {
-                    Client.Initialize();
+                    Client.Initialize(account);
                     Client.Connect();
                 }, TaskCreationOptions.LongRunning);
             } else {
@@ -119,7 +120,7 @@ namespace MapleCLB.Forms {
         }
 
         private void InitTestBtn_Click(object sender, EventArgs e) {
-            Task.Factory.StartNew(Client.Initialize, TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(a => Client.Initialize(null), TaskCreationOptions.LongRunning);
         }
 
         private void CcBtn_Click(object sender, EventArgs e) {
@@ -139,9 +140,9 @@ namespace MapleCLB.Forms {
             //int Y = 0xFEB4;
             //int CRC = 0x5104F9C5;
             //int PID = 0xE005;
-            Client.SendPacket(HexEncoding.GetBytes("75 0 23D DE 77 42 00 00"));
-            Client.SendPacket(HexEncoding.GetBytes("75 0 23D DE 77 42 00 00"));
-            Client.SendPacket(HexEncoding.GetBytes("B9 00 01 28 C2 7A 2A 1D E0 77 42 00 00 00 00 00 75 01 15 FE 00 00 00 00 07 0C 01 00 75 01 16 FE 00 00 3C 00 00 00 00 00 00 00 06 1E 00 00 0C 02 00 75 01 5E FE 00 00 1C 02 00 00 00 00 00 00 06 F0 00 00 0C 03 00 75 01 60 FE 00 00 00 00 00 00 00 00 00 00 06 03 00 00 00 75 01 60 FE 00 00 00 00 0F 00 00 00 00 00 04 ED 00 00 11 00 00 00 00 00 00 00 00 00"));
+            Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
+            Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
+            Client.SendPacket(HexEncoding.ToByteArray("B9 00 01 28 C2 7A 2A 1D E0 77 42 00 00 00 00 00 75 01 15 FE 00 00 00 00 07 0C 01 00 75 01 16 FE 00 00 3C 00 00 00 00 00 00 00 06 1E 00 00 0C 02 00 75 01 5E FE 00 00 1C 02 00 00 00 00 00 00 06 F0 00 00 0C 03 00 75 01 60 FE 00 00 00 00 00 00 00 00 00 00 06 03 00 00 00 75 01 60 FE 00 00 00 00 0F 00 00 00 00 00 04 ED 00 00 11 00 00 00 00 00 00 00 00 00"));
             //C.SendPacket(Movement.Teleport(CRC,(short)X,(short)Y,(short)PID));
         }
 
@@ -166,7 +167,7 @@ namespace MapleCLB.Forms {
         private void SendSpamBtn_Click(object sender, EventArgs e) {
             if (PacketInput.Text.Length == 0) return;
 
-            Client.SendPacket(HexEncoding.GetBytes(PacketInput.Text));
+            Client.SendPacket(HexEncoding.ToByteArray(PacketInput.Text));
             /*if (!sMenuSpam.Checked) {
                 C.SendPacket(sendPacket.Text);
             } else {

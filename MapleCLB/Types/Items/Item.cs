@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Types.Items {

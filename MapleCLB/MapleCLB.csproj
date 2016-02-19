@@ -97,6 +97,8 @@
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
+    <Compile Include="MapleClient\Scripts\IgnBot.cs" />
+    <Compile Include="Tools\Blocking.cs" />
     <Compile Include="ScriptLib\ScriptManager.cs" />
     <Compile Include="ScriptLib\ComplexScript.cs" />
     <Compile Include="ScriptLib\Script.cs" />
@@ -105,7 +107,7 @@
     <Compile Include="MapleLib\Crypto\AesCipher.cs" />
     <Compile Include="MapleLib\Crypto\AuthCipher.cs" />
     <Compile Include="MapleLib\Crypto\MapleCipher.cs" />
-    <Compile Include="MapleLib\Packet\HexEncoding.cs" />
+    <Compile Include="Tools\HexEncoding.cs" />
     <Compile Include="MapleLib\Packet\PacketReader.cs" />
     <Compile Include="MapleLib\Packet\PacketWriter.cs" />
     <Compile Include="MapleLib\ServerInfo.cs" />
@@ -130,7 +132,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\ItemParse.cs" />
     <Compile Include="Tools\MultiKeyDictionary.cs" />
-    <Compile Include="Tools\HexEncoding.cs" />
     <Compile Include="Forms\SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -138,6 +139,7 @@
     <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
+    <Compile Include="Types\Account.cs" />
     <Compile Include="Types\Items\Pet.cs" />
     <Compile Include="Types\Items\Equip.cs" />
     <Compile Include="Types\Items\Item.cs" />

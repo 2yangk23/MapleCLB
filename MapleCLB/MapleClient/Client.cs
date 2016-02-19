@@ -6,7 +6,6 @@ using System.Threading;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
-using MapleCLB.MapleClient.Scripts;
 using MapleCLB.MapleLib;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Tools;
@@ -26,8 +25,7 @@ namespace MapleCLB.MapleClient {
     }
 
     public class Client {
-        private static int seed = Environment.TickCount;
-        private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+        
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
@@ -47,8 +45,6 @@ namespace MapleCLB.MapleClient {
         private Session Session;
         internal ScriptManager ScriptManager;
         internal ClientMode Mode;
-        internal readonly int Hwid1 = Rng.Value.Next(0, int.MaxValue);
-        internal readonly short Hwid2 = (short)Rng.Value.Next(0, short.MaxValue);
 
         private IProgress<byte[]> SendPacketProgress;
 
@@ -60,12 +56,12 @@ namespace MapleCLB.MapleClient {
         public int autoCCtime;
 
         /* User Info */
-        internal string User, Pass, Pic, Selection;
+        internal Account Account;
         internal Mapler Mapler;
-        internal int UserId; 
-        internal byte World, Channel, Select, doWhat;
-
+        internal int UserId;
         internal long SessionId;
+
+        internal byte Channel, doWhat;
 
         internal bool shouldCC;
 
@@ -126,13 +122,17 @@ namespace MapleCLB.MapleClient {
         }
 
         // This must be called in client's thread
-        internal void Initialize() {
+        internal void Initialize(Account account) {
+            Account = account;
+
             /* Initialize Progress */
             SendPacketProgress = new Progress<byte[]>(SendBytePacket);
 
             /* Start Scripts */
             //ScriptManager.Get<PlayerLoader>().Start();
-            ScriptManager.Get<ChatBot>().Start();
+            //ScriptManager.Get<ChatBot>().Start();
+            //ScriptManager.Get<IgnBot>().Start();
+
         }
 
         internal void Connect() {
@@ -183,12 +183,11 @@ namespace MapleCLB.MapleClient {
 
         private void SendBytePacket(byte[] packet) {
             try {
-                if (CForm.IsLogSend()) {
-                    byte[] copy = new byte[packet.Length];
-                    Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
-                    WriteSend.Report(copy);
-                }
-                Session.SendPacket(packet);
+                WriteSend.Report(packet);
+
+                byte[] copy = new byte[packet.Length];
+                Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
+                Session.SendPacket(copy);
             } catch {
                 WriteLog.Report("An error occured when attempting to send packet.");
             }
@@ -210,6 +209,10 @@ namespace MapleCLB.MapleClient {
 
         internal void WaitScriptRecv(ushort header, AutoResetEvent handle) {
             PacketHandler.RegisterWait(header, handle);
+        }
+
+        internal void WaitScriptRecv2(ushort header, Blocking<PacketReader> reader) {
+            PacketHandler.RegisterWait(header, reader);
         }
 
         /* Timer Handlers */

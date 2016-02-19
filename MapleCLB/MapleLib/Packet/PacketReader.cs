@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Text;
+using MapleCLB.Tools;
 
 namespace MapleCLB.MapleLib.Packet {
     public class PacketReader {
         public byte[] Buffer { get; }
         public int Position { get; private set; }
 
-         public int Available => Buffer.Length - Position;
+        public int Available => Buffer.Length - Position;
 
         public PacketReader(byte[] packet, int skip = 0) {
             Buffer = packet;
@@ -125,7 +126,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public string ReadHexString(int count) {
-            return HexEncoding.ToHexString(ReadBytes(count));
+            return HexEncoding.ToHexString(ReadBytes(count), ' ');
         }
 
         public void Skip(int count) {
@@ -145,7 +146,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public override string ToString() {
-            return HexEncoding.ToHexString(Buffer);
+            return HexEncoding.ToHexString(Buffer, ' ');
         }
     }
 }

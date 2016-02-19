@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using MapleCLB.Tools;
 
 namespace MapleCLB.MapleLib.Packet {
     public class PacketWriter {
@@ -149,7 +150,7 @@ namespace MapleCLB.MapleLib.Packet {
         }
 
         public override string ToString() {
-            return HexEncoding.ToHexString(ToArray());
+            return HexEncoding.ToHexString(ToArray(), ' ');
         }
     }
 }

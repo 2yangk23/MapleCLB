@@ -1,5 +1,4 @@
-﻿using System;
-using MapleCLB.MapleClient;
+﻿using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;

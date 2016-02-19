@@ -1,4 +1,5 @@
 ﻿using MapleCLB.MapleLib.Packet;
+using MapleCLB.Types;
 
 namespace MapleCLB.Packets.Send {
     internal class Login {
@@ -18,14 +19,14 @@ namespace MapleCLB.Packets.Send {
             return pw.ToArray();
         }
 
-        public static byte[] ClientLogin(string password, string auth, int hwid1, short hwid2) {
+        public static byte[] ClientLogin(Account account, string auth) {
             var pw = new PacketWriter(SendOps.CLIENT_LOGIN);
-            pw.WriteMapleString(password);
+            pw.WriteMapleString(account.Password);
             pw.WriteMapleString(auth);
             pw.WriteZero(6);
-            pw.WriteInt(hwid1);
+            pw.WriteInt(account.Hwid1);
             pw.WriteZero(4);
-            pw.WriteInt(hwid2);
+            pw.WriteInt(account.Hwid2);
             pw.WriteZero(2);
             pw.WriteByte(2);
             pw.WriteZero(6);
@@ -44,27 +45,27 @@ namespace MapleCLB.Packets.Send {
             return pw.ToArray();
         }
 
-        public static byte[] SelectCharacter(int uid, string pic) {
+        public static byte[] SelectCharacter(Account account, int uid) {
             var pw = new PacketWriter(SendOps.CHAR_SELECT);
-            pw.WriteMapleString(pic);
+            pw.WriteMapleString(account.Pic);
             pw.WriteInt(uid);
             pw.WriteByte();
-            //pw.WriteHexString("11 00 37 41 2D 37 39 2D 31 39 2D 41 46 2D 41 38 2D 44 44");
-            pw.WriteHexString(Tools.HexEncoding.MacAddress(uid));
-            //pw.WriteMapleString(Tools.HexEncoding.GetRandomHexString(6, "-")); //Blank works too! (MAC address)
-            pw.WriteMapleString(Tools.HexEncoding.GetRandomHexString(6) + "_" + Tools.HexEncoding.GetRandomHexString(4)); //Blank works too! (HWID)
+            pw.WriteMapleString(account.MacAddress);
+            pw.WriteMapleString(account.Hwid);
+            //pw.WriteMapleString(Tools.HexEncoding.RandomHexString(6, '-')); //Blank works too! (MAC address)
+            //pw.WriteMapleString(Tools.HexEncoding.RandomHexString(6) + "_" + Tools.HexEncoding.RandomHexString(4)); //Blank works too! (HWID)
 
             return pw.ToArray();
         }
 
-        public static byte[] EnterServer(int worldId, int uid, long sessionId, int hwid1, short hwid2) {
+        public static byte[] EnterServer(Account account, int uid, long sessionId) {
             var pw = new PacketWriter(SendOps.PLAYER_LOGGEDIN);
-            pw.WriteInt(worldId);
+            pw.WriteInt(account.World);
             pw.WriteInt(uid);
             pw.WriteZero(6);
-            pw.WriteInt(hwid1);
+            pw.WriteInt(account.Hwid1);
             pw.WriteZero(4);
-            pw.WriteInt(hwid2);
+            pw.WriteInt(account.Hwid2);
             pw.WriteLong(sessionId);
 
             return pw.ToArray();

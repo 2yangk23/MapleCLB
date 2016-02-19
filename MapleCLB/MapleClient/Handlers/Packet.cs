@@ -6,6 +6,7 @@ using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Recv.Connection;
 using MapleCLB.Packets.Recv.Map;
+using MapleCLB.Tools;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {
@@ -14,11 +15,13 @@ namespace MapleCLB.MapleClient.Handlers {
         /* Script Headers */
         private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> ScriptHandler;
         private readonly ConcurrentDictionary<ushort, List<AutoResetEvent>> ScriptWait;
+        private readonly ConcurrentDictionary<ushort, List<Blocking<PacketReader>>> ScriptWait2;
 
         internal Packet(Client client) : base(client) {
             HeaderMap = new Dictionary<ushort, EventHandler<PacketReader>>();
             ScriptWait = new ConcurrentDictionary<ushort, List<AutoResetEvent>>();
             ScriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
+            ScriptWait2 = new ConcurrentDictionary<ushort, List<Blocking<PacketReader>>>();
 
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
@@ -52,6 +55,12 @@ namespace MapleCLB.MapleClient.Handlers {
                 ScriptWait.TryRemove(header, out waitList);
                 waitList.ForEach(e => e.Set());
             }
+            if (ScriptWait2.ContainsKey(header)) {
+                // Ordering is necessary to prevent race condition
+                List<Blocking<PacketReader>> waitList;
+                ScriptWait2.TryRemove(header, out waitList);
+                waitList.ForEach(r => r.Set(new PacketReader(packet, 2)));
+            }
         }
 
         internal void Register(ushort header, EventHandler<PacketReader> handler) {
@@ -80,6 +89,13 @@ namespace MapleCLB.MapleClient.Handlers {
                 ScriptWait[header] = new List<AutoResetEvent>(2);
             }
             ScriptWait[header].Add(handle);
+        }
+
+        internal void RegisterWait(ushort header, Blocking<PacketReader> reader) {
+            if (!ScriptWait2.ContainsKey(header)) {
+                ScriptWait2[header] = new List<Blocking<PacketReader>>(2);
+            }
+            ScriptWait2[header].Add(reader);
         }
     }
 }

@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Tools;
 
 namespace MapleCLB.ScriptLib {
+    [Synchronization(true)]
     internal abstract class Script {
         private readonly AutoResetEvent Waiter = new AutoResetEvent(false);
+        private readonly Blocking<PacketReader> Reader = new Blocking<PacketReader>();
         private readonly ScriptManager Manager;
 
         protected Client Client;
@@ -58,6 +62,11 @@ namespace MapleCLB.ScriptLib {
         protected void WaitRecv(ushort header) {
             Client.WaitScriptRecv(header, Waiter);
             Waiter.WaitOne();
+        }
+
+        protected PacketReader WaitRecv2(ushort header) {
+            Client.WaitScriptRecv2(header, Reader);
+            return Reader.Get();
         }
 
         protected void WriteLog(string value) {

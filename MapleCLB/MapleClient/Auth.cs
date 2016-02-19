@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using MapleCLB.MapleLib.Crypto;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient {
     internal static class Auth {
@@ -29,14 +30,14 @@ namespace MapleCLB.MapleClient {
         private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
         private static readonly ThreadLocal<byte[]> Buffer = new ThreadLocal<byte[]>(() => new byte[1024]);
 
-        public static string GetAuth(string user, string pass) {
+        public static string GetAuth(Account account) {
             string auth = string.Empty;
             for (int i = 1; i <= 3; ++i) {
                 var authSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 authSocket.Connect(AuthIps, AUTH_PORT);
                 switch (i) {
                     case 1:
-                        authSocket.Send(AuthFirst(user, pass));
+                        authSocket.Send(AuthFirst(account.Username, account.Password));
                         int length = authSocket.Receive(Buffer.Value);
                         if (length == 0) {
                             i = 4; // Skip the rest of the auths

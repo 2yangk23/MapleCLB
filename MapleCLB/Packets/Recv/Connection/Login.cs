@@ -2,6 +2,7 @@
 using System.Threading;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Types;
 
 namespace MapleCLB.Packets.Recv.Connection {
     internal class Login {
@@ -44,7 +45,7 @@ namespace MapleCLB.Packets.Recv.Connection {
                     break;
                 default:
                     c.SendPacket(Send.Login.GetServers());
-                    c.SendPacket(Send.Login.SelectServer(c.World, c.Channel));
+                    c.SendPacket(Send.Login.SelectServer(c.Account.World, c.Account.Channel));
                     return;
             }
             c.Disconnect();
@@ -57,19 +58,19 @@ namespace MapleCLB.Packets.Recv.Connection {
             Load.Charlist(c, r);
 
             try {
-                switch (c.Select) {
-                    case 0:
+                switch (c.Account.Mode) {
+                    case SelectMode.SLOT:
                         byte n;
-                        byte.TryParse(c.Selection, out n);
+                        byte.TryParse(c.Account.Select, out n);
                         c.UserId = c.CharMap[--n];
                         break;
-                    case 1:
-                        c.UserId = c.CharMap[c.Selection.ToLower()];
+                    case SelectMode.NAME:
+                        c.UserId = c.CharMap[c.Account.Select.ToLower()];
                         break;
                     default:
-                        throw new InvalidOperationException("Selection mode " + c.Select + " is not valid.");
+                        throw new InvalidOperationException("Selection mode " + c.Account.Mode + " is not valid.");
                 }
-                c.SendPacket(Send.Login.SelectCharacter(c.UserId, c.Pic));
+                c.SendPacket(Send.Login.SelectCharacter(c.Account, c.UserId));
             } catch {
                 c.WriteLog.Report("Error selecting character. Restart in 1 min...");
                 Thread.Sleep(60000);

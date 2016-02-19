@@ -1,5 +1,5 @@
 ﻿namespace MapleCLB.MapleClient.Handlers {
-    abstract class Handler<T> {
+    internal abstract class Handler<T> {
         protected Client Client;
 
         protected Handler(Client client) {
