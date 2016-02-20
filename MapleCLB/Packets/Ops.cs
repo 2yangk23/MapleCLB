@@ -40,11 +40,14 @@
             GENERAL_CHAT = 0xC5,
             WHISPER = 0x0193,
             SEND_CHAT = 0x00,
+
+            DROP_ITEM = 0xF0,
             /* cashshop */
             ENTER_CASHSHOP = 0xAF,
             MOVE_PLAYER = 0xB9,
             NPC_TALK = 0x00,
             NPC_TALK_MORE = NPC_TALK + 0x02; //why do i have this?
+
 
     }
 
@@ -77,9 +80,13 @@
             LOAD_MUSHY = 0x03AD,
             CHAR_INFO = 0x019B,
             FINISH_LOAD = 0x0045,
+
+            CLOSE_SHOP = 0x01F0,
+
             LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
             SPAWN_PLAYER = 0x01EB, //0x01D3
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01, //0x01D4
+
 
             ALL_CHAT = 0x01ED;
     }

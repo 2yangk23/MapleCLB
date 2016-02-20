@@ -40,5 +40,18 @@ namespace MapleCLB.Packets.Send {
 
             return pw.ToArray();
         }
+
+        public static byte[] DropItem(byte tab, byte slot){
+            // 01 = Equip tab, 02 = Use tab, 04 = Etc tab, 03 = SetUp Tab
+            var pw = new PacketWriter(SendOps.DROP_ITEM);
+            pw.Timestamp();
+            pw.WriteByte(tab);
+            pw.WriteByte(slot);
+            pw.WriteInt(1);
+            pw.WriteZero(1);
+            return pw.ToArray();
+        }
+
+
     }
 }

@@ -96,6 +96,7 @@
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
+    <Compile Include="MapleClient\Scripts\SpotStealerBot.cs" />
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
     <Compile Include="Tools\Blocking.cs" />

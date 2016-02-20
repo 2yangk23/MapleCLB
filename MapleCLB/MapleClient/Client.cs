@@ -14,6 +14,7 @@ using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
 using MapleCLB.Types;
 using Timer = System.Timers.Timer;
+using MapleCLB.MapleClient.Scripts;
 
 namespace MapleCLB.MapleClient {
     internal enum ClientMode : byte {
@@ -28,6 +29,8 @@ namespace MapleCLB.MapleClient {
         
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
+
+        public const int FM1CRC = 0x28C27A2A; //Temp
 
         /* UI Info */
         private readonly ClientForm CForm;
@@ -71,7 +74,7 @@ namespace MapleCLB.MapleClient {
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
         internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
-        internal readonly Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
+        //internal readonly Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
         internal readonly Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
 
         internal readonly Dictionary<int, string> EquipToString;// Dictionary of ALL Data, ID -> Name
@@ -132,6 +135,7 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<PlayerLoader>().Start();
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
+            ScriptManager.Get<SpotStealerBot>().Start();
 
         }
 
@@ -181,7 +185,7 @@ namespace MapleCLB.MapleClient {
             SendPacketProgress?.Report(packet);
         }
 
-        private void SendBytePacket(byte[] packet) {
+        public void SendBytePacket(byte[] packet) {
             try {
                 WriteSend.Report(packet);
 
@@ -252,7 +256,6 @@ namespace MapleCLB.MapleClient {
             WriteLog.Report("Disconnected from server.");
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
-            IgnUid.Clear();
             UidMovementPacket.Clear();
             ClearStats();
             //cst.Enabled = false;
