@@ -42,6 +42,9 @@
             SEND_CHAT = 0x00,
 
             DROP_ITEM = 0xF0,
+
+            BEFORE_MOVE = 0x0275,
+
             /* cashshop */
             ENTER_CASHSHOP = 0xAF,
             MOVE_PLAYER = 0xB9,
@@ -82,6 +85,7 @@
             FINISH_LOAD = 0x0045,
 
             CLOSE_SHOP = 0x01F0,
+            FINISH_LOAD_PERMIT = 0x04D2,
 
             LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
             SPAWN_PLAYER = 0x01EB, //0x01D3

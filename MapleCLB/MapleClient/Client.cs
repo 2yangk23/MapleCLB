@@ -30,8 +30,7 @@ namespace MapleCLB.MapleClient {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
-        public const int FM1CRC = 0x28C27A2A; //Temp
-
+        public const int FM1CRC = 0x2A7AC228; 
         /* UI Info */
         private readonly ClientForm CForm;
         internal readonly IProgress<bool> ConnectToggle;

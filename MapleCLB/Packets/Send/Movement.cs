@@ -2,8 +2,9 @@
 
 namespace MapleCLB.Packets.Send {
     internal class Movement {
-        public static byte[] Teleport(int crc, short x, short y, short pid) {
+        public static byte[] Teleport(int crc, short x, short y, short fh) {
             var pw = new PacketWriter(SendOps.MOVE_PLAYER);
+            short temper = -8188;
             pw.WriteByte(Portal.Count);
             pw.WriteInt(crc);
             pw.Timestamp();
@@ -14,22 +15,21 @@ namespace MapleCLB.Packets.Send {
             pw.WriteShort(1); //number of movement things  1 minimum
             pw.WriteShort(x);
             pw.WriteShort(y);
-            pw.WriteZero(10);
-            pw.WriteShort(pid);
-            pw.WriteZero(3);
-            // Technically dont need these but I keep for consistency
-            pw.WriteShort(x);
-            pw.WriteShort(y);
-            pw.WriteShort(x);
-            pw.WriteShort(y);
-            pw.WriteZero(16);
+            pw.WriteZero(4);
+            pw.WriteShort(fh); 
+            pw.WriteZero(4);
+            pw.WriteShort(temper); //Animation
+            pw.WriteZero(12);
 
             return pw.ToArray();
+        }
 
-            //CRC = 9F F5 D0 03
-            // y = 13 01
-            // X = 5C FE 
-            //PID = 03 5A
+        public static byte[] beforeTeleport(){
+            var pw = new PacketWriter(SendOps.BEFORE_MOVE);
+            pw.Timestamp();
+            pw.WriteZero(2);
+
+            return pw.ToArray();
         }
 
     }

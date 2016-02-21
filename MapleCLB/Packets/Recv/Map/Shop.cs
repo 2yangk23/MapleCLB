@@ -11,11 +11,11 @@ namespace MapleCLB.Packets.Recv.Map {
             r.Skip(4);
             short x = r.ReadShort();
             short y = r.ReadShort();
-            short pid = r.ReadShort();
+            short fh = r.ReadShort();
             string ign = r.ReadMapleString();
 
             c.UidMap[uid] = ign; 
-            c.UidMovementPacket[uid] = Movement.Teleport(Client.FM1CRC, x, y, pid);
+            c.UidMovementPacket[uid] = Movement.Teleport(Client.FM1CRC, x, y, fh);
 
             c.WriteLog.Report("Added : " + ign + " to UID : " + uid + " @ " + x + " " + y);
         }

@@ -33,7 +33,7 @@ namespace MapleCLB.Packets.Send {
 
         public static byte[] PutItem(byte inventory, short slot, short amount, short stacks, long price) {
             var pw = new PacketWriter(SendOps.TRADE);
-            pw.WriteByte(0x21);
+            pw.WriteByte(0x41); //This Might change?
             pw.WriteByte(inventory);
             pw.WriteShort(slot);
             pw.WriteShort(amount);

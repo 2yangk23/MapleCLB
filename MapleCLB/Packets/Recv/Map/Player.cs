@@ -53,7 +53,6 @@ namespace MapleCLB.Packets.Recv.Map {
             bool notfound = true;
             int count = 0;
             while (notfound && count !=5){
-                //if (r.ReadByte() == 0xFF && r.ReadByte() == 00 && r.ReadByte() == 00 && r.ReadByte() == 00 && r.ReadByte() == 00 && r.ReadByte() == 00)
                 if(r.ReadByte() == 0xFF){
                     r.Skip(4);
                     if (r.ReadByte() == 0 && r.ReadByte() == 0 && r.ReadByte() == 0 && r.ReadByte() == 0)
@@ -62,7 +61,6 @@ namespace MapleCLB.Packets.Recv.Map {
                         r.Next(0xFF);
                         count++;
                          }
-
                 }
                 else{
                     r.Next(0xFF);
@@ -75,12 +73,12 @@ namespace MapleCLB.Packets.Recv.Map {
             short x = r.ReadShort();
             short y = r.ReadShort();
             r.Skip(1);//Stance
-            short pid = r.ReadShort();
+            short fh = r.ReadShort(); 
 
             c.UidMap[uid] = ign;
             //To Do: Split this movement packet so players/permits and mushrooms have a different dictionary
-            c.UidMovementPacket[uid] = Movement.Teleport(Client.FM1CRC, x, y, pid);
-            c.WriteLog.Report("Added : " + ign + " to UID : " + uid + "@ "+x+", "+y+ ", PID: "+pid);
+            c.UidMovementPacket[uid] = Movement.Teleport(Client.FM1CRC, x, y, fh);
+            c.WriteLog.Report("Added : " + ign + " to UID : " + uid + "@ "+x+", "+y+ ", PID: "+ fh);
         }
 
 
