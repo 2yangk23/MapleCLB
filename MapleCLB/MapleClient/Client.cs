@@ -26,11 +26,9 @@ namespace MapleCLB.MapleClient {
     }
 
     public class Client {
-        
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
-        public const int FM1CRC = 0x2A7AC228; 
         /* UI Info */
         private readonly ClientForm CForm;
         internal readonly IProgress<bool> ConnectToggle;
@@ -47,8 +45,6 @@ namespace MapleCLB.MapleClient {
         private Session Session;
         internal ScriptManager ScriptManager;
         internal ClientMode Mode;
-
-        private IProgress<byte[]> SendPacketProgress;
 
         /* Timers */
         public Timer cst;
@@ -72,9 +68,6 @@ namespace MapleCLB.MapleClient {
         /* Dictionaries */
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
         internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
-
-        //internal readonly Dictionary<string, int> IgnUid = new Dictionary<string, int>();            //IGN -> UID
-        internal readonly Dictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
 
         internal readonly Dictionary<int, string> EquipToString;// Dictionary of ALL Data, ID -> Name
         internal readonly Dictionary<int, string> UseToString;
@@ -127,9 +120,6 @@ namespace MapleCLB.MapleClient {
         internal void Initialize(Account account) {
             Account = account;
 
-            /* Initialize Progress */
-            SendPacketProgress = new Progress<byte[]>(SendBytePacket);
-
             /* Start Scripts */
             //ScriptManager.Get<PlayerLoader>().Start();
             //ScriptManager.Get<ChatBot>().Start();
@@ -180,17 +170,24 @@ namespace MapleCLB.MapleClient {
             Session.Disconnect();
         }
 
-        public void SendPacket(byte[] packet) {
-            SendPacketProgress?.Report(packet);
+        internal void SendPacket(byte[] packet) {
+            try {
+                if (CForm.IsLogSend) {
+                    byte[] copy = new byte[packet.Length];
+                    Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
+                    WriteSend.Report(copy);
+                }
+
+                Session.SendPacket(packet);
+            } catch {
+                WriteLog.Report("An error occured when attempting to send packet.");
+            }
         }
 
-        public void SendBytePacket(byte[] packet) {
+        internal void SendPacket(PacketWriter w) {
             try {
-                WriteSend.Report(packet);
-
-                byte[] copy = new byte[packet.Length];
-                Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
-                Session.SendPacket(copy);
+                WriteSend.Report(w.GetBuffer());
+                Session.SendPacket(w.ToArray());
             } catch {
                 WriteLog.Report("An error occured when attempting to send packet.");
             }
@@ -223,7 +220,7 @@ namespace MapleCLB.MapleClient {
             if (doWhat == 1) {
                 WriteLog.Report("Changing to Ch 2");
                 shouldCC = true;
-                SendBytePacket(General.ChangeChannel(0x01));
+                SendPacket(General.ChangeChannel(0x01));
             }
         }
 
@@ -255,7 +252,6 @@ namespace MapleCLB.MapleClient {
             WriteLog.Report("Disconnected from server.");
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
-            UidMovementPacket.Clear();
             ClearStats();
             //cst.Enabled = false;
             ccst.Enabled = false;

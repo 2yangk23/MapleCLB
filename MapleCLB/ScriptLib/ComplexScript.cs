@@ -36,6 +36,7 @@ namespace MapleCLB.ScriptLib {
             }
             // Clean-up script
             Release(source);
+            Complete();
             Running = false;
         }
 

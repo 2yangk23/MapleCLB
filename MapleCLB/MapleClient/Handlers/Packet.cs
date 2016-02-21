@@ -34,7 +34,6 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.SPAWN_PLAYER, Player.SpawnPlayer);
             Register(RecvOps.REMOVE_PLAYER, Player.RemovePlayer);
 
-            Register(RecvOps.LOAD_MUSHY,  Shop.SpawnMushy);
             Register(RecvOps.CHAR_INFO, MapCheck.Check);
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
         }

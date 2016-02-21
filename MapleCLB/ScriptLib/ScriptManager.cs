@@ -16,6 +16,12 @@ namespace MapleCLB.ScriptLib {
 
             return (T) Scripts.GetOrAdd(k, 
                 t => new Lazy<Script>(() => (T) Activator.CreateInstance(t, Client))).Value;
-        } 
+        }
+
+        // This will have to do until i figure out way to use generics
+        internal void Release(Type t) {
+            Lazy<Script> trash;
+            Scripts.TryRemove(t, out trash);
+        }
     }
 }

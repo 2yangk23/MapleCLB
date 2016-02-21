@@ -39,14 +39,19 @@ namespace MapleCLB.ScriptLib {
             return true;
         }
 
+        protected void Complete() {
+            Manager.Release(GetType());
+        }
+
         protected T Requires<T>() where T : Script {
             var script = Manager.Get<T>();
             var complex = script as ComplexScript;
 
+            // Make sure script is started
             if (complex != null) {
                 complex.Start();
             } else {
-                script.Start(); // Make sure script is started
+                script.Start();
             }
 
             return script;
@@ -55,6 +60,7 @@ namespace MapleCLB.ScriptLib {
         /* Script Run */
         private void Run() {
             Execute();
+            Complete();
             Running = false;
         }
 
@@ -78,7 +84,7 @@ namespace MapleCLB.ScriptLib {
         }
 
         protected void SendPacket(PacketWriter w) {
-            Client.SendPacket(w.ToArray());
+            Client.SendPacket(w);
         }
 
         protected abstract void Execute();

@@ -81,10 +81,11 @@
             SERVER_IP = 0x0D,
             CHANNEL_IP = 0x17,
             LOAD_MUSHY = 0x03AD,
+            CLOSE_MUSHY = LOAD_MUSHY + 0x02, // This is a guess
             CHAR_INFO = 0x019B,
             FINISH_LOAD = 0x0045,
 
-            CLOSE_SHOP = 0x01F0,
+            CLOSE_PERMIT = 0x01F0,
             FINISH_LOAD_PERMIT = 0x04D2,
 
             LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 

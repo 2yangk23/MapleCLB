@@ -16,6 +16,7 @@ namespace MapleCLB.Forms {
         public Progress<byte> UpdateCh;
 
         public Information test = new Information();
+        public bool IsLogSend => PacketView.LogSend;
 
         public ClientForm() {
             InitializeComponent();
@@ -91,10 +92,6 @@ namespace MapleCLB.Forms {
             UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
         }
 
-        public bool IsLogSend() {
-            return PacketView.LogSend;
-        }
-
         /* Temporary stuff*/
         private void ConnectBtn_Click(object sender, EventArgs e) {
             if (ConnectBtn.Text.Equals("Connect")) {
@@ -120,7 +117,7 @@ namespace MapleCLB.Forms {
         }
 
         private void InitTestBtn_Click(object sender, EventArgs e) {
-            Task.Factory.StartNew(a => Client.Initialize(null), TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(() => Client.Initialize(null), TaskCreationOptions.LongRunning);
         }
 
         private void CcBtn_Click(object sender, EventArgs e) {

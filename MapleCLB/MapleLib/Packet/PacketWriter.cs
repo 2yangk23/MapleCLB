@@ -149,6 +149,12 @@ namespace MapleCLB.MapleLib.Packet {
             return copy;
         }
 
+        // Be careful when using this method
+        // If you modify the buffer, it will modify the PacketWriter
+        public byte[] GetBuffer() {
+            return Buffer;
+        }
+
         public override string ToString() {
             return HexEncoding.ToHexString(ToArray(), ' ');
         }
