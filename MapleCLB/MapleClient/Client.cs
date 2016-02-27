@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Diagnostics;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
@@ -29,6 +30,8 @@ namespace MapleCLB.MapleClient {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
+        public const int FM1_CRC = 0x2A7AC228;
+
         /* UI Info */
         private readonly ClientForm CForm;
         internal readonly IProgress<bool> ConnectToggle;
@@ -36,7 +39,13 @@ namespace MapleCLB.MapleClient {
         internal readonly IProgress<byte[]> WriteSend, WriteRecv;
 
         internal readonly IProgress<Mapler> UpdateMapler;
+        
         internal readonly IProgress<byte> UpdateChannel;
+        internal readonly IProgress<long> UpdateExp;
+        internal readonly IProgress<int> UpdateItems;
+        internal readonly IProgress<int> UpdatePeople;
+        internal readonly IProgress<String> UpdateWorking;
+
 
         /* Client Info */
         private readonly Handshake HandshakeHandler;
@@ -47,11 +56,11 @@ namespace MapleCLB.MapleClient {
         internal ClientMode Mode;
 
         /* Timers */
-        public Timer cst;
-        public int autoCStime;
-
         public Timer ccst;
         public int autoCCtime;
+
+        public Timer displayTimer;
+        public int displayTime;
 
         /* User Info */
         internal Account Account;
@@ -63,7 +72,13 @@ namespace MapleCLB.MapleClient {
 
         internal bool shouldCC;
 
-        internal bool ShowInformation;
+        internal int totalItemCount;
+        internal int totalPeopleCount;
+
+        internal bool ShowInformation = false;
+        internal bool ShowFMFunctions = false;
+
+        Stopwatch stopWatch = new Stopwatch();
 
         /* Dictionaries */
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
@@ -90,24 +105,29 @@ namespace MapleCLB.MapleClient {
             WriteRecv       = form.WriteRecv;
             UpdateMapler    = form.UpdateMapler;
             UpdateChannel   = form.UpdateCh;
+            UpdateExp       = form.UpdateExp;
+            UpdateItems     = form.UpdateItems;
+            UpdatePeople    = form.UpdatePeople;
+            UpdateWorking   = form.UpdateWorking;
 
             /* Initialize Client */
             ScriptManager = new ScriptManager(this);
             HandshakeHandler = new Handshake(this);
             PacketHandler = new Packet(this);
 
-            autoCStime = 3600000;
+            autoCCtime = 300000; //5 Minutes
+            displayTime = 60;
 
-            //cst = new System.Timers.Timer(autoCStime);
-            //cst.Elapsed += new System.Timers.ElapsedEventHandler(AutoCS);
+            totalItemCount = 0;
+            totalPeopleCount = 0;
 
-            ccst = new Timer(autoCStime);
+            ccst = new Timer(autoCCtime);
             ccst.Elapsed += AutoCC;
 
+            displayTimer = new Timer(displayTime);
+            displayTimer.Elapsed += ConnectTimer;
+
             shouldCC = false;
-
-            ShowInformation = false;
-
 
             EquipToString = Tools.ItemParse.Parsing_Data("Equip");
             UseToString = Tools.ItemParse.Parsing_Data("Use");
@@ -124,8 +144,7 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<PlayerLoader>().Start();
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
-            ScriptManager.Get<SpotStealerBot>().Start();
-
+            //ScriptManager.Get<SpotStealerBot>().Start();
         }
 
         internal void Connect() {
@@ -196,6 +215,9 @@ namespace MapleCLB.MapleClient {
         internal void ClearStats() {
             UpdateMapler.Report(null);
             UpdateChannel.Report(0);
+            stopWatch.Stop();
+            stopWatch.Reset();
+            totalPeopleCount = 0;
         }
 
         /* Script Packet Funcs (Concurrent) */
@@ -217,21 +239,20 @@ namespace MapleCLB.MapleClient {
 
         /* Timer Handlers */
         private void AutoCC(object sender, ElapsedEventArgs e) {
-            if (doWhat == 1) {
-                WriteLog.Report("Changing to Ch 2");
-                shouldCC = true;
-                SendPacket(General.ChangeChannel(0x01));
+            if (doWhat == 1){
+                WriteLog.Report("Disconnecting 5 Minute Test!");
+                Disconnect();
+                Thread.Sleep(10000);
+                Connect();
             }
         }
-
-        //AutoCS Event (Timer)
-        private void AutoCS(object sender, ElapsedEventArgs e) {
-            //if (Program.Gui.aCS.Checked)
-            //{
-            //    WriteLog.Report(("Auto CS time!"));
-            //   SendPacket(General.EnterCS());
-            //    Mode = ClientMode.CASHSHOP;
-            // }
+        private void ConnectTimer(object sender, ElapsedEventArgs e){
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}",ts.Hours, ts.Minutes, ts.Seconds);
+            UpdateWorking.Report(elapsedTime);
+        }
+        internal void StartWatch() {
+            stopWatch.Start();
         }
 
         /* Event Handlers */
@@ -253,8 +274,8 @@ namespace MapleCLB.MapleClient {
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
             ClearStats();
-            //cst.Enabled = false;
             ccst.Enabled = false;
+            displayTimer.Enabled = false;
             if (CForm.AutoRestart.Checked) {
                 Connect();  //Start connection again
             } else {

@@ -75,6 +75,12 @@
     <Compile Include="Forms\ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FreeMarketForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FreeMarketForm.Designer.cs">
+      <DependentUpon>FreeMarketForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Information.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,6 +105,7 @@
     <Compile Include="MapleClient\Scripts\SpotStealerBot.cs" />
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
+    <Compile Include="Resources\EXP.cs" />
     <Compile Include="Tools\Blocking.cs" />
     <Compile Include="ScriptLib\ScriptManager.cs" />
     <Compile Include="ScriptLib\ComplexScript.cs" />
@@ -147,6 +154,9 @@
     <Compile Include="Types\Mapler.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FreeMarketForm.resx">
+      <DependentUpon>FreeMarketForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Information.resx">
       <DependentUpon>Information.cs</DependentUpon>

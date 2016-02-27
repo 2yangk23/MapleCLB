@@ -23,6 +23,9 @@
          ********************************/
 
     internal class SendOps {
+
+        public const int FM1_CRC = 0x2A7AC228;
+
         public const ushort
             PONG = 0x9E,
 

@@ -92,6 +92,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Equip.Parse(pr, type);
                 itemTest.Slot = slot;
+                c.totalItemCount = c.totalItemCount + 1;
                 //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
                 c.WriteLog.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
@@ -101,6 +102,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Equip.Parse(pr, type);
                 itemTest.Slot = slot;
+                c.totalItemCount = c.totalItemCount + 1;
                 //c.currentEquipInventory[itemTest.Id] = 1; 
                 //c.WriteLog.Report("Cash Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
@@ -111,6 +113,7 @@ namespace MapleCLB.Packets.Recv {
                 var itemTest = Equip.Parse(pr,type);
                 itemTest.Slot = slot;
                 c.currentEquipInventory[c.EquipToString[itemTest.Id]] = 1;
+                c.totalItemCount = c.totalItemCount + 1;
                 //c.WriteLog.Report("Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
             // [Zero (24)]
@@ -121,6 +124,7 @@ namespace MapleCLB.Packets.Recv {
                 var itemTest = Other.Parse(pr,type);
                 itemTest.Slot = slot;
                 c.currentUseInventory[c.UseToString[itemTest.Id]] = itemTest.Quantity;
+                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Use: " + itemTest.Id + " Item Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
             }
             /* Set-up Inventory */
@@ -129,6 +133,7 @@ namespace MapleCLB.Packets.Recv {
                 var itemTest = Other.Parse(pr, type);
                 itemTest.Slot = slot;
                 c.currentSetUpInventory[c.SetUpToString[itemTest.Id]] = itemTest.Quantity;
+                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Setup: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Etc Inventory */
@@ -137,6 +142,7 @@ namespace MapleCLB.Packets.Recv {
                 var itemTest = Other.Parse(pr, type);
                 itemTest.Slot = slot;
                 c.currentEtcInventory[c.EtcToString[itemTest.Id]] = itemTest.Quantity;
+                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Etc: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Cash Inventory */
@@ -147,18 +153,20 @@ namespace MapleCLB.Packets.Recv {
                     var itemTest = Pet.Parse(pr, type);
                     itemTest.Slot = slot;
                     c.currentEquipInventory[c.CashToString[itemTest.Id]] = 1;
+                    c.totalItemCount = c.totalItemCount + 1;
                 }
                 else{
                     var itemTest = Other.Parse(pr, type);
                     itemTest.Slot = slot;
                     c.currentEquipInventory[c.CashToString[itemTest.Id]] = itemTest.Quantity;
-                    //c.WriteLog.Report("Cash: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
+                    c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 }
             }
 
             c.Mapler = m;
             c.Channel = (byte) (channel + 1);
 
+            c.UpdateItems.Report(c.totalItemCount);
             c.UpdateMapler.Report(m);
             c.UpdateChannel.Report(c.Channel);
         }

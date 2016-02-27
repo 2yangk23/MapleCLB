@@ -63,6 +63,7 @@ namespace MapleCLB.Packets.Send {
             pw.WriteInt(account.World);
             pw.WriteInt(uid);
             pw.WriteZero(6);
+            //pw.WriteHexString("68 05 CA 18 48 CF");
             pw.WriteInt(account.Hwid1);
             pw.WriteZero(4);
             pw.WriteInt(account.Hwid2);

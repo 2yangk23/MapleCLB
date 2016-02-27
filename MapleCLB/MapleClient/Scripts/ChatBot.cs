@@ -18,7 +18,7 @@ namespace MapleCLB.MapleClient.Scripts {
 
         protected override void Execute() {
             WaitRecv(RecvOps.CHAR_INFO);
-            SendPacket(Chat.All("I have arrived"));
+            SendPacket(Chat.All("Kelvin is gh3y"));
             WaitRecv(0xFFFF); // Wait forever
         }
 

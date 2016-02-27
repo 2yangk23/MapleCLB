@@ -242,7 +242,8 @@
             this.equipTab.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
-
+            this.TopMost = true;
+            this.ControlBox = false;
         }
 
         #endregion

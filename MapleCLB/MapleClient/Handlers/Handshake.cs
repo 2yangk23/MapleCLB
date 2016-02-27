@@ -21,6 +21,8 @@ namespace MapleCLB.MapleClient.Handlers {
 
                 case ClientMode.LOGIN:
                     Debug.WriteLine("Logged in!");
+                    Client.StartWatch();
+                    Client.displayTimer.Enabled = true;
                     Client.ccst.Enabled = true;
                     SendPacket(Login.EnterServer(Client.Account, Client.UserId, Client.SessionId));
                     Client.Mode = ClientMode.GAME;

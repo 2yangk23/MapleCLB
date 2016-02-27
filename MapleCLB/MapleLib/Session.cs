@@ -215,7 +215,6 @@ namespace MapleCLB.MapleLib {
             if (!Connected) return;
 
             Cursor = 0;
-
             Socket.Shutdown(SocketShutdown.Both);
             Socket.Disconnect(false);
             Socket.Dispose();
@@ -229,11 +228,11 @@ namespace MapleCLB.MapleLib {
             Encrypted = false;
             Connected = false;
 
+
             if (!finished) return;
 
             ClientCipher = null;
             ServerCipher = null;
-
             if (OnDisconnected != null) {
                 OnDisconnected(this,null);
             }

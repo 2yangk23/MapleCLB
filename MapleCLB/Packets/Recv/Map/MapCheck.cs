@@ -6,7 +6,6 @@ namespace MapleCLB.Packets.Recv.Map {
         public static void Check(object o, PacketReader r) {
             var c = o as Client;
             Load.CharInfo(c, r);
-            FMMovement.shouldCC(c);
         }
     }
 }

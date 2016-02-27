@@ -36,6 +36,8 @@
             this.UserInput = new System.Windows.Forms.TextBox();
             this.ConnectBtn = new System.Windows.Forms.Button();
             this.StatGroup = new System.Windows.Forms.GroupBox();
+            this.ExpStatus = new System.Windows.Forms.Label();
+            this.Exp = new System.Windows.Forms.Label();
             this.MesoStatus = new System.Windows.Forms.Label();
             this.Mesos = new System.Windows.Forms.Label();
             this.MapStat = new System.Windows.Forms.Label();
@@ -48,13 +50,15 @@
             this.NameLbl = new System.Windows.Forms.Label();
             this.AutoRestart = new System.Windows.Forms.CheckBox();
             this.FeatureGroup = new System.Windows.Forms.GroupBox();
+            this.FM_Functions = new System.Windows.Forms.Button();
+            this.Information = new System.Windows.Forms.Button();
+            this.CcBtn = new System.Windows.Forms.Button();
             this.CsBtn = new System.Windows.Forms.Button();
             this.MoveBtn = new System.Windows.Forms.Button();
-            this.CcBtn = new System.Windows.Forms.Button();
             this.Tabs = new System.Windows.Forms.TabControl();
             this.AccountTab = new System.Windows.Forms.TabPage();
+            this.InitTestBtn = new System.Windows.Forms.Button();
             this.PacketTab = new System.Windows.Forms.TabPage();
-            this.PacketView = new MapleCLB.Forms.PacketView();
             this.RushTab = new System.Windows.Forms.TabPage();
             this.RushStatusBar = new System.Windows.Forms.StatusStrip();
             this.MapStatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
@@ -74,10 +78,14 @@
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SendSpamBtn = new SplitButton();
-            this.InitTestBtn = new System.Windows.Forms.Button();
+            this.Items = new System.Windows.Forms.Label();
+            this.ItemsStatus = new System.Windows.Forms.Label();
+            this.People = new System.Windows.Forms.Label();
+            this.PeopleStatus = new System.Windows.Forms.Label();
+            this.Working = new System.Windows.Forms.Label();
+            this.WorkingStatus = new System.Windows.Forms.Label();
             this.SendSpamBtn = new MapleCLB.Forms.SplitButton();
-            this.Information = new System.Windows.Forms.Button();
+            this.PacketView = new MapleCLB.Forms.PacketView();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
             this.FeatureGroup.SuspendLayout();
@@ -233,6 +241,14 @@
             // 
             // StatGroup
             // 
+            this.StatGroup.Controls.Add(this.WorkingStatus);
+            this.StatGroup.Controls.Add(this.Working);
+            this.StatGroup.Controls.Add(this.PeopleStatus);
+            this.StatGroup.Controls.Add(this.People);
+            this.StatGroup.Controls.Add(this.ItemsStatus);
+            this.StatGroup.Controls.Add(this.Items);
+            this.StatGroup.Controls.Add(this.ExpStatus);
+            this.StatGroup.Controls.Add(this.Exp);
             this.StatGroup.Controls.Add(this.MesoStatus);
             this.StatGroup.Controls.Add(this.Mesos);
             this.StatGroup.Controls.Add(this.MapStat);
@@ -243,17 +259,35 @@
             this.StatGroup.Controls.Add(this.ChannelLbl);
             this.StatGroup.Controls.Add(this.LevelLbl);
             this.StatGroup.Controls.Add(this.NameLbl);
-            this.StatGroup.Location = new System.Drawing.Point(6, 199);
+            this.StatGroup.Location = new System.Drawing.Point(371, 6);
             this.StatGroup.Name = "StatGroup";
-            this.StatGroup.Size = new System.Drawing.Size(420, 101);
+            this.StatGroup.Size = new System.Drawing.Size(254, 253);
             this.StatGroup.TabIndex = 2;
             this.StatGroup.TabStop = false;
             this.StatGroup.Text = "Stats";
             // 
+            // ExpStatus
+            // 
+            this.ExpStatus.AutoSize = true;
+            this.ExpStatus.Location = new System.Drawing.Point(67, 112);
+            this.ExpStatus.Name = "ExpStatus";
+            this.ExpStatus.Size = new System.Drawing.Size(16, 13);
+            this.ExpStatus.TabIndex = 18;
+            this.ExpStatus.Text = "-1";
+            // 
+            // Exp
+            // 
+            this.Exp.AutoSize = true;
+            this.Exp.Location = new System.Drawing.Point(6, 112);
+            this.Exp.Name = "Exp";
+            this.Exp.Size = new System.Drawing.Size(28, 13);
+            this.Exp.TabIndex = 17;
+            this.Exp.Text = "Exp:";
+            // 
             // MesoStatus
             // 
             this.MesoStatus.AutoSize = true;
-            this.MesoStatus.Location = new System.Drawing.Point(210, 19);
+            this.MesoStatus.Location = new System.Drawing.Point(67, 94);
             this.MesoStatus.Name = "MesoStatus";
             this.MesoStatus.Size = new System.Drawing.Size(16, 13);
             this.MesoStatus.TabIndex = 16;
@@ -262,7 +296,7 @@
             // Mesos
             // 
             this.Mesos.AutoSize = true;
-            this.Mesos.Location = new System.Drawing.Point(156, 19);
+            this.Mesos.Location = new System.Drawing.Point(6, 94);
             this.Mesos.Name = "Mesos";
             this.Mesos.Size = new System.Drawing.Size(41, 13);
             this.Mesos.TabIndex = 8;
@@ -271,7 +305,7 @@
             // MapStat
             // 
             this.MapStat.AutoSize = true;
-            this.MapStat.Location = new System.Drawing.Point(64, 73);
+            this.MapStat.Location = new System.Drawing.Point(67, 76);
             this.MapStat.Name = "MapStat";
             this.MapStat.Size = new System.Drawing.Size(16, 13);
             this.MapStat.TabIndex = 7;
@@ -280,7 +314,7 @@
             // ChannelStat
             // 
             this.ChannelStat.AutoSize = true;
-            this.ChannelStat.Location = new System.Drawing.Point(64, 55);
+            this.ChannelStat.Location = new System.Drawing.Point(67, 58);
             this.ChannelStat.Name = "ChannelStat";
             this.ChannelStat.Size = new System.Drawing.Size(16, 13);
             this.ChannelStat.TabIndex = 6;
@@ -289,16 +323,16 @@
             // LevelStat
             // 
             this.LevelStat.AutoSize = true;
-            this.LevelStat.Location = new System.Drawing.Point(64, 37);
+            this.LevelStat.Location = new System.Drawing.Point(67, 40);
             this.LevelStat.Name = "LevelStat";
-            this.LevelStat.Size = new System.Drawing.Size(13, 13);
+            this.LevelStat.Size = new System.Drawing.Size(16, 13);
             this.LevelStat.TabIndex = 5;
-            this.LevelStat.Text = "0";
+            this.LevelStat.Text = "-1";
             // 
             // NameStat
             // 
             this.NameStat.AutoSize = true;
-            this.NameStat.Location = new System.Drawing.Point(64, 19);
+            this.NameStat.Location = new System.Drawing.Point(67, 22);
             this.NameStat.Name = "NameStat";
             this.NameStat.Size = new System.Drawing.Size(53, 13);
             this.NameStat.TabIndex = 4;
@@ -307,7 +341,7 @@
             // MapLbl
             // 
             this.MapLbl.AutoSize = true;
-            this.MapLbl.Location = new System.Drawing.Point(6, 73);
+            this.MapLbl.Location = new System.Drawing.Point(6, 76);
             this.MapLbl.Name = "MapLbl";
             this.MapLbl.Size = new System.Drawing.Size(31, 13);
             this.MapLbl.TabIndex = 3;
@@ -316,7 +350,7 @@
             // ChannelLbl
             // 
             this.ChannelLbl.AutoSize = true;
-            this.ChannelLbl.Location = new System.Drawing.Point(6, 55);
+            this.ChannelLbl.Location = new System.Drawing.Point(6, 58);
             this.ChannelLbl.Name = "ChannelLbl";
             this.ChannelLbl.Size = new System.Drawing.Size(49, 13);
             this.ChannelLbl.TabIndex = 2;
@@ -325,7 +359,7 @@
             // LevelLbl
             // 
             this.LevelLbl.AutoSize = true;
-            this.LevelLbl.Location = new System.Drawing.Point(6, 37);
+            this.LevelLbl.Location = new System.Drawing.Point(6, 40);
             this.LevelLbl.Name = "LevelLbl";
             this.LevelLbl.Size = new System.Drawing.Size(36, 13);
             this.LevelLbl.TabIndex = 1;
@@ -334,7 +368,7 @@
             // NameLbl
             // 
             this.NameLbl.AutoSize = true;
-            this.NameLbl.Location = new System.Drawing.Point(6, 19);
+            this.NameLbl.Location = new System.Drawing.Point(6, 22);
             this.NameLbl.Name = "NameLbl";
             this.NameLbl.Size = new System.Drawing.Size(38, 13);
             this.NameLbl.TabIndex = 0;
@@ -352,21 +386,51 @@
             // 
             // FeatureGroup
             // 
-            this.FeatureGroup.Controls.Add(this.CsBtn);
-            this.FeatureGroup.Controls.Add(this.MoveBtn);
+            this.FeatureGroup.Controls.Add(this.FM_Functions);
+            this.FeatureGroup.Controls.Add(this.Information);
             this.FeatureGroup.Controls.Add(this.CcBtn);
             this.FeatureGroup.Location = new System.Drawing.Point(209, 6);
             this.FeatureGroup.Name = "FeatureGroup";
-            this.FeatureGroup.Size = new System.Drawing.Size(223, 154);
+            this.FeatureGroup.Size = new System.Drawing.Size(145, 137);
             this.FeatureGroup.TabIndex = 15;
             this.FeatureGroup.TabStop = false;
             this.FeatureGroup.Text = "Features";
             // 
+            // FM_Functions
+            // 
+            this.FM_Functions.Location = new System.Drawing.Point(6, 99);
+            this.FM_Functions.Name = "FM_Functions";
+            this.FM_Functions.Size = new System.Drawing.Size(133, 34);
+            this.FM_Functions.TabIndex = 17;
+            this.FM_Functions.Text = "FM Functions";
+            this.FM_Functions.UseVisualStyleBackColor = true;
+            this.FM_Functions.Click += new System.EventHandler(this.FMFunctions_Click);
+            // 
+            // Information
+            // 
+            this.Information.Location = new System.Drawing.Point(6, 59);
+            this.Information.Name = "Information";
+            this.Information.Size = new System.Drawing.Size(133, 34);
+            this.Information.TabIndex = 16;
+            this.Information.Text = "Information";
+            this.Information.UseVisualStyleBackColor = true;
+            this.Information.Click += new System.EventHandler(this.Information_Click);
+            // 
+            // CcBtn
+            // 
+            this.CcBtn.Location = new System.Drawing.Point(6, 19);
+            this.CcBtn.Name = "CcBtn";
+            this.CcBtn.Size = new System.Drawing.Size(133, 34);
+            this.CcBtn.TabIndex = 0;
+            this.CcBtn.Text = "Change Channel";
+            this.CcBtn.UseVisualStyleBackColor = true;
+            this.CcBtn.Click += new System.EventHandler(this.CcBtn_Click);
+            // 
             // CsBtn
             // 
-            this.CsBtn.Location = new System.Drawing.Point(6, 112);
+            this.CsBtn.Location = new System.Drawing.Point(101, 261);
             this.CsBtn.Name = "CsBtn";
-            this.CsBtn.Size = new System.Drawing.Size(211, 34);
+            this.CsBtn.Size = new System.Drawing.Size(57, 34);
             this.CsBtn.TabIndex = 2;
             this.CsBtn.Text = "Cash Shop";
             this.CsBtn.UseVisualStyleBackColor = true;
@@ -374,23 +438,13 @@
             // 
             // MoveBtn
             // 
-            this.MoveBtn.Location = new System.Drawing.Point(6, 65);
+            this.MoveBtn.Location = new System.Drawing.Point(12, 261);
             this.MoveBtn.Name = "MoveBtn";
-            this.MoveBtn.Size = new System.Drawing.Size(211, 34);
+            this.MoveBtn.Size = new System.Drawing.Size(68, 34);
             this.MoveBtn.TabIndex = 1;
             this.MoveBtn.Text = "Send Movement";
             this.MoveBtn.UseVisualStyleBackColor = true;
             this.MoveBtn.Click += new System.EventHandler(this.MoveBtn_Click);
-            // 
-            // CcBtn
-            // 
-            this.CcBtn.Location = new System.Drawing.Point(6, 19);
-            this.CcBtn.Name = "CcBtn";
-            this.CcBtn.Size = new System.Drawing.Size(211, 34);
-            this.CcBtn.TabIndex = 0;
-            this.CcBtn.Text = "Change Channel";
-            this.CcBtn.UseVisualStyleBackColor = true;
-            this.CcBtn.Click += new System.EventHandler(this.CcBtn_Click);
             // 
             // Tabs
             // 
@@ -406,8 +460,9 @@
             // 
             // AccountTab
             // 
+            this.AccountTab.Controls.Add(this.CsBtn);
+            this.AccountTab.Controls.Add(this.MoveBtn);
             this.AccountTab.Controls.Add(this.InitTestBtn);
-            this.AccountTab.Controls.Add(this.Information);
             this.AccountTab.Controls.Add(this.AccountGroup);
             this.AccountTab.Controls.Add(this.FeatureGroup);
             this.AccountTab.Controls.Add(this.ConnectBtn);
@@ -421,6 +476,16 @@
             this.AccountTab.Text = "Account";
             this.AccountTab.UseVisualStyleBackColor = true;
             // 
+            // InitTestBtn
+            // 
+            this.InitTestBtn.Location = new System.Drawing.Point(182, 261);
+            this.InitTestBtn.Name = "InitTestBtn";
+            this.InitTestBtn.Size = new System.Drawing.Size(84, 35);
+            this.InitTestBtn.TabIndex = 16;
+            this.InitTestBtn.Text = "Init Test";
+            this.InitTestBtn.UseVisualStyleBackColor = true;
+            this.InitTestBtn.Click += new System.EventHandler(this.InitTestBtn_Click);
+            // 
             // PacketTab
             // 
             this.PacketTab.Controls.Add(this.PacketView);
@@ -431,13 +496,6 @@
             this.PacketTab.TabIndex = 1;
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
-            // 
-            // PacketView
-            // 
-            this.PacketView.Location = new System.Drawing.Point(3, 3);
-            this.PacketView.Name = "PacketView";
-            this.PacketView.Size = new System.Drawing.Size(628, 312);
-            this.PacketView.TabIndex = 0;
             // 
             // RushTab
             // 
@@ -603,6 +661,60 @@
             this.SpamMenuItem.Text = "Spam";
             this.SpamMenuItem.Click += new System.EventHandler(this.SpamMenuItem_Click);
             // 
+            // Items
+            // 
+            this.Items.AutoSize = true;
+            this.Items.Location = new System.Drawing.Point(6, 130);
+            this.Items.Name = "Items";
+            this.Items.Size = new System.Drawing.Size(35, 13);
+            this.Items.TabIndex = 19;
+            this.Items.Text = "Items:";
+            // 
+            // ItemsStatus
+            // 
+            this.ItemsStatus.AutoSize = true;
+            this.ItemsStatus.Location = new System.Drawing.Point(67, 130);
+            this.ItemsStatus.Name = "ItemsStatus";
+            this.ItemsStatus.Size = new System.Drawing.Size(16, 13);
+            this.ItemsStatus.TabIndex = 20;
+            this.ItemsStatus.Text = "-1";
+            // 
+            // People
+            // 
+            this.People.AutoSize = true;
+            this.People.Location = new System.Drawing.Point(6, 148);
+            this.People.Name = "People";
+            this.People.Size = new System.Drawing.Size(43, 13);
+            this.People.TabIndex = 21;
+            this.People.Text = "People:";
+            // 
+            // PeopleStatus
+            // 
+            this.PeopleStatus.AutoSize = true;
+            this.PeopleStatus.Location = new System.Drawing.Point(67, 148);
+            this.PeopleStatus.Name = "PeopleStatus";
+            this.PeopleStatus.Size = new System.Drawing.Size(16, 13);
+            this.PeopleStatus.TabIndex = 22;
+            this.PeopleStatus.Text = "-1";
+            // 
+            // Working
+            // 
+            this.Working.AutoSize = true;
+            this.Working.Location = new System.Drawing.Point(6, 166);
+            this.Working.Name = "Working";
+            this.Working.Size = new System.Drawing.Size(50, 13);
+            this.Working.TabIndex = 23;
+            this.Working.Text = "Working:";
+            // 
+            // WorkingStatus
+            // 
+            this.WorkingStatus.AutoSize = true;
+            this.WorkingStatus.Location = new System.Drawing.Point(67, 166);
+            this.WorkingStatus.Name = "WorkingStatus";
+            this.WorkingStatus.Size = new System.Drawing.Size(16, 13);
+            this.WorkingStatus.TabIndex = 24;
+            this.WorkingStatus.Text = "-1";
+            // 
             // SendSpamBtn
             // 
             this.SendSpamBtn.AutoSize = true;
@@ -616,24 +728,12 @@
             this.SendSpamBtn.UseVisualStyleBackColor = true;
             this.SendSpamBtn.Click += new System.EventHandler(this.SendSpamBtn_Click);
             // 
-            // InitTestBtn
+            // PacketView
             // 
-            this.InitTestBtn.Location = new System.Drawing.Point(532, 265);
-            this.InitTestBtn.Name = "InitTestBtn";
-            this.InitTestBtn.Size = new System.Drawing.Size(84, 35);
-            this.InitTestBtn.TabIndex = 16;
-            this.InitTestBtn.Text = "Init Test";
-            this.InitTestBtn.UseVisualStyleBackColor = true;
-            this.InitTestBtn.Click += new System.EventHandler(this.InitTestBtn_Click);
-            // Information
-            // 
-            this.Information.Location = new System.Drawing.Point(451, 25);
-            this.Information.Name = "Information";
-            this.Information.Size = new System.Drawing.Size(114, 34);
-            this.Information.TabIndex = 16;
-            this.Information.Text = "Information";
-            this.Information.UseVisualStyleBackColor = true;
-            this.Information.Click += new System.EventHandler(this.Information_Click);
+            this.PacketView.Location = new System.Drawing.Point(3, 3);
+            this.PacketView.Name = "PacketView";
+            this.PacketView.Size = new System.Drawing.Size(628, 312);
+            this.PacketView.TabIndex = 0;
             // 
             // ClientForm
             // 
@@ -721,5 +821,14 @@
         private Forms.PacketView PacketView;
         private System.Windows.Forms.Button InitTestBtn;
         private System.Windows.Forms.Button Information;
+        private System.Windows.Forms.Label ExpStatus;
+        private System.Windows.Forms.Label Exp;
+        private System.Windows.Forms.Button FM_Functions;
+        private System.Windows.Forms.Label PeopleStatus;
+        private System.Windows.Forms.Label People;
+        private System.Windows.Forms.Label ItemsStatus;
+        private System.Windows.Forms.Label Items;
+        private System.Windows.Forms.Label WorkingStatus;
+        private System.Windows.Forms.Label Working;
     }
 }

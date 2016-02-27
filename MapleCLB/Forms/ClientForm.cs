@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 using MapleCLB.Types;
+using MapleCLB.Resources;
 
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
@@ -15,7 +17,13 @@ namespace MapleCLB.Forms {
         public Progress<Mapler> UpdateMapler; 
         public Progress<byte> UpdateCh;
 
+        public Progress<long> UpdateExp;
+        public Progress<int> UpdateItems;
+        public Progress<int> UpdatePeople;
+        public Progress<String> UpdateWorking;
+
         public Information test = new Information();
+        public FreeMarketForm FMFunctions = new FreeMarketForm();
         public bool IsLogSend => PacketView.LogSend;
 
         public ClientForm() {
@@ -41,7 +49,7 @@ namespace MapleCLB.Forms {
             channel.SelectedIndex   = 0;*/
             #endif
 
-            string[] users = {"themapleblc@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com", "t.h.e.mapleblc@gmail.com" };
+            string[] users = {"T.heOldKingCoal@gmail.com","Th.eOldKingCoal@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com", "t.h.e.mapleblc@gmail.com" };
 
             UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
             PassInput.Text = "maplestory";
@@ -52,8 +60,6 @@ namespace MapleCLB.Forms {
             ChannelList.SelectedIndex = 6;
             ModeList.SelectedIndex = 0;
 
-            test.TopMost = true;
-            test.ControlBox = false;
 
         }
 
@@ -82,14 +88,24 @@ namespace MapleCLB.Forms {
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
                     MesoStatus.Text = m.Meso.ToString("N0");
+                    ExpStatus.Text = ((Decimal.Divide(m.Exp,EXP.PlayerExp[m.Level]))*100).ToString("F")+"%";
                 } else {
                     NameStat.Text = "Unknown";
                     MapStat.Text = "-1";
-                    LevelStat.Text = "0";
+                    LevelStat.Text = "-1";
                     MesoStatus.Text = "-1";
+                    ExpStatus.Text = "-1";
+                    //Just going to leave this here... :D
+                    ItemsStatus.Text = "-1";
+                    PeopleStatus.Text = "-1";
+                    WorkingStatus.Text = "-1";
+
                 }
             });
             UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
+            UpdateItems = new Progress<int>(d => ItemsStatus.Text = d.ToString());
+            UpdatePeople = new Progress<int>(d => PeopleStatus.Text = d.ToString());
+            UpdateWorking = new Progress<String>(d => WorkingStatus.Text = d);
         }
 
         /* Temporary stuff*/
@@ -127,16 +143,6 @@ namespace MapleCLB.Forms {
         }
 
         private void MoveBtn_Click(object sender, EventArgs e) {
-            //int CRC = 0x9FF5D003;
-            //  int CRC = 0x03D0F59F;
-            //   int X = 0xFE5C;
-            //   short Y = 0x0113;
-            //  short PID = 0x5A03;
-
-            //int X = 0xF574;
-            //int Y = 0xFEB4;
-            //int CRC = 0x5104F9C5;
-            //int PID = 0xE005;
             Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
             Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
             Client.SendPacket(HexEncoding.ToByteArray("B9 00 01 28 C2 7A 2A 1D E0 77 42 00 00 00 00 00 75 01 15 FE 00 00 00 00 07 0C 01 00 75 01 16 FE 00 00 3C 00 00 00 00 00 00 00 06 1E 00 00 0C 02 00 75 01 5E FE 00 00 1C 02 00 00 00 00 00 00 06 F0 00 00 0C 03 00 75 01 60 FE 00 00 00 00 00 00 00 00 00 00 06 03 00 00 00 75 01 60 FE 00 00 00 00 0F 00 00 00 00 00 04 ED 00 00 11 00 00 00 00 00 00 00 00 00"));
@@ -154,11 +160,20 @@ namespace MapleCLB.Forms {
                 Client.ShowInformation = false;}
         }
 
+        private void FMFunctions_Click(object sender, EventArgs e){
+            if (Client.ShowFMFunctions == false){
+                FMFunctions.Show();
+                Client.ShowFMFunctions = true;
+            }
+            else {
+                FMFunctions.Hide();
+                Client.ShowFMFunctions = false;
+            }
+        }
+
         private void CsBtn_Click(object sender, EventArgs e) {
             Console.WriteLine("Sup not working");
             //Client.SendPacket(General.EnterCS());
-            //Client.SendPacket(HexEncoding.GetBytes("75 02 5A E5 58 5C 00 01"));
-            //Client.SendPacket(HexEncoding.GetBytes("55 01"));
         }
 
         private void SendSpamBtn_Click(object sender, EventArgs e) {

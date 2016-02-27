@@ -46,17 +46,14 @@ namespace MapleCLB.MapleLib {
 
         private void EndConnect(IAsyncResult iar) {
             var client = iar.AsyncState as TcpClient;
-
             try {
                 client.EndConnect(iar);
-
                 if (client.Connected) {
                     var session = new Session(client.Client, SessionType.CLIENT);
                     session.OnReconnect += OnReconnect;
                     if (OnConnected != null) {
                         OnConnected(this, session);
                     }
-
                     session.Start(null);
                 } else {
                     Debug.WriteLine("Failed to connect, let's try again?");
