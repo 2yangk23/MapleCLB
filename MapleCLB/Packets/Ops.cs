@@ -39,6 +39,7 @@
             CHANGE_MAP = 0xAA,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
             TRADE = 0x0196,
+            USE_MUSHY = 0x00E1,
             /* Chat */
             GENERAL_CHAT = 0xC5,
             WHISPER = 0x0193,
@@ -85,8 +86,10 @@
             CHANNEL_IP = 0x17,
             LOAD_MUSHY = 0x03AD,
             CLOSE_MUSHY = LOAD_MUSHY + 0x02, // This is a guess
+            BLUE_POP = 0x005F,
             CHAR_INFO = 0x019B,
             FINISH_LOAD = 0x0045,
+            TEMP = 0x003F,
 
             CLOSE_PERMIT = 0x01F0,
             FINISH_LOAD_PERMIT = 0x04D2,

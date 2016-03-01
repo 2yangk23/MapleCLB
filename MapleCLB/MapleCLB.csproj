@@ -126,7 +126,6 @@
     <Compile Include="Packets\Recv\Connection\PortIp.cs" />
     <Compile Include="Packets\Recv\Map\FMMovement.cs" />
     <Compile Include="Packets\Recv\Map\MapCheck.cs" />
-    <Compile Include="Packets\Recv\Map\Player.cs" />
     <Compile Include="Packets\Recv\Load.cs" />
     <Compile Include="Packets\Send\Chat.cs" />
     <Compile Include="Packets\Send\General.cs" />

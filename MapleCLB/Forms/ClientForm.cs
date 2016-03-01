@@ -8,6 +8,7 @@ using MapleCLB.Tools;
 using MapleCLB.Types;
 using MapleCLB.Resources;
 
+
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
         private readonly Client Client;
@@ -22,8 +23,9 @@ namespace MapleCLB.Forms {
         public Progress<int> UpdatePeople;
         public Progress<String> UpdateWorking;
 
+        public FreeMarketForm FMFunctions;
+
         public Information test = new Information();
-        public FreeMarketForm FMFunctions = new FreeMarketForm();
         public bool IsLogSend => PacketView.LogSend;
 
         public ClientForm() {
@@ -38,8 +40,10 @@ namespace MapleCLB.Forms {
             Win32.SendMessage(DelayInput.Handle, Win32.EM_SETCUEBANNER, 0, "Delay");
 
             Client = new Client(this);
+            FMFunctions = new FreeMarketForm(this);
 
-            #if DEBUG
+
+#if DEBUG
             /*Use this for testing account 
             username.Text           = "";
             password.Text           = "";
@@ -47,7 +51,7 @@ namespace MapleCLB.Forms {
             character.Text          = "";
             world.SelectedIndex     = 0;
             channel.SelectedIndex   = 0;*/
-            #endif
+#endif
 
             string[] users = {"T.heOldKingCoal@gmail.com","Th.eOldKingCoal@gmail.com", "t.hemapleblc@gmail.com", "t.h.emapleblc@gmail.com", "t.h.e.mapleblc@gmail.com" };
 
@@ -97,9 +101,8 @@ namespace MapleCLB.Forms {
                     ExpStatus.Text = "-1";
                     //Just going to leave this here... :D
                     ItemsStatus.Text = "-1";
-                    PeopleStatus.Text = "-1";
+                    PeopleStatus.Text = "Not Active";
                     WorkingStatus.Text = "-1";
-
                 }
             });
             UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
@@ -169,6 +172,15 @@ namespace MapleCLB.Forms {
                 FMFunctions.Hide();
                 Client.ShowFMFunctions = false;
             }
+        }
+        
+        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode, bool takeAnyCB){
+            Client.StartScript(IGN,shopNAME,FH,X,Y,PermitCB,SCMode,takeAnyCB);
+        }
+
+        //Temp
+        internal void WriteLine(string line){
+            Console.WriteLine(line);
         }
 
         private void CsBtn_Click(object sender, EventArgs e) {

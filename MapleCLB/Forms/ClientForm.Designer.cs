@@ -36,6 +36,12 @@
             this.UserInput = new System.Windows.Forms.TextBox();
             this.ConnectBtn = new System.Windows.Forms.Button();
             this.StatGroup = new System.Windows.Forms.GroupBox();
+            this.WorkingStatus = new System.Windows.Forms.Label();
+            this.Working = new System.Windows.Forms.Label();
+            this.PeopleStatus = new System.Windows.Forms.Label();
+            this.People = new System.Windows.Forms.Label();
+            this.ItemsStatus = new System.Windows.Forms.Label();
+            this.Items = new System.Windows.Forms.Label();
             this.ExpStatus = new System.Windows.Forms.Label();
             this.Exp = new System.Windows.Forms.Label();
             this.MesoStatus = new System.Windows.Forms.Label();
@@ -59,6 +65,7 @@
             this.AccountTab = new System.Windows.Forms.TabPage();
             this.InitTestBtn = new System.Windows.Forms.Button();
             this.PacketTab = new System.Windows.Forms.TabPage();
+            this.PacketView = new MapleCLB.Forms.PacketView();
             this.RushTab = new System.Windows.Forms.TabPage();
             this.RushStatusBar = new System.Windows.Forms.StatusStrip();
             this.MapStatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
@@ -78,14 +85,7 @@
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Items = new System.Windows.Forms.Label();
-            this.ItemsStatus = new System.Windows.Forms.Label();
-            this.People = new System.Windows.Forms.Label();
-            this.PeopleStatus = new System.Windows.Forms.Label();
-            this.Working = new System.Windows.Forms.Label();
-            this.WorkingStatus = new System.Windows.Forms.Label();
             this.SendSpamBtn = new MapleCLB.Forms.SplitButton();
-            this.PacketView = new MapleCLB.Forms.PacketView();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
             this.FeatureGroup.SuspendLayout();
@@ -265,6 +265,60 @@
             this.StatGroup.TabIndex = 2;
             this.StatGroup.TabStop = false;
             this.StatGroup.Text = "Stats";
+            // 
+            // WorkingStatus
+            // 
+            this.WorkingStatus.AutoSize = true;
+            this.WorkingStatus.Location = new System.Drawing.Point(67, 166);
+            this.WorkingStatus.Name = "WorkingStatus";
+            this.WorkingStatus.Size = new System.Drawing.Size(16, 13);
+            this.WorkingStatus.TabIndex = 24;
+            this.WorkingStatus.Text = "-1";
+            // 
+            // Working
+            // 
+            this.Working.AutoSize = true;
+            this.Working.Location = new System.Drawing.Point(6, 166);
+            this.Working.Name = "Working";
+            this.Working.Size = new System.Drawing.Size(50, 13);
+            this.Working.TabIndex = 23;
+            this.Working.Text = "Working:";
+            // 
+            // PeopleStatus
+            // 
+            this.PeopleStatus.AutoSize = true;
+            this.PeopleStatus.Location = new System.Drawing.Point(67, 148);
+            this.PeopleStatus.Name = "PeopleStatus";
+            this.PeopleStatus.Size = new System.Drawing.Size(57, 13);
+            this.PeopleStatus.TabIndex = 22;
+            this.PeopleStatus.Text = "Not Active";
+            // 
+            // People
+            // 
+            this.People.AutoSize = true;
+            this.People.Location = new System.Drawing.Point(6, 148);
+            this.People.Name = "People";
+            this.People.Size = new System.Drawing.Size(43, 13);
+            this.People.TabIndex = 21;
+            this.People.Text = "People:";
+            // 
+            // ItemsStatus
+            // 
+            this.ItemsStatus.AutoSize = true;
+            this.ItemsStatus.Location = new System.Drawing.Point(67, 130);
+            this.ItemsStatus.Name = "ItemsStatus";
+            this.ItemsStatus.Size = new System.Drawing.Size(16, 13);
+            this.ItemsStatus.TabIndex = 20;
+            this.ItemsStatus.Text = "-1";
+            // 
+            // Items
+            // 
+            this.Items.AutoSize = true;
+            this.Items.Location = new System.Drawing.Point(6, 130);
+            this.Items.Name = "Items";
+            this.Items.Size = new System.Drawing.Size(35, 13);
+            this.Items.TabIndex = 19;
+            this.Items.Text = "Items:";
             // 
             // ExpStatus
             // 
@@ -497,6 +551,13 @@
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
             // 
+            // PacketView
+            // 
+            this.PacketView.Location = new System.Drawing.Point(3, 3);
+            this.PacketView.Name = "PacketView";
+            this.PacketView.Size = new System.Drawing.Size(628, 312);
+            this.PacketView.TabIndex = 0;
+            // 
             // RushTab
             // 
             this.RushTab.Controls.Add(this.RushStatusBar);
@@ -661,60 +722,6 @@
             this.SpamMenuItem.Text = "Spam";
             this.SpamMenuItem.Click += new System.EventHandler(this.SpamMenuItem_Click);
             // 
-            // Items
-            // 
-            this.Items.AutoSize = true;
-            this.Items.Location = new System.Drawing.Point(6, 130);
-            this.Items.Name = "Items";
-            this.Items.Size = new System.Drawing.Size(35, 13);
-            this.Items.TabIndex = 19;
-            this.Items.Text = "Items:";
-            // 
-            // ItemsStatus
-            // 
-            this.ItemsStatus.AutoSize = true;
-            this.ItemsStatus.Location = new System.Drawing.Point(67, 130);
-            this.ItemsStatus.Name = "ItemsStatus";
-            this.ItemsStatus.Size = new System.Drawing.Size(16, 13);
-            this.ItemsStatus.TabIndex = 20;
-            this.ItemsStatus.Text = "-1";
-            // 
-            // People
-            // 
-            this.People.AutoSize = true;
-            this.People.Location = new System.Drawing.Point(6, 148);
-            this.People.Name = "People";
-            this.People.Size = new System.Drawing.Size(43, 13);
-            this.People.TabIndex = 21;
-            this.People.Text = "People:";
-            // 
-            // PeopleStatus
-            // 
-            this.PeopleStatus.AutoSize = true;
-            this.PeopleStatus.Location = new System.Drawing.Point(67, 148);
-            this.PeopleStatus.Name = "PeopleStatus";
-            this.PeopleStatus.Size = new System.Drawing.Size(16, 13);
-            this.PeopleStatus.TabIndex = 22;
-            this.PeopleStatus.Text = "-1";
-            // 
-            // Working
-            // 
-            this.Working.AutoSize = true;
-            this.Working.Location = new System.Drawing.Point(6, 166);
-            this.Working.Name = "Working";
-            this.Working.Size = new System.Drawing.Size(50, 13);
-            this.Working.TabIndex = 23;
-            this.Working.Text = "Working:";
-            // 
-            // WorkingStatus
-            // 
-            this.WorkingStatus.AutoSize = true;
-            this.WorkingStatus.Location = new System.Drawing.Point(67, 166);
-            this.WorkingStatus.Name = "WorkingStatus";
-            this.WorkingStatus.Size = new System.Drawing.Size(16, 13);
-            this.WorkingStatus.TabIndex = 24;
-            this.WorkingStatus.Text = "-1";
-            // 
             // SendSpamBtn
             // 
             this.SendSpamBtn.AutoSize = true;
@@ -727,13 +734,6 @@
             this.SendSpamBtn.Text = "Send";
             this.SendSpamBtn.UseVisualStyleBackColor = true;
             this.SendSpamBtn.Click += new System.EventHandler(this.SendSpamBtn_Click);
-            // 
-            // PacketView
-            // 
-            this.PacketView.Location = new System.Drawing.Point(3, 3);
-            this.PacketView.Name = "PacketView";
-            this.PacketView.Size = new System.Drawing.Size(628, 312);
-            this.PacketView.TabIndex = 0;
             // 
             // ClientForm
             // 

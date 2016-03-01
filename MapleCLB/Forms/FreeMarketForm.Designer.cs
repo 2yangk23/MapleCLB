@@ -39,7 +39,7 @@
             this.SCModeStartButton = new System.Windows.Forms.Button();
             this.ShopInfoGroup = new System.Windows.Forms.GroupBox();
             this.NameOfShopTBox = new System.Windows.Forms.TextBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.MushCB = new System.Windows.Forms.CheckBox();
             this.PermitCB = new System.Windows.Forms.CheckBox();
             this.RegSpotBotGroup.SuspendLayout();
             this.ServerCheckGroup.SuspendLayout();
@@ -70,7 +70,7 @@
             // 
             // FMStealIgnBox
             // 
-            this.FMStealIgnBox.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.FMStealIgnBox.ForeColor = System.Drawing.SystemColors.MenuText;
             this.FMStealIgnBox.Location = new System.Drawing.Point(5, 42);
             this.FMStealIgnBox.Name = "FMStealIgnBox";
             this.FMStealIgnBox.Size = new System.Drawing.Size(108, 20);
@@ -101,7 +101,7 @@
             // 
             // FHTBox
             // 
-            this.FHTBox.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.FHTBox.ForeColor = System.Drawing.SystemColors.MenuText;
             this.FHTBox.Location = new System.Drawing.Point(6, 22);
             this.FHTBox.Name = "FHTBox";
             this.FHTBox.Size = new System.Drawing.Size(37, 20);
@@ -109,7 +109,7 @@
             // 
             // YTBox
             // 
-            this.YTBox.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.YTBox.ForeColor = System.Drawing.SystemColors.MenuText;
             this.YTBox.Location = new System.Drawing.Point(91, 22);
             this.YTBox.Name = "YTBox";
             this.YTBox.Size = new System.Drawing.Size(37, 20);
@@ -117,7 +117,7 @@
             // 
             // XTBox
             // 
-            this.XTBox.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.XTBox.ForeColor = System.Drawing.SystemColors.MenuText;
             this.XTBox.Location = new System.Drawing.Point(49, 22);
             this.XTBox.Name = "XTBox";
             this.XTBox.Size = new System.Drawing.Size(37, 20);
@@ -136,7 +136,7 @@
             // ShopInfoGroup
             // 
             this.ShopInfoGroup.Controls.Add(this.NameOfShopTBox);
-            this.ShopInfoGroup.Controls.Add(this.checkBox2);
+            this.ShopInfoGroup.Controls.Add(this.MushCB);
             this.ShopInfoGroup.Controls.Add(this.PermitCB);
             this.ShopInfoGroup.Location = new System.Drawing.Point(7, 134);
             this.ShopInfoGroup.Name = "ShopInfoGroup";
@@ -147,21 +147,21 @@
             // 
             // NameOfShopTBox
             // 
-            this.NameOfShopTBox.ForeColor = System.Drawing.SystemColors.ScrollBar;
+            this.NameOfShopTBox.ForeColor = System.Drawing.SystemColors.MenuText;
             this.NameOfShopTBox.Location = new System.Drawing.Point(6, 39);
             this.NameOfShopTBox.Name = "NameOfShopTBox";
             this.NameOfShopTBox.Size = new System.Drawing.Size(204, 20);
             this.NameOfShopTBox.TabIndex = 2;
             // 
-            // checkBox2
+            // MushCB
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(67, 16);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(75, 17);
-            this.checkBox2.TabIndex = 1;
-            this.checkBox2.Text = "Mushroom";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.MushCB.AutoSize = true;
+            this.MushCB.Location = new System.Drawing.Point(67, 16);
+            this.MushCB.Name = "MushCB";
+            this.MushCB.Size = new System.Drawing.Size(75, 17);
+            this.MushCB.TabIndex = 1;
+            this.MushCB.Text = "Mushroom";
+            this.MushCB.UseVisualStyleBackColor = true;
             // 
             // PermitCB
             // 
@@ -205,7 +205,7 @@
         private System.Windows.Forms.TextBox FMStealIgnBox;
         private System.Windows.Forms.Button StartFMBotNorButton;
         private System.Windows.Forms.TextBox NameOfShopTBox;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox MushCB;
         private System.Windows.Forms.CheckBox PermitCB;
         private System.Windows.Forms.TextBox FHTBox;
         private System.Windows.Forms.TextBox YTBox;

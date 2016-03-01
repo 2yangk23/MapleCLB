@@ -30,7 +30,7 @@ namespace MapleCLB.MapleClient {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
-        public const int FM1_CRC = 0x2A7AC228;
+        //public const int FM1_CRC = 0x2A7AC228;
 
         /* UI Info */
         private readonly ClientForm CForm;
@@ -115,8 +115,8 @@ namespace MapleCLB.MapleClient {
             HandshakeHandler = new Handshake(this);
             PacketHandler = new Packet(this);
 
-            autoCCtime = 300000; //5 Minutes
-            displayTime = 60;
+            autoCCtime = 1800000; //30 minutes
+            displayTime = 60; //1 Second
 
             totalItemCount = 0;
             totalPeopleCount = 0;
@@ -145,6 +145,20 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
             //ScriptManager.Get<SpotStealerBot>().Start();
+        }
+
+        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB,bool SCMode, bool takeAnyCB){
+            //change to w.e you wanted? not exactly sure.. :D
+            ScriptManager.Get<SpotStealerBot>().IGN = IGN;
+            ScriptManager.Get<SpotStealerBot>().shopName = shopNAME;
+            ScriptManager.Get<SpotStealerBot>().FH = FH;
+            ScriptManager.Get<SpotStealerBot>().X = X;
+            ScriptManager.Get<SpotStealerBot>().Y = Y;
+            ScriptManager.Get<SpotStealerBot>().PermitCB = PermitCB;
+            ScriptManager.Get<SpotStealerBot>().SCMode = SCMode;
+            ScriptManager.Get<SpotStealerBot>().takeAnyCB = takeAnyCB;
+            //SpotStealerBot script = get<SpotStealerBot>(); ???
+            ScriptManager.Get<SpotStealerBot>().Start();
         }
 
         internal void Connect() {
@@ -186,7 +200,8 @@ namespace MapleCLB.MapleClient {
         }
 
         internal void Disconnect() {
-            Session.Disconnect();
+            //Session.Disconnect();
+            SendPacket(General.ExitCS()); //Temp -.-
         }
 
         internal void SendPacket(byte[] packet) {
@@ -217,6 +232,10 @@ namespace MapleCLB.MapleClient {
             UpdateChannel.Report(0);
             stopWatch.Stop();
             stopWatch.Reset();
+            currentEquipInventory.Clear();
+            currentUseInventory.Clear();
+            currentSetUpInventory.Clear();
+            currentEtcInventory.Clear();
             totalPeopleCount = 0;
         }
 
