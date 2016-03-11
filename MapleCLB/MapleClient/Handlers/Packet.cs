@@ -31,12 +31,10 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.LOGIN_STATUS, Login.LoginStatus);
             Register(RecvOps.LOGIN_SECOND, Login.LoginSecond);
 
-            //Now Used as a script
-            //Register(RecvOps.SPAWN_PLAYER, Player.SpawnPlayer);
-            //Register(RecvOps.REMOVE_PLAYER, Player.RemovePlayer);
+            //To Do : Rename this to something else
+            Register(RecvOps.CHAR_INFO, MapCheck.Check);
 
             //Temp
-            Register(RecvOps.CHAR_INFO, MapCheck.Check);
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
         }
 

@@ -26,15 +26,13 @@ namespace MapleCLB.MapleClient.Scripts {
 
         protected override void Init() {
             RegisterRecv(RecvOps.CLOSE_PERMIT, StealSpot);
-            RegisterRecv(RecvOps.CLOSE_MUSHY, StealSpot); 
+            RegisterRecv(RecvOps.CLOSE_MUSHY, StealSpotMush); 
             RegisterRecv(RecvOps.BLUE_POP, OpenMushy);
         }
 
         //To Do: add custom items to permit
         protected override void Execute() {
             WaitRecv(RecvOps.FINISH_LOAD);
-            SendPacket(Movement.beforeTeleport());
-            SendPacket(Movement.beforeTeleport());
             if (!PermitCB)
                 WaitRecv(RecvOps.TEMP); //This shit is guessed... You must wait if its a mushroom.
             if (SCMode){
@@ -50,10 +48,10 @@ namespace MapleCLB.MapleClient.Scripts {
                 if(!PermitCB)
                     SendPacket(Trade.OpenShop2());
                 SendPacket(Trade.OpenShop());
+                Client.hasFMShop = true;
                 WriteLog("Shop Open For Business!");
             }
             else {
-                SendPacket(Movement.Teleport(FM1_CRC, 80, 34, 52)); //Lands on the ground
                 if (!PermitCB)
                     WaitRecv(RecvOps.BLUE_POP);
                 WaitRecv(RecvOps.FINISH_LOAD_PERMIT);
@@ -65,6 +63,7 @@ namespace MapleCLB.MapleClient.Scripts {
                 if (!PermitCB)
                     SendPacket(Trade.OpenShop2());
                 SendPacket(Trade.OpenShop());
+                Client.hasFMShop = true;
                 WriteLog("Shop Open For Business!");
             }
         }
@@ -85,6 +84,7 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         private void StealSpot(PacketReader r) {
+            WriteLog("Permit Dropped!");
             int uid = r.ReadInt();
             if (takeAnyCB) {
                 SendPacket(Movement.beforeTeleport());
@@ -104,5 +104,34 @@ namespace MapleCLB.MapleClient.Scripts {
             }
             PlayerLoader.UidMovementPacket.Remove(uid);
         }
+
+
+        private void StealSpotMush(PacketReader r)
+        {
+            WriteLog("Mush Dropped!");
+            int uid = r.ReadInt();
+            if (takeAnyCB)
+            {
+                SendPacket(Movement.beforeTeleport());
+                SendPacket(PlayerLoader.UidMushMovementPacket[uid]);
+                if (PermitCB)
+                    SendPacket(Trade.CreateShop(5, shopName, 1, 5140000));
+                else
+                    SendPacket(Trade.UseMushy(1));
+            }
+            else if (IGN.Equals(PlayerLoader.UidMushMap[uid]))
+            {
+                SendPacket(Movement.beforeTeleport());
+                SendPacket(PlayerLoader.UidMushMovementPacket[uid]);
+                if (PermitCB)
+                    SendPacket(Trade.CreateShop(5, shopName, 1, 5140000));
+                else
+                    SendPacket(Trade.UseMushy(1));
+            }
+            PlayerLoader.UidMushMovementPacket.Remove(uid);
+            PlayerLoader.UidMushMap.Remove(uid);
+        }
+
+
     }
 }

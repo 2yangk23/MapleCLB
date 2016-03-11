@@ -8,8 +8,10 @@ using MapleCLB.Packets.Send;
 namespace MapleCLB.MapleClient.Scripts {
     internal class PlayerLoader : ComplexScript {
         // All public fields should be thread-safe
-        public readonly IDictionary<int, string> UidMap = new ConcurrentDictionary<int, string>(); //uid -> ign
-        public readonly IDictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //UID -> MovementPacket
+        public readonly IDictionary<int, string> UidMap = new ConcurrentDictionary<int, string>(); //Player-UID's -> ign
+        public readonly IDictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //Player-UID's -> MovementPacket
+        public readonly IDictionary<int, string> UidMushMap = new ConcurrentDictionary<int, string>(); //Mushroom UID's -> ign
+        public readonly IDictionary<int, byte[]> UidMushMovementPacket = new Dictionary<int, byte[]>(); //Mushroom-UID's -> MovementPacket
 
         public PlayerLoader(Client client) : base(client) { }
 
@@ -34,16 +36,6 @@ namespace MapleCLB.MapleClient.Scripts {
             WriteLog($"[{uid:X8}] removed.");
         }
 
-        /*  private void SpawnPlayer(PacketReader r) {
-              int uid = r.ReadInt();
-              r.ReadByte();
-              string ign = r.ReadMapleString();
-
-              UidMap[uid] = ign;
-              WriteLog($"[{uid:X8}] {ign} spawned.");
-          }*/
-
-
         private void SpawnMushy(PacketReader r) {
             int uid = r.ReadInt();
             r.Skip(4);
@@ -51,11 +43,13 @@ namespace MapleCLB.MapleClient.Scripts {
             short y = r.ReadShort();
             short fh = r.ReadShort();
             string ign = r.ReadMapleString();
+            byte type = r.ReadByte(); 
+            int counter = r.ReadInt(); // Used to enter shops
 
-            UidMap[uid] = ign; 
-            UidMovementPacket[uid] = Movement.Teleport(SendOps.FM1_CRC, x, y, fh);
+            UidMushMap[uid] = ign;
+            UidMushMovementPacket[uid] = Movement.Teleport(SendOps.FM1_CRC, x, y, fh);
 
-            WriteLog("Added : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
+            WriteLog("Added Mushroom : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
 
         private void SpawnPlayer(PacketReader r)
@@ -130,14 +124,15 @@ namespace MapleCLB.MapleClient.Scripts {
             r.Skip(4); //Skip remaining zeros
             short x = r.ReadShort();
             short y = r.ReadShort();
-            r.Skip(1);//Stance
+            r.Skip(1);//Type or stance?
             short fh = r.ReadShort();
+            r.Skip(18); //Unknown shit
+            int counter = r.ReadInt(); //Counter used to enter shops
             UidMap[uid] = ign;
 
             Client.totalItemCount = Client.totalPeopleCount++;
             Client.UpdatePeople.Report(Client.totalPeopleCount);
 
-            //To Do: Split this movement packet so players/permits and mushrooms have a different dictionary
             UidMovementPacket[uid] = Movement.Teleport(SendOps.FM1_CRC, x, y, fh);
             WriteLog("Added : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }

@@ -23,7 +23,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     Debug.WriteLine("Logged in!");
                     Client.StartWatch();
                     Client.displayTimer.Enabled = true;
-                    Client.ccst.Enabled = true;
+                    Client.dcst.Enabled = true;
                     SendPacket(Login.EnterServer(Client.Account, Client.UserId, Client.SessionId));
                     Client.Mode = ClientMode.GAME;
                     break;

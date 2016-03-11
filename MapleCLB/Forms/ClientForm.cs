@@ -141,15 +141,13 @@ namespace MapleCLB.Forms {
 
         private void CcBtn_Click(object sender, EventArgs e) {
             Client.WriteLog.Report("Changing to Ch 2");
-            Client.shouldCC = true;
             Client.SendPacket(General.ChangeChannel(0x01));
         }
 
         private void MoveBtn_Click(object sender, EventArgs e) {
-            Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
-            Client.SendPacket(HexEncoding.ToByteArray("75 0 23D DE 77 42 00 00"));
-            Client.SendPacket(HexEncoding.ToByteArray("B9 00 01 28 C2 7A 2A 1D E0 77 42 00 00 00 00 00 75 01 15 FE 00 00 00 00 07 0C 01 00 75 01 16 FE 00 00 3C 00 00 00 00 00 00 00 06 1E 00 00 0C 02 00 75 01 5E FE 00 00 1C 02 00 00 00 00 00 00 06 F0 00 00 0C 03 00 75 01 60 FE 00 00 00 00 00 00 00 00 00 00 06 03 00 00 00 75 01 60 FE 00 00 00 00 0F 00 00 00 00 00 04 ED 00 00 11 00 00 00 00 00 00 00 00 00"));
-            //C.SendPacket(Movement.Teleport(CRC,(short)X,(short)Y,(short)PID));
+            Client.SendPacket(Movement.beforeTeleport());
+            Client.SendPacket(Movement.beforeTeleport());
+            Client.SendPacket(Movement.Teleport(0x26F611E3, 80, 34, 52));
         }
 
         private void Information_Click(object sender, EventArgs e){

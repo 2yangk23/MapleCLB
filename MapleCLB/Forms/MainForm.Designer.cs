@@ -33,7 +33,7 @@ namespace MapleCLB.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.AccountTabs = new System.Windows.Forms.TabControl();
             this.Account1 = new System.Windows.Forms.TabPage();
-            this.clientForm1 = new ClientForm();
+            this.clientForm1 = new MapleCLB.Forms.ClientForm();
             this.AccountTabs.SuspendLayout();
             this.Account1.SuspendLayout();
             this.SuspendLayout();
@@ -60,6 +60,7 @@ namespace MapleCLB.Forms
             // 
             // clientForm1
             // 
+            this.clientForm1.AutoScroll = true;
             this.clientForm1.Location = new System.Drawing.Point(3, 7);
             this.clientForm1.Name = "clientForm1";
             this.clientForm1.Size = new System.Drawing.Size(643, 378);
@@ -75,7 +76,7 @@ namespace MapleCLB.Forms
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "[170.2.1] MapleStory Clientless Bot";
+            this.Text = "[171.0.1] MapleStory Clientless Bot";
             this.AccountTabs.ResumeLayout(false);
             this.Account1.ResumeLayout(false);
             this.ResumeLayout(false);

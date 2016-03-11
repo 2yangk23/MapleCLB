@@ -21,6 +21,7 @@ namespace MapleCLB.Packets.Send {
 
         public static byte[] ClientLogin(Account account, string auth) {
             var pw = new PacketWriter(SendOps.CLIENT_LOGIN);
+            pw.WriteBool(true);
             pw.WriteMapleString(account.Password);
             pw.WriteMapleString(auth);
             pw.WriteZero(6);

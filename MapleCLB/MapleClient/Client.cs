@@ -30,8 +30,6 @@ namespace MapleCLB.MapleClient {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
-        //public const int FM1_CRC = 0x2A7AC228;
-
         /* UI Info */
         private readonly ClientForm CForm;
         internal readonly IProgress<bool> ConnectToggle;
@@ -56,8 +54,8 @@ namespace MapleCLB.MapleClient {
         internal ClientMode Mode;
 
         /* Timers */
-        public Timer ccst;
-        public int autoCCtime;
+        public Timer dcst;
+        public int autoDCtime;
 
         public Timer displayTimer;
         public int displayTime;
@@ -70,13 +68,13 @@ namespace MapleCLB.MapleClient {
 
         internal byte Channel, doWhat;
 
-        internal bool shouldCC;
-
         internal int totalItemCount;
         internal int totalPeopleCount;
 
         internal bool ShowInformation = false;
         internal bool ShowFMFunctions = false;
+
+        internal bool hasFMShop = false;
 
         Stopwatch stopWatch = new Stopwatch();
 
@@ -115,19 +113,17 @@ namespace MapleCLB.MapleClient {
             HandshakeHandler = new Handshake(this);
             PacketHandler = new Packet(this);
 
-            autoCCtime = 1800000; //30 minutes
+            autoDCtime = 1800000; //30 minutes
             displayTime = 60; //1 Second
 
             totalItemCount = 0;
             totalPeopleCount = 0;
 
-            ccst = new Timer(autoCCtime);
-            ccst.Elapsed += AutoCC;
+            dcst = new Timer(autoDCtime);
+            dcst.Elapsed += AutoDCForFMShop;
 
             displayTimer = new Timer(displayTime);
             displayTimer.Elapsed += ConnectTimer;
-
-            shouldCC = false;
 
             EquipToString = Tools.ItemParse.Parsing_Data("Equip");
             UseToString = Tools.ItemParse.Parsing_Data("Use");
@@ -257,11 +253,10 @@ namespace MapleCLB.MapleClient {
         }
 
         /* Timer Handlers */
-        private void AutoCC(object sender, ElapsedEventArgs e) {
-            if (doWhat == 1){
+        private void AutoDCForFMShop(object sender, ElapsedEventArgs e) {
+            if (doWhat == 1 && hasFMShop == false){
                 WriteLog.Report("Disconnecting 5 Minute Test!");
                 Disconnect();
-                Thread.Sleep(10000);
                 Connect();
             }
         }
@@ -293,7 +288,7 @@ namespace MapleCLB.MapleClient {
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
             ClearStats();
-            ccst.Enabled = false;
+            dcst.Enabled = false;
             displayTimer.Enabled = false;
             if (CForm.AutoRestart.Checked) {
                 Connect();  //Start connection again

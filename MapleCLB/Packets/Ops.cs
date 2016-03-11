@@ -20,14 +20,15 @@
         NPC_TALK_MORE   - Send when continuing chat with NPC
 
         TRADE           - Send when opening a permit or trade
+        USE_MUSHY       - Send when double clicking a mushroom in inventory
+        BEFORE_MOVE     - Send before first MOVE_PLAYER [Header][TimeStamp]
          ********************************/
 
     internal class SendOps {
-
-        public const int FM1_CRC = 0x2A7AC228;
+        public const int FM1_CRC = 0x26F611E3;
 
         public const ushort
-            PONG = 0x9E,
+            PONG = 0x93,
 
             /* login */
             CLIENT_HELLO = 0x67,
@@ -35,24 +36,24 @@
             SERVER_LOGIN = 0x6A,
             CHAR_SELECT = 0x6B,
             PLAYER_LOGGEDIN = 0x6E,
-            GET_SERVERS = 0x82,
-            CHANGE_MAP = 0xAA,
+            GET_SERVERS = 0x9E,
+            CHANGE_MAP = 0xAC,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
-            TRADE = 0x0196,
+            TRADE = 0x0179,
             USE_MUSHY = 0x00E1,
             /* Chat */
-            GENERAL_CHAT = 0xC5,
-            WHISPER = 0x0193,
-            SEND_CHAT = 0x00,
+            GENERAL_CHAT = 0xC7,
+            WHISPER = 0x0177,
+            SEND_CHAT = 0x00, //not updated
 
-            DROP_ITEM = 0xF0,
+            DROP_ITEM = 0xF0, //Not updated, useless
 
-            BEFORE_MOVE = 0x0275,
+            BEFORE_MOVE = 0x022E,
 
             /* cashshop */
-            ENTER_CASHSHOP = 0xAF,
-            MOVE_PLAYER = 0xB9,
-            NPC_TALK = 0x00,
+            ENTER_CASHSHOP = 0xB1,
+            MOVE_PLAYER = 0xBB,
+            NPC_TALK = 0x00, //Not udpated
             NPC_TALK_MORE = NPC_TALK + 0x02; //why do i have this?
 
 
@@ -68,37 +69,43 @@
      * 
     SPAWN_PLAYER  - Received when player enters map or when you enter a new map
     REMOVE_PLAYER - Received when player leaves map
+    FINISH_LOAD   - Received when client is done loading [HEADER] 
+    CHAR_INFO     - Received when client loads Character/Map Info *Very Large Packet*
 
-    LOAD_SEED    - Received when you login [HEADER][4 Bytes]
+    LOAD_SEED    - Received when you login [HEADER][4 Bytes] (Not Zeros?)
     LOAD_MUSHY   - Received when client loads mushrooms in FM
+    BLUE_POP     - Received when opening a Permit shop
+    CLOSE_PERMIT - Received when someone closes a permit
+    CLOSE_MUSHY  - Recieved when someone closes a mushroom
     ********************************/
 
     internal class RecvOps {
         public const ushort
-            PING = 0x18,
+            PING = 0x12,
 
             /* server */
             LOGIN_STATUS = 0x00,
-            LOGIN_SECOND = 0x0E,
-            CHARLIST = 0x0C,
-            SERVERLIST = 0x07, // Useless
-            SERVER_IP = 0x0D,
-            CHANNEL_IP = 0x17,
-            LOAD_MUSHY = 0x03AD,
-            CLOSE_MUSHY = LOAD_MUSHY + 0x02, // This is a guess
-            BLUE_POP = 0x005F,
-            CHAR_INFO = 0x019B,
-            FINISH_LOAD = 0x0045,
-            TEMP = 0x003F,
+            LOGIN_SECOND = 0x08,
+            CHARLIST = 0x06,
+            SERVERLIST = 0x01, // Useless
+            SERVER_IP = 0x07,
+            CHANNEL_IP = 0x11,
+            LOAD_MUSHY = 0x03B0,
+            CLOSE_MUSHY = LOAD_MUSHY + 0x02, 
+            BLUE_POP = 0x005F, //Not updated
+            CHAR_INFO = 0x019D,
+            FINISH_LOAD = 0x0047,
 
-            CLOSE_PERMIT = 0x01F0,
-            FINISH_LOAD_PERMIT = 0x04D2,
+            TEMP = 0x003F, //Not Updated, need to fix too
 
-            LOAD_SEED = 0x73,  //4A DC E4 FF is magic number 
-            SPAWN_PLAYER = 0x01EB, //0x01D3
-            REMOVE_PLAYER = SPAWN_PLAYER + 0x01, //0x01D4
+            CLOSE_PERMIT = 0x01F1,
+            FINISH_LOAD_PERMIT = 0x04D5,
+
+            LOAD_SEED = 0x0171,  //4A FC E4 FF is magic number  
+            SPAWN_PLAYER = 0x01ED, 
+            REMOVE_PLAYER = SPAWN_PLAYER + 0x01, 
 
 
-            ALL_CHAT = 0x01ED;
+            ALL_CHAT = 0x01EF; 
     }
 }

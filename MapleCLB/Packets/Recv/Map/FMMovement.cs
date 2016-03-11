@@ -13,7 +13,7 @@ namespace MapleCLB.Packets.Recv.Map {
             } 
             else if (c.doWhat == 1 && c.Mapler.Map != 910000001){
                 c.WriteLog.Report("Not in FM Room 1, Disconnecting");
-                c.shouldCC = false;
+                c.dcst.Enabled = false;
                 c.Disconnect();
             }
         }
