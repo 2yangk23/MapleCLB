@@ -75,7 +75,7 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         private void ServerCheckSteal() { 
-            SendPacket(Movement.Teleport(FM1_CRC, (short)Int32.Parse(X), (short)Int32.Parse(Y), (short)Int32.Parse(FH)));
+            SendPacket(Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, short.Parse(X), short.Parse(Y), short.Parse(FH)));
             if (PermitCB)
                 SendPacket(Trade.CreateShop(5, shopName, 1, 5140000));
             else {

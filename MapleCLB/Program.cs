@@ -2,6 +2,7 @@
 using System.Net;
 using System.Windows.Forms;
 using MapleCLB.Forms;
+using MapleCLB.MapleClient.Functions;
 using MapleCLB.MapleLib.Crypto;
 
 namespace MapleCLB {
@@ -29,7 +30,7 @@ namespace MapleCLB {
         private static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            Resources.ResourceLoader.LoadMaps();
             gui = new MainForm();
             Application.Run(gui);
         }

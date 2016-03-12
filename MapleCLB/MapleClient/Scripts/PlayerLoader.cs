@@ -47,7 +47,7 @@ namespace MapleCLB.MapleClient.Scripts {
             int counter = r.ReadInt(); // Used to enter shops
 
             UidMushMap[uid] = ign;
-            UidMushMovementPacket[uid] = Movement.Teleport(SendOps.FM1_CRC, x, y, fh);
+            UidMushMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
 
             WriteLog("Added Mushroom : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
@@ -133,7 +133,7 @@ namespace MapleCLB.MapleClient.Scripts {
             Client.totalItemCount = Client.totalPeopleCount++;
             Client.UpdatePeople.Report(Client.totalPeopleCount);
 
-            UidMovementPacket[uid] = Movement.Teleport(SendOps.FM1_CRC, x, y, fh);
+            UidMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
             WriteLog("Added : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
 

@@ -1,5 +1,9 @@
-﻿using MapleCLB.MapleClient;
+﻿using System;
+using System.CodeDom;
+using System.Threading;
+using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Tools;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
 
@@ -19,7 +23,7 @@ namespace MapleCLB.Packets.Recv {
 
             for (byte i = 0; i < count; ++i) {
                 /* Character Stats */
-                var m = Mapler.Parse(pr, 8);
+                var m = Mapler.Parse(pr);
 
                 /* AddPlayer Appearance */
                 pr.Skip(15); // [Gender (1)] [Skin (1)] [Face (4)] [Job (2)] [SubJob (2)] [Mega (1)] [Hair (4)]
@@ -50,7 +54,15 @@ namespace MapleCLB.Packets.Recv {
             }
         }
 
-        public static void CharInfo(Client c, PacketReader pr){
+        public static void CharInfo(Client c, PacketReader pr) {
+            //TODO: Better fix for this? Although this should always work so maybe it's good enough
+            if (pr.Available < 100) {
+                pr.Skip(44);
+                c.Mapler.Map = pr.ReadInt();
+                c.UpdateMapler.Report(c.Mapler);
+                return;
+            }
+
             pr.Skip(18);    //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
             int channel = pr.ReadInt(); //CH Connected To
             pr.Skip(10);    // [00 00 00 00 00 01 00 00 00 00]
@@ -59,11 +71,10 @@ namespace MapleCLB.Packets.Recv {
             pr.Skip(12);    // Unknown 12 bytes something to do with connection
             pr.Skip(8);     // [FF FF FF FF FF FF FF FF]
             pr.Skip(13);    // [00 F1 FF FF FF F1 FF FF FF F1 FF FF FF] Where F1 Changes to random Fx Value
-            pr.Skip(6);     // [00 00 00 00 00 00]
-            pr.ReadInt();   // [uid (4)]
+            pr.Skip(7);     // [00 00 00 00 00 00 00]
 
             /* Character Stats */
-            var m = Mapler.Parse(pr, 5);
+            var m = Mapler.Parse(pr);
 
             /* Char Info */
             pr.Skip(1); // BL Size
@@ -169,6 +180,14 @@ namespace MapleCLB.Packets.Recv {
             c.UpdateItems.Report(c.totalItemCount);
             c.UpdateMapler.Report(m);
             c.UpdateChannel.Report(c.Channel);
+        }
+
+        private const int MAGIC_NUM = -1770422;
+        public static void Seed(object o, PacketReader pr) {
+            var c = o as Client;
+            int seed = pr.ReadInt();
+            c.PortalCrc = c.Mapler.Id ^ seed ^ MAGIC_NUM;
+            c.PortalCount = 1;
         }
     }
 }

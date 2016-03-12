@@ -24,7 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClientForm));
             this.AccountGroup = new System.Windows.Forms.GroupBox();
             this.ModeList = new System.Windows.Forms.ComboBox();
             this.CharInput = new System.Windows.Forms.TextBox();
@@ -67,17 +66,7 @@
             this.PacketTab = new System.Windows.Forms.TabPage();
             this.PacketView = new MapleCLB.Forms.PacketView();
             this.RushTab = new System.Windows.Forms.TabPage();
-            this.RushStatusBar = new System.Windows.Forms.StatusStrip();
-            this.MapStatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
-            this.MapStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusSep = new System.Windows.Forms.ToolStripStatusLabel();
-            this.RushStatusLbl = new System.Windows.Forms.ToolStripStatusLabel();
-            this.RushStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.StatusSep2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
-            this.elliniaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.henesysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.RushTree = new System.Windows.Forms.TreeView();
+            this.RusherView = new MapleCLB.Forms.RusherView();
             this.LogTab = new System.Windows.Forms.TabPage();
             this.LogText = new System.Windows.Forms.TextBox();
             this.PacketInput = new System.Windows.Forms.TextBox();
@@ -93,7 +82,6 @@
             this.AccountTab.SuspendLayout();
             this.PacketTab.SuspendLayout();
             this.RushTab.SuspendLayout();
-            this.RushStatusBar.SuspendLayout();
             this.LogTab.SuspendLayout();
             this.SendMenu.SuspendLayout();
             this.SuspendLayout();
@@ -560,8 +548,7 @@
             // 
             // RushTab
             // 
-            this.RushTab.Controls.Add(this.RushStatusBar);
-            this.RushTab.Controls.Add(this.RushTree);
+            this.RushTab.Controls.Add(this.RusherView);
             this.RushTab.Location = new System.Drawing.Point(4, 22);
             this.RushTab.Name = "RushTab";
             this.RushTab.Size = new System.Drawing.Size(631, 315);
@@ -569,93 +556,12 @@
             this.RushTab.Text = "Rusher";
             this.RushTab.UseVisualStyleBackColor = true;
             // 
-            // RushStatusBar
+            // RusherView
             // 
-            this.RushStatusBar.BackColor = System.Drawing.Color.White;
-            this.RushStatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MapStatusLbl,
-            this.MapStatus,
-            this.StatusSep,
-            this.RushStatusLbl,
-            this.RushStatus,
-            this.StatusSep2,
-            this.toolStripDropDownButton1});
-            this.RushStatusBar.Location = new System.Drawing.Point(0, 293);
-            this.RushStatusBar.Name = "RushStatusBar";
-            this.RushStatusBar.Size = new System.Drawing.Size(631, 22);
-            this.RushStatusBar.TabIndex = 1;
-            this.RushStatusBar.Text = "Status";
-            // 
-            // MapStatusLbl
-            // 
-            this.MapStatusLbl.Name = "MapStatusLbl";
-            this.MapStatusLbl.Size = new System.Drawing.Size(34, 17);
-            this.MapStatusLbl.Text = "Map:";
-            // 
-            // MapStatus
-            // 
-            this.MapStatus.Name = "MapStatus";
-            this.MapStatus.Size = new System.Drawing.Size(51, 17);
-            this.MapStatus.Text = "Uknown";
-            // 
-            // StatusSep
-            // 
-            this.StatusSep.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
-            this.StatusSep.BorderStyle = System.Windows.Forms.Border3DStyle.Etched;
-            this.StatusSep.Name = "StatusSep";
-            this.StatusSep.Size = new System.Drawing.Size(4, 17);
-            // 
-            // RushStatusLbl
-            // 
-            this.RushStatusLbl.Name = "RushStatusLbl";
-            this.RushStatusLbl.Size = new System.Drawing.Size(42, 17);
-            this.RushStatusLbl.Text = "Status:";
-            // 
-            // RushStatus
-            // 
-            this.RushStatus.Name = "RushStatus";
-            this.RushStatus.Size = new System.Drawing.Size(26, 17);
-            this.RushStatus.Text = "Idle";
-            // 
-            // StatusSep2
-            // 
-            this.StatusSep2.Name = "StatusSep2";
-            this.StatusSep2.Size = new System.Drawing.Size(344, 17);
-            this.StatusSep2.Spring = true;
-            // 
-            // toolStripDropDownButton1
-            // 
-            this.toolStripDropDownButton1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.elliniaToolStripMenuItem,
-            this.henesysToolStripMenuItem});
-            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
-            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(115, 20);
-            this.toolStripDropDownButton1.Text = "Continenent Rush";
-            this.toolStripDropDownButton1.ToolTipText = "Continenent Rush";
-            // 
-            // elliniaToolStripMenuItem
-            // 
-            this.elliniaToolStripMenuItem.Name = "elliniaToolStripMenuItem";
-            this.elliniaToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
-            this.elliniaToolStripMenuItem.Text = "Ellinia";
-            // 
-            // henesysToolStripMenuItem
-            // 
-            this.henesysToolStripMenuItem.Name = "henesysToolStripMenuItem";
-            this.henesysToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
-            this.henesysToolStripMenuItem.Text = "Henesys";
-            // 
-            // RushTree
-            // 
-            this.RushTree.Location = new System.Drawing.Point(2, 3);
-            this.RushTree.Name = "RushTree";
-            this.RushTree.Size = new System.Drawing.Size(626, 290);
-            this.RushTree.TabIndex = 0;
+            this.RusherView.Location = new System.Drawing.Point(-1, -1);
+            this.RusherView.Name = "RusherView";
+            this.RusherView.Size = new System.Drawing.Size(633, 317);
+            this.RusherView.TabIndex = 0;
             // 
             // LogTab
             // 
@@ -756,9 +662,6 @@
             this.AccountTab.PerformLayout();
             this.PacketTab.ResumeLayout(false);
             this.RushTab.ResumeLayout(false);
-            this.RushTab.PerformLayout();
-            this.RushStatusBar.ResumeLayout(false);
-            this.RushStatusBar.PerformLayout();
             this.LogTab.ResumeLayout(false);
             this.LogTab.PerformLayout();
             this.SendMenu.ResumeLayout(false);
@@ -795,17 +698,6 @@
         private System.Windows.Forms.TabPage LogTab;
         private System.Windows.Forms.TabPage RushTab;
         public System.Windows.Forms.TextBox LogText;
-        private System.Windows.Forms.TreeView RushTree;
-        private System.Windows.Forms.StatusStrip RushStatusBar;
-        private System.Windows.Forms.ToolStripStatusLabel MapStatusLbl;
-        private System.Windows.Forms.ToolStripStatusLabel MapStatus;
-        private System.Windows.Forms.ToolStripStatusLabel StatusSep;
-        private System.Windows.Forms.ToolStripStatusLabel RushStatusLbl;
-        private System.Windows.Forms.ToolStripStatusLabel RushStatus;
-        private System.Windows.Forms.ToolStripStatusLabel StatusSep2;
-        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
-        private System.Windows.Forms.ToolStripMenuItem elliniaToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem henesysToolStripMenuItem;
         private System.Windows.Forms.Button CcBtn;
         private System.Windows.Forms.Button MoveBtn;
         private System.Windows.Forms.Button CsBtn;
@@ -830,5 +722,6 @@
         private System.Windows.Forms.Label Items;
         private System.Windows.Forms.Label WorkingStatus;
         private System.Windows.Forms.Label Working;
+        private RusherView RusherView;
     }
 }

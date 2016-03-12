@@ -20,16 +20,16 @@ namespace MapleCLB.Types {
         public int Ap { get; private set; }
         public long Exp { get; private set; }
         public int Fame { get; private set; }
-        public int Map { get; private set; }
+        public int Map { get; set; }
 
         public long Meso { get; set; }
 
-        public static Mapler Parse(PacketReader pr, int skip) {
+        public static Mapler Parse(PacketReader pr) {
             var m = new Mapler();
 
-            // [uid (4)] [?? (5 or 8)] [Name (13)]
+            // [uid (4)] [uid (4)] [02 00 00 00] [Name (13)]
             m.Id = pr.ReadInt();
-            pr.Skip(skip); // 8 in CHARLIST [?? ?? ?? ?? ?? ?? ?? ??], 5 in CHAR_INFO [00 02 00 00 00]
+            pr.Skip(8);
             m.Name = pr.ReadString(13).TrimEnd('\0');
             //[Gender (1)] [Skin (1)] [Face (4)] [Hair (4)] [FF 00 00] [Level (1)] [Job (2)]
             pr.Skip(13);

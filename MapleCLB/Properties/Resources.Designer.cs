@@ -59,5 +59,14 @@ namespace MapleCLB.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ÿÿÿÿæSystem.Collections.Generic.Dictionary`2[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[MapleCLB.Types.MapNode, MaplePathfinder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]VersionComparerHashSize        ///KeyValuePairs’System.Collections.Generic.GenericEqualityComparer`1[[System.UInt32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]êSystem.Collections.Generic.KeyValuePair`2[[System.UInt32,  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string MapNodes {
+            get {
+                return ResourceManager.GetString("MapNodes", resourceCulture);
+            }
+        }
     }
 }

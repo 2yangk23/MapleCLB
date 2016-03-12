@@ -99,6 +99,13 @@
     <Compile Include="Forms\PacketView.Designer.cs">
       <DependentUpon>PacketView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\RusherView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\RusherView.Designer.cs">
+      <DependentUpon>RusherView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MapleClient\Functions\MapRusher.cs" />
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
@@ -106,6 +113,7 @@
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
     <Compile Include="Resources\EXP.cs" />
+    <Compile Include="Resources\ResourceLoader.cs" />
     <Compile Include="Tools\Blocking.cs" />
     <Compile Include="ScriptLib\ScriptManager.cs" />
     <Compile Include="ScriptLib\ComplexScript.cs" />
@@ -151,6 +159,7 @@
     <Compile Include="Types\Items\Item.cs" />
     <Compile Include="Types\Items\Other.cs" />
     <Compile Include="Types\Mapler.cs" />
+    <Compile Include="Types\MapNode.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,6 +174,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PacketView.resx">
       <DependentUpon>PacketView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RusherView.resx">
+      <DependentUpon>RusherView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -185,6 +197,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Resources\name.map" />
+    <EmbeddedResource Include="Resources\node.map" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
+using MapleCLB.MapleClient.Functions;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 using MapleCLB.Types;
@@ -21,7 +23,7 @@ namespace MapleCLB.Forms {
         public Progress<long> UpdateExp;
         public Progress<int> UpdateItems;
         public Progress<int> UpdatePeople;
-        public Progress<String> UpdateWorking;
+        public Progress<string> UpdateWorking;
 
         public FreeMarketForm FMFunctions;
 
@@ -31,7 +33,7 @@ namespace MapleCLB.Forms {
         public ClientForm() {
             InitializeComponent();
             InitializeProgress();
-            PacketView.SetInput(PacketInput);
+            
             Win32.SendMessage(UserInput.Handle, Win32.EM_SETCUEBANNER, 0, "Username");
             Win32.SendMessage(PassInput.Handle, Win32.EM_SETCUEBANNER, 0, "Password");
             Win32.SendMessage(PicInput.Handle, Win32.EM_SETCUEBANNER, 0, "PIC");
@@ -40,8 +42,10 @@ namespace MapleCLB.Forms {
             Win32.SendMessage(DelayInput.Handle, Win32.EM_SETCUEBANNER, 0, "Delay");
 
             Client = new Client(this);
-            FMFunctions = new FreeMarketForm(this);
+            PacketView.SetInput(PacketInput);
+            RusherView.SetClient(Client);
 
+            FMFunctions = new FreeMarketForm(this);
 
 #if DEBUG
             /*Use this for testing account 
@@ -63,8 +67,6 @@ namespace MapleCLB.Forms {
             WorldList.SelectedIndex = 2;
             ChannelList.SelectedIndex = 6;
             ModeList.SelectedIndex = 0;
-
-
         }
 
         private void InitializeProgress() {
@@ -92,7 +94,8 @@ namespace MapleCLB.Forms {
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
                     MesoStatus.Text = m.Meso.ToString("N0");
-                    ExpStatus.Text = ((Decimal.Divide(m.Exp,EXP.PlayerExp[m.Level]))*100).ToString("F")+"%";
+                    ExpStatus.Text = ((decimal.Divide(m.Exp,EXP.PlayerExp[m.Level]))*100).ToString("F")+"%";
+                    RusherView.Update(m.Map);
                 } else {
                     NameStat.Text = "Unknown";
                     MapStat.Text = "-1";
@@ -108,7 +111,7 @@ namespace MapleCLB.Forms {
             UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
             UpdateItems = new Progress<int>(d => ItemsStatus.Text = d.ToString());
             UpdatePeople = new Progress<int>(d => PeopleStatus.Text = d.ToString());
-            UpdateWorking = new Progress<String>(d => WorkingStatus.Text = d);
+            UpdateWorking = new Progress<string>(d => WorkingStatus.Text = d);
         }
 
         /* Temporary stuff*/
@@ -147,7 +150,7 @@ namespace MapleCLB.Forms {
         private void MoveBtn_Click(object sender, EventArgs e) {
             Client.SendPacket(Movement.beforeTeleport());
             Client.SendPacket(Movement.beforeTeleport());
-            Client.SendPacket(Movement.Teleport(0x26F611E3, 80, 34, 52));
+            Client.SendPacket(Movement.Teleport(Client.PortalCount, 0x26F611E3, 80, 34, 52));
         }
 
         private void Information_Click(object sender, EventArgs e){

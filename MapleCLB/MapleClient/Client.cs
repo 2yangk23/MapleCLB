@@ -42,7 +42,7 @@ namespace MapleCLB.MapleClient {
         internal readonly IProgress<long> UpdateExp;
         internal readonly IProgress<int> UpdateItems;
         internal readonly IProgress<int> UpdatePeople;
-        internal readonly IProgress<String> UpdateWorking;
+        internal readonly IProgress<string> UpdateWorking;
 
 
         /* Client Info */
@@ -52,6 +52,8 @@ namespace MapleCLB.MapleClient {
         private Session Session;
         internal ScriptManager ScriptManager;
         internal ClientMode Mode;
+
+        internal IProgress<List<Tuple<short[], string>>> MapRush; 
 
         /* Timers */
         public Timer dcst;
@@ -67,6 +69,9 @@ namespace MapleCLB.MapleClient {
         internal long SessionId;
 
         internal byte Channel, doWhat;
+
+        internal int PortalCrc;
+        internal byte PortalCount = 1;
 
         internal int totalItemCount;
         internal int totalPeopleCount;
@@ -135,6 +140,17 @@ namespace MapleCLB.MapleClient {
         // This must be called in client's thread
         internal void Initialize(Account account) {
             Account = account;
+
+            MapRush = new Progress<List<Tuple<short[], string>>>(list => {
+                if (list == null) return;
+                foreach (Tuple<short[], string> data in list) {
+                    SendPacket(Portal.Enter(PortalCount, PortalCrc, data));
+                    if (PortalCount++ == 255) {
+                        PortalCount = 1; // wrap around
+                    }
+                    Thread.Sleep(50); // small delay just in case
+                }
+            });
 
             /* Start Scripts */
             //ScriptManager.Get<PlayerLoader>().Start();

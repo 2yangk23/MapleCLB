@@ -101,7 +101,7 @@
             CLOSE_PERMIT = 0x01F1,
             FINISH_LOAD_PERMIT = 0x04D5,
 
-            LOAD_SEED = 0x0171,  //4A FC E4 FF is magic number  
+            SEED = 0x0171,  //4A FC E4 FF is magic number  
             SPAWN_PLAYER = 0x01ED, 
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01, 
 

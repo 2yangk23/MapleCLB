@@ -1,22 +1,17 @@
-﻿using MapleCLB.MapleLib.Packet;
+﻿using System;
+using MapleCLB.MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class Portal {
-        //TODO: This needs to go in client so each client has its counter
-        public static byte Count = 1;
-
-        public static byte[] Enter(int crc, string command, short x, short y) {
+        public static byte[] Enter(byte count, int crc, Tuple<short[], string> data) {
             var pw = new PacketWriter(SendOps.CHANGE_MAP);
-            pw.WriteByte(Count);
+            pw.WriteByte(count);
             pw.WriteInt(-1); // FF FF FF FF
             pw.WriteInt(crc);
-            pw.WriteMapleString(command);
-            pw.WriteShort(x);
-            pw.WriteShort(y);
+            pw.WriteMapleString(data.Item2);
+            pw.WriteShort(data.Item1[0]);
+            pw.WriteShort(data.Item1[1]);
             pw.WriteZero(3); //what is this
-
-            if (++Count > 255) //loop around
-                Count = 1;
 
             return pw.ToArray();
         }

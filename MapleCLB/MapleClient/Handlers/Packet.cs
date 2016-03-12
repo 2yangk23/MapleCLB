@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using MapleCLB.MapleLib.Packet;
 using MapleCLB.Packets;
+using MapleCLB.Packets.Recv;
 using MapleCLB.Packets.Recv.Connection;
 using MapleCLB.Packets.Recv.Map;
 using MapleCLB.Tools;
@@ -27,6 +28,7 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
             Register(RecvOps.CHANNEL_IP, PortIp.ChannelIp);
             Register(RecvOps.PING, Request.PingPong);
+            Register(RecvOps.SEED, Load.Seed);
 
             Register(RecvOps.LOGIN_STATUS, Login.LoginStatus);
             Register(RecvOps.LOGIN_SECOND, Login.LoginSecond);
