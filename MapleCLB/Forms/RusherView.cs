@@ -17,16 +17,13 @@ namespace MapleCLB.Forms {
             Client = client;
         }
 
-        // TODO: Use custom serialization and split names up
-        private static readonly IReadOnlyDictionary<int, string[]> MapNames = ResourceLoader.LoadMapNames();
-
         public void Update(int srcMap) {
             RushTree.Nodes.Clear();
 
             List<int> reachable = MapRusher.Reachable(srcMap);
             foreach (int map in reachable) {
                 string[] names;
-                MapNames.TryGetValue(map, out names);
+                MapData.Names.TryGetValue(map, out names);
 
                 if (!RushTree.Nodes.ContainsKey(names[0])) {
                     RushTree.Nodes.Add(names[0], names[0]);

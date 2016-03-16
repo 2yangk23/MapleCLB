@@ -87,12 +87,6 @@ namespace MapleCLB.MapleClient {
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
         internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
-        internal readonly Dictionary<int, string> EquipToString;// Dictionary of ALL Data, ID -> Name
-        internal readonly Dictionary<int, string> UseToString;
-        internal readonly Dictionary<int, string> SetUpToString;
-        internal readonly Dictionary<int, string> EtcToString;
-        internal readonly Dictionary<int, string> CashToString;
-
         internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>(); //Dictionary of CLIENTS Data, Name -> Quantity
         internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
         internal readonly Dictionary<string, int> currentSetUpInventory = new Dictionary<string, int>();
@@ -129,12 +123,6 @@ namespace MapleCLB.MapleClient {
 
             displayTimer = new Timer(displayTime);
             displayTimer.Elapsed += ConnectTimer;
-
-            EquipToString = Tools.ItemParse.Parsing_Data("Equip");
-            UseToString = Tools.ItemParse.Parsing_Data("Use");
-            SetUpToString = Tools.ItemParse.Parsing_Data("SetUp");
-            EtcToString = Tools.ItemParse.Parsing_Data("Etc");
-            CashToString = Tools.ItemParse.Parsing_Data("Cash");
         }
 
         // This must be called in client's thread

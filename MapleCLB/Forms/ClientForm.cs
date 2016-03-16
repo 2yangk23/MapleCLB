@@ -94,7 +94,7 @@ namespace MapleCLB.Forms {
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
                     MesoStatus.Text = m.Meso.ToString("N0");
-                    ExpStatus.Text = ((decimal.Divide(m.Exp,EXP.PlayerExp[m.Level]))*100).ToString("F")+"%";
+                    ExpStatus.Text = ((decimal.Divide(m.Exp,Resources.Exp.PlayerExp[m.Level]))*100).ToString("F")+"%";
                     RusherView.Update(m.Map);
                 } else {
                     NameStat.Text = "Unknown";

@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Threading;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleLib.Packet;
+using MapleCLB.Resources;
 using MapleCLB.Tools;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
@@ -26,18 +27,7 @@ namespace MapleCLB.Packets.Recv {
                 var m = Mapler.Parse(pr);
 
                 /* AddPlayer Appearance */
-                pr.Skip(15); // [Gender (1)] [Skin (1)] [Face (4)] [Job (2)] [SubJob (2)] [Mega (1)] [Hair (4)]
-                for (int j = 0; j < 3; ++j) { // Skips the Equipment
-                    pr.Next(0xFF);
-                }
-                pr.Skip(4); // [00 00 00 00]
-
-                pr.Skip(24); // [Weapon (4)] [Shield (4)] [Mercedes Ears (1)] [Zeros (15)]
-                if ((m.Job >= 3100 && m.Job <= 3122) || (m.Job >= 3600 && m.Job <= 3612) || m.Job == 3002 || m.Job == 3001) { // Demon/Xenon
-                    pr.Skip(4); // [FaceMark (4)]
-                } else if (m.Job >= 11200 && m.Job <= 11212) { // Beast Tamer
-                    pr.Skip(14); // [FaceMark (4)] [Ears (1)] [EarType (4)] [Tail (1)] [TailType (4)]
-                }
+                Mapler.SkipAppearance(pr, m.Job);
 
                 bool hasRank = pr.ReadBool(); // [HasRanking (1)]
                 if (hasRank) {
@@ -123,7 +113,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Equip.Parse(pr,type);
                 itemTest.Slot = slot;
-                c.currentEquipInventory[c.EquipToString[itemTest.Id]] = 1;
+                c.currentEquipInventory[ItemData.Equip[itemTest.Id]] = 1;
                 c.totalItemCount = c.totalItemCount + 1;
                 //c.WriteLog.Report("Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
@@ -134,7 +124,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Other.Parse(pr,type);
                 itemTest.Slot = slot;
-                c.currentUseInventory[c.UseToString[itemTest.Id]] = itemTest.Quantity;
+                c.currentUseInventory[ItemData.Use[itemTest.Id]] = itemTest.Quantity;
                 c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Use: " + itemTest.Id + " Item Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
             }
@@ -143,7 +133,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Other.Parse(pr, type);
                 itemTest.Slot = slot;
-                c.currentSetUpInventory[c.SetUpToString[itemTest.Id]] = itemTest.Quantity;
+                c.currentSetUpInventory[ItemData.Setup[itemTest.Id]] = itemTest.Quantity;
                 c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Setup: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
@@ -152,7 +142,7 @@ namespace MapleCLB.Packets.Recv {
                 byte type = pr.ReadByte();
                 var itemTest = Other.Parse(pr, type);
                 itemTest.Slot = slot;
-                c.currentEtcInventory[c.EtcToString[itemTest.Id]] = itemTest.Quantity;
+                c.currentEtcInventory[ItemData.Etc[itemTest.Id]] = itemTest.Quantity;
                 c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 //c.WriteLog.Report("Etc: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
@@ -163,13 +153,13 @@ namespace MapleCLB.Packets.Recv {
                 if (type == 3){
                     var itemTest = Pet.Parse(pr, type);
                     itemTest.Slot = slot;
-                    c.currentEquipInventory[c.CashToString[itemTest.Id]] = 1;
+                    c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = 1;
                     c.totalItemCount = c.totalItemCount + 1;
                 }
                 else{
                     var itemTest = Other.Parse(pr, type);
                     itemTest.Slot = slot;
-                    c.currentEquipInventory[c.CashToString[itemTest.Id]] = itemTest.Quantity;
+                    c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = itemTest.Quantity;
                     c.totalItemCount = c.totalItemCount + itemTest.Quantity;
                 }
             }

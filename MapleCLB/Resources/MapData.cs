@@ -6,11 +6,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using MapleCLB.Types;
 
 namespace MapleCLB.Resources {
-    public class ResourceLoader {
+    public class MapData {
         private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
 
-        public static ReadOnlyDictionary<int, MapNode> LoadMaps() {
-            using (var file = Assembly.GetManifestResourceStream("MapleCLB.Resources.node.map")) {
+        public static ReadOnlyDictionary<int, MapNode> Nodes = LoadMaps();
+        public static ReadOnlyDictionary<int, string[]> Names = LoadMapNames();
+
+        private static ReadOnlyDictionary<int, MapNode> LoadMaps() {
+            using (var file = Assembly.GetManifestResourceStream("MapleCLB.Resources.Map.node.map")) {
                 var br = new BinaryReader(file);
 
                 int count = br.ReadInt32();
@@ -25,8 +28,8 @@ namespace MapleCLB.Resources {
             }
         }
 
-        public static ReadOnlyDictionary<int, string[]> LoadMapNames() {
-            using (var file = Assembly.GetManifestResourceStream("MapleCLB.Resources.name.map")) {
+        private static ReadOnlyDictionary<int, string[]> LoadMapNames() {
+            using (var file = Assembly.GetManifestResourceStream("MapleCLB.Resources.Map.name.map")) {
                 var br = new BinaryReader(file);
 
                 int count = br.ReadInt32();

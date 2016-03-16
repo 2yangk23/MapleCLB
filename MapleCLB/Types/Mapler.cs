@@ -69,9 +69,7 @@ namespace MapleCLB.Types {
             m.Map = pr.ReadInt();
 
             pr.Skip(7); // [SpawnPoint (1)] 00 00 00 00 [SubJob (2)] [(Demon, Xenon, Beast Tamer) ? FaceMark (4)]
-            if (m.IsDemon || m.IsXenon) { // Demon/Xenon
-                pr.Skip(4);
-            } else if (m.IsBeastTamer) { // Beast Tamer
+            if (m.IsDemon || m.IsXenon || m.IsBeastTamer) { // Demon/Xenon/Beast Tamer
                 pr.Skip(4);
             }
 
@@ -86,6 +84,23 @@ namespace MapleCLB.Types {
             pr.Skip(1);     // 00
 
             return m;
+        }
+
+        public static void SkipAppearance(PacketReader pr, short job) {
+            var m = new Mapler { Job = job };
+            pr.Skip(15); // [Gender (1)] [Skin (1)] [Face (4)] [Job (2)] [SubJob (2)] [Mega (1)] [Hair (4)]
+            for (int j = 0; j < 3; ++j) { // Skips the Equipment
+                pr.Next(0xFF);
+            }
+            pr.Skip(4); // [00 00 00 00]
+
+            pr.Skip(21); // [Weapon (4)] [Shield (4)] [Mercedes Ears (1)] [Zeros (12)]
+            if (m.IsDemon || m.IsXenon) { // Demon/Xenon
+                pr.Skip(4); // [FaceMark (4)]
+            } else if (m.IsBeastTamer) { // Beast Tamer
+                pr.Skip(14); // [FaceMark (4)] [Ears (1)] [EarType (4)] [Tail (1)] [TailType (4)]
+            }
+            pr.Skip(3); // ?? ?? ??
         }
 
         public bool IsDemon => Job == 3001 || Job / 100 == 31;
