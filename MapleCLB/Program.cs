@@ -9,8 +9,7 @@ namespace MapleCLB {
         public static readonly IPAddress LoginIp = IPAddress.Parse("8.31.99.143");
         public static readonly short LoginPort = 8484;
 
-        private static readonly byte[] UserKey = //171.1
-        {
+        private static readonly byte[] UserKey = { //171.1
             0xF1, 0x00, 0x00, 0x00,
             0x02, 0x00, 0x00, 0x00,
             0x15, 0x00, 0x00, 0x00,

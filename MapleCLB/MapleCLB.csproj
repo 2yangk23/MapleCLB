@@ -109,9 +109,11 @@
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
+    <Compile Include="MapleClient\Scripts\MesoVac.cs" />
     <Compile Include="MapleClient\Scripts\SpotStealerBot.cs" />
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
+    <Compile Include="Packets\Send\Map.cs" />
     <Compile Include="Resources\Exp.cs" />
     <Compile Include="Resources\ItemData.cs" />
     <Compile Include="Resources\MapData.cs" />
@@ -124,6 +126,8 @@
     <Compile Include="MapleLib\Crypto\AesCipher.cs" />
     <Compile Include="MapleLib\Crypto\AuthCipher.cs" />
     <Compile Include="MapleLib\Crypto\MapleCipher.cs" />
+    <Compile Include="Tools\BlockingLinkedList.cs" />
+    <Compile Include="Tools\Crc32.cs" />
     <Compile Include="Tools\HexEncoding.cs" />
     <Compile Include="MapleLib\Packet\PacketReader.cs" />
     <Compile Include="MapleLib\Packet\PacketWriter.cs" />

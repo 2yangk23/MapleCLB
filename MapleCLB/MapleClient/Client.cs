@@ -145,6 +145,7 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
             //ScriptManager.Get<SpotStealerBot>().Start();
+            //ScriptManager.Get<MesoVac>().Start();
         }
 
         internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB,bool SCMode, bool takeAnyCB){

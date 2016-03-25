@@ -37,6 +37,8 @@
             CHAR_SELECT = 0x6B,
             PLAYER_LOGGEDIN = 0x6E,
             GET_SERVERS = 0x9E,
+
+            LOOT_ITEM = 0x032E,
             CHANGE_MAP = 0xAC,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
             TRADE = 0x0179,
@@ -90,22 +92,27 @@
             SERVERLIST = 0x01, // Useless
             SERVER_IP = 0x07,
             CHANNEL_IP = 0x11,
-            LOAD_MUSHY = 0x03B0,
-            CLOSE_MUSHY = LOAD_MUSHY + 0x02, 
-            BLUE_POP = 0x005F, //Not updated
-            CHAR_INFO = 0x019D,
-            FINISH_LOAD = 0x0047,
 
+            /* player */
+            CHAR_INFO = 0x019E,
+            SEED = 0x0172,  //4A FC E4 FF is magic number  
+
+            BLUE_POP = 0x005F, //Not updated
             TEMP = 0x003F, //Not Updated, need to fix too
 
-            CLOSE_PERMIT = 0x01F1,
-            FINISH_LOAD_PERMIT = 0x04D5,
+            /* shop */
+            LOAD_MUSHY = 0x03B1,
+            CLOSE_MUSHY = LOAD_MUSHY + 0x02,
+            CLOSE_PERMIT = 0x01F2,
+            FINISH_LOAD_PERMIT = 0x04D6,
 
-            SEED = 0x0171,  //4A FC E4 FF is magic number  
-            SPAWN_PLAYER = 0x01ED, 
-            REMOVE_PLAYER = SPAWN_PLAYER + 0x01, 
+            /* map */
+            SPAWN_PLAYER = 0x01EE, 
+            REMOVE_PLAYER = SPAWN_PLAYER + 0x01,
+            SPAWN_ITEM = 0x03B4,
+            FINISH_LOAD = 0x0047,
 
-
+            /* chat */
             ALL_CHAT = 0x01EF; 
     }
 }
