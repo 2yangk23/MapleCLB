@@ -1,5 +1,5 @@
-﻿using System;
-using MapleLib.Packet;
+﻿using MapleLib.Packet;
+using SharedTools;
 
 namespace MapleCLB.Types.Items {
     public enum Potential : byte {
@@ -20,10 +20,8 @@ namespace MapleCLB.Types.Items {
         // TODO: Add all the stats :D
 
         public new static Equip Parse(PacketReader pr, byte temp) {
-            var e =  Item.Parse(pr, temp) as Equip;
-            if (e == null) {
-                throw new InvalidCastException("Error casting item-type Equip.");
-            }
+            var e = Item.Parse(pr, temp) as Equip;
+            Precondition.NotNull(e, "Error casting item-type Equip.");
 
             pr.Next(0xFF); // Skip item stats
             // [00 11 00 00] Unknown
@@ -34,12 +32,11 @@ namespace MapleCLB.Types.Items {
             }
             // [Other Creator] [Potential (1)] [Enhancements (1)]
             pr.ReadMapleString();
-            e.Potential = (Potential)pr.ReadByte();
+            e.Potential = (Potential) pr.ReadByte();
             e.Enhancements = pr.ReadByte();
             // [Potential (2 * 3)] [Bonus Potential (2 * 3)] 00 00 [Socket State (2)] [Socket (2 * 3)]
-            pr.Skip(22);
             // [Database Id (8)] [Timestamp (8)] FF FF FF FF [Zero (8)] [Timestamp (8)] [Zero (20)] 00 00
-            pr.Skip(58);
+            pr.Skip(22 + 58);
 
             return e;
         }

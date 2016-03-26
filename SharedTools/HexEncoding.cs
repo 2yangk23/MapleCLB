@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Threading;
+using SharedTools;
 
 namespace MapleCLB.Tools {
     public static class HexEncoding {
         private static int seed = Environment.TickCount;
-        private static readonly ThreadLocal<Random> rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+
+        private static readonly ThreadLocal<Random> rng =
+            new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
         private static readonly uint[] hexLookup = {
             3145776, 3211312, 3276848, 3342384, 3407920, 3473456, 3538992, 3604528, 3670064, 3735600, 4259888, 4325424,
@@ -32,13 +35,11 @@ namespace MapleCLB.Tools {
         };
 
         private static readonly byte[] nybbleLookup = {
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   255, 255,
-            255, 255, 255, 255, 255, 10,  11,  12,  13,  14,  15,  255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 10,  11,  12,  13,  14,  15
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 255, 255, 255, 255, 255,
+            255, 255, 10, 11, 12, 13, 14, 15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 10, 11, 12, 13, 14, 15
         };
 
         public static bool IsHexDigit(char c) {
@@ -46,9 +47,8 @@ namespace MapleCLB.Tools {
         }
 
         public static unsafe byte ToByte(string hex) {
-            if (hex.Length > 2 || hex.Length < 1) {
-                throw new ArgumentException("Hex byte string must have 1-2 characters");
-            }
+            Precondition.Check<ArgumentException>(hex.Length == 1 || hex.Length == 2,
+                "Hex byte string must have 1-2 characters");
 
             fixed (byte* lookupPtr = nybbleLookup) {
                 return hex.Length == 1 ? lookupPtr[hex[0]] : (byte) (lookupPtr[hex[0]] << 4 | lookupPtr[hex[1]]);
@@ -59,16 +59,14 @@ namespace MapleCLB.Tools {
             string result = new string('\0', 2);
             fixed (char* ptr = result)
             fixed (uint* lookupPtr = hexLookup) {
-                *(uint*)ptr = lookupPtr[b];
+                *(uint*) ptr = lookupPtr[b];
             }
             return result;
         }
 
         public static unsafe byte[] ToByteArray(string hex) {
             hex = hex.Replace(" ", string.Empty);
-            if (hex.Length % 2 != 0) {
-                throw new ArgumentException("Hex string must have even number of characters");
-            }
+            Precondition.Check<ArgumentException>(hex.Length % 2 == 0, "Hex string must have even number of characters");
 
             byte[] result = new byte[hex.Length / 2];
             fixed (byte* lookupPtr = nybbleLookup) {
@@ -83,7 +81,7 @@ namespace MapleCLB.Tools {
             string result = new string('\0', bytes.Length);
             fixed (char* resultPtr = result) {
                 for (int i = 0; i < bytes.Length; i++) {
-                    resultPtr[i] = bytes[i] < 32 ? '.' : (char)bytes[i];
+                    resultPtr[i] = bytes[i] < 32 ? '.' : (char) bytes[i];
                 }
             }
             return result;
@@ -95,7 +93,7 @@ namespace MapleCLB.Tools {
             fixed (char* resultPtr = result)
             fixed (uint* lookupPtr = hexLookup) {
                 for (int i = 0, j = 0; i < bytes.Length; i++) {
-                    *(uint*)(resultPtr + j) = lookupPtr[bytesPtr[i]];
+                    *(uint*) (resultPtr + j) = lookupPtr[bytesPtr[i]];
                     j += 2;
                 }
             }
@@ -108,7 +106,7 @@ namespace MapleCLB.Tools {
             fixed (char* resultPtr = result)
             fixed (uint* lookupPtr = hexLookup) {
                 for (int i = 0, j = 0; i < bytes.Length; i++) {
-                    *(uint*)(resultPtr + j) = lookupPtr[bytesPtr[i]];
+                    *(uint*) (resultPtr + j) = lookupPtr[bytesPtr[i]];
                     j += 3;
                 }
             }

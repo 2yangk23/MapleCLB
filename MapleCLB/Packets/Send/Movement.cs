@@ -16,7 +16,7 @@ namespace MapleCLB.Packets.Send {
             pw.WriteShort(x);
             pw.WriteShort(y);
             pw.WriteZero(4);
-            pw.WriteShort(fh); 
+            pw.WriteShort(fh);
             pw.WriteZero(4);
             pw.WriteShort(temper); //Animation
             pw.WriteZero(12);
@@ -24,13 +24,12 @@ namespace MapleCLB.Packets.Send {
             return pw.ToArray();
         }
 
-        public static byte[] beforeTeleport(){
+        public static byte[] beforeTeleport() {
             var pw = new PacketWriter(SendOps.BEFORE_MOVE);
             pw.Timestamp();
             pw.WriteZero(2);
 
             return pw.ToArray();
         }
-
     }
 }

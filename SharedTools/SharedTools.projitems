@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Crc32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexEncoding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MultiKeyDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Precondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Win32.cs" />
   </ItemGroup>
 </Project>

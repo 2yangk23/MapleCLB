@@ -1,9 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System.Reflection;
+using System.Windows.Forms;
 
 namespace MapleCLB.Forms {
-    public partial class MainForm : Form {
+    public sealed partial class MainForm : Form {
         public MainForm() {
             InitializeComponent();
+            Text = $"[{Assembly.GetEntryAssembly().GetName().Version}] MapleStory Clientless Bot";
         }
     }
 }

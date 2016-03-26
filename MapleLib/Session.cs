@@ -3,27 +3,31 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using MapleLib.Crypto;
 using MapleLib.Packet;
-
+using SharedTools;
 
 namespace MapleLib {
-    public enum SessionType { CLIENT, SERVER }
+    public enum SessionType {
+        CLIENT,
+        SERVER
+    }
 
     public sealed class Session {
         private const short RECEIVE_SIZE = 1024;
         private const int HANDSHAKE_HEADER_SIZE = 2;
         private const int PACKET_HEADER_SIZE = 4;
 
-        private readonly Socket socket;
         private readonly AesCipher aesCipher;
-        private readonly object sendLock;
         private readonly byte[] recvBuffer;
-
-        private MapleCipher clientCipher;
-        private MapleCipher serverCipher;
-        private byte[] packetBuffer;
-        private int cursor;
+        private readonly object sendLock;
 
         public readonly SessionType SessionType;
+
+        private readonly Socket socket;
+        private MapleCipher clientCipher;
+        private int cursor;
+        private byte[] packetBuffer;
+        private MapleCipher serverCipher;
+
         public bool Connected { get; private set; }
         public bool Encrypted { get; private set; }
 
@@ -72,7 +76,9 @@ namespace MapleLib {
         }
 
         private void Receive() {
-            if (!Connected) return;
+            if (!Connected) {
+                return;
+            }
 
             SocketError error;
             socket.BeginReceive(recvBuffer, 0, RECEIVE_SIZE, SocketFlags.None, out error, PacketCallback, null);
@@ -83,7 +89,9 @@ namespace MapleLib {
         }
 
         private void PacketCallback(IAsyncResult iar) {
-            if (!Connected) return;
+            if (!Connected) {
+                return;
+            }
 
             SocketError error;
             // TODO: Fix Diposed Socket Bug
@@ -143,7 +151,9 @@ namespace MapleLib {
 
         private void ProcessHandshake() {
             short packetSize = BitConverter.ToInt16(packetBuffer, 0);
-            if (cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) return;
+            if (cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) {
+                return;
+            }
 
             byte[] buffer = new byte[packetSize];
             Buffer.BlockCopy(packetBuffer, HANDSHAKE_HEADER_SIZE, buffer, 0, packetSize);
@@ -170,15 +180,9 @@ namespace MapleLib {
         }
 
         public void SendPacket(byte[] packet) {
-            if (!Connected) {
-                throw new InvalidOperationException("Socket is not connected");
-            }
-            if (!Encrypted) {
-                throw new InvalidOperationException("Handshake has not been received yet");
-            }
-            if (packet.Length < 2) {
-                throw new ArgumentOutOfRangeException(nameof(packet), @"Packet length must be greater than 2");
-            }
+            Precondition.Check<InvalidOperationException>(Connected, "Socket is not connected");
+            Precondition.Check<InvalidOperationException>(Encrypted, "Handshake has not been received yet");
+            Precondition.Check<ArgumentException>(packet.Length >= 2, @"Packet length must be greater than 2");
 
             lock (sendLock) {
                 byte[] final = new byte[packet.Length + PACKET_HEADER_SIZE];
@@ -214,7 +218,9 @@ namespace MapleLib {
         }
 
         public void Disconnect(bool finished = true) {
-            if (!Connected) return;
+            if (!Connected) {
+                return;
+            }
 
             cursor = 0;
             socket.Shutdown(SocketShutdown.Both);
@@ -230,12 +236,13 @@ namespace MapleLib {
             Encrypted = false;
             Connected = false;
 
-
-            if (!finished) return;
+            if (!finished) {
+                return;
+            }
 
             clientCipher = null;
             serverCipher = null;
-            OnDisconnected?.Invoke(this,null);
+            OnDisconnected?.Invoke(this, null);
         }
     }
 }

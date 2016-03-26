@@ -57,8 +57,6 @@
             MOVE_PLAYER = 0xBB,
             NPC_TALK = 0x00, //Not udpated
             NPC_TALK_MORE = NPC_TALK + 0x02; //why do i have this?
-
-
     }
 
     /*************RECEIVE************

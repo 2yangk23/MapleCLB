@@ -8,7 +8,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             r.ReadShort();
             byte[] serverIp = r.ReadBytes(4);
             short port = r.ReadShort();
-            string ip = serverIp[0] + "." + serverIp[1] + "." + serverIp[2] + "." + serverIp[3];
+            string ip = $"{serverIp[0]}.{serverIp[1]}.{serverIp[2]}.{serverIp[3]}";
             c.Reconnect(ip, port);
         }
 
@@ -17,7 +17,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             r.ReadByte();
             byte[] channelIp = r.ReadBytes(4);
             short port = r.ReadShort();
-            string ip = channelIp[0] + "." + channelIp[1] + "." + channelIp[2] + "." + channelIp[3];
+            string ip = $"{channelIp[0]}.{channelIp[1]}.{channelIp[2]}.{channelIp[3]}";
             c.Reconnect(ip, port);
         }
     }

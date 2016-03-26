@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography;
+using SharedTools;
 
 namespace MapleLib.Crypto {
     public sealed class AesCipher {
         private readonly ICryptoTransform crypto;
 
         public AesCipher(byte[] aesKey) {
-            if (aesKey == null) {
-                throw new ArgumentNullException(nameof(aesKey));
-            }
-            if (aesKey.Length != 32) {
-                throw new ArgumentOutOfRangeException(nameof(aesKey), "Key length needs to be 32");
-            }
+            Precondition.NotNull(aesKey, nameof(aesKey));
+            Precondition.Check<ArgumentOutOfRangeException>(aesKey.Length == 32, "Key length needs to be 32");
 
             var aes = new RijndaelManaged {
                 Key = aesKey,
@@ -31,15 +28,18 @@ namespace MapleLib.Crypto {
             int length = 0x5B0;
 
             while (remaining > 0) {
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < 16; i++) {
                     morphKey[i] = iv[i % 4];
+                }
 
-                if (remaining < length)
+                if (remaining < length) {
                     length = remaining;
+                }
 
                 for (int index = start; index < start + length; index++) {
-                    if ((index - start) % 16 == 0)
+                    if ((index - start) % 16 == 0) {
                         crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
+                    }
 
                     data[index] ^= morphKey[(index - start) % 16];
                 }

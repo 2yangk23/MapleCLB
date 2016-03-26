@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using MapleCLB.Resources;
+using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient.Functions {
     internal class MapRusher {
-        internal static List<Tuple<short[], string>> Pathfind(int src, int dst) {
-            List<Tuple<short[], string>> directions = new List<Tuple<short[], string>>();
+        internal static List<PortalInfo> Pathfind(int src, int dst) {
+            List<PortalInfo> directions = new List<PortalInfo>();
 
             // Already on destination map
             if (src == dst) {
@@ -14,7 +14,7 @@ namespace MapleCLB.MapleClient.Functions {
             }
 
             // Can move to map with 1 portal
-            ReadOnlyDictionary<int, Tuple<short[], string>> curPortals = MapData.Nodes[src].Portals;
+            ReadOnlyDictionary<int, PortalInfo> curPortals = MapData.Nodes[src].Portals;
             if (curPortals.ContainsKey(dst)) {
                 directions.Add(curPortals[dst]);
                 return directions;

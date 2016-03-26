@@ -3,27 +3,27 @@ using System.Windows.Forms;
 
 namespace MapleCLB.Forms
 {
-    public partial class Information : Form{
+    public partial class Information : Form {
         //To Do : Split up inventory calls
-        public void updateInventory(Dictionary<string, int> equipsClient, Dictionary<string, int> useClient, Dictionary<string, int> setUpClient, Dictionary<string, int> etcClient){
-            foreach( KeyValuePair<string, int> kvp in equipsClient ){
-                System.Windows.Forms.ListViewItem listViewItem = new System.Windows.Forms.ListViewItem(new string[] { kvp.Key, "" + kvp.Value }, -1);
-                EquipListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem });
+        public void UpdateInventory(Dictionary<string, int> equipsClient, Dictionary<string, int> useClient, Dictionary<string, int> setUpClient, Dictionary<string, int> etcClient) {
+            foreach (KeyValuePair<string, int> kvp in equipsClient) {
+                ListViewItem listViewItem = new ListViewItem(new[] { kvp.Key, "" + kvp.Value }, -1);
+                EquipListView.Items.AddRange(new[] { listViewItem });
             }
 
-            foreach (KeyValuePair<string, int> kvp in useClient){
-                System.Windows.Forms.ListViewItem listViewItem = new System.Windows.Forms.ListViewItem(new string[] { kvp.Key, "" + kvp.Value }, -1);
-                UseListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem });
+            foreach (KeyValuePair<string, int> kvp in useClient) {
+                ListViewItem listViewItem = new ListViewItem(new[] { kvp.Key, "" + kvp.Value }, -1);
+                UseListView.Items.AddRange(new[] { listViewItem });
             }
 
-            foreach (KeyValuePair<string, int> kvp in setUpClient){
-                System.Windows.Forms.ListViewItem listViewItem = new System.Windows.Forms.ListViewItem(new string[] { kvp.Key, "" + kvp.Value }, -1);
-                SetUpListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem });
+            foreach (KeyValuePair<string, int> kvp in setUpClient) {
+                ListViewItem listViewItem = new ListViewItem(new[] { kvp.Key, "" + kvp.Value }, -1);
+                SetUpListView.Items.AddRange(new[] { listViewItem });
             }
 
-            foreach (KeyValuePair<string, int> kvp in etcClient){
-                System.Windows.Forms.ListViewItem listViewItem = new System.Windows.Forms.ListViewItem(new string[] { kvp.Key, "" + kvp.Value }, -1);
-                EtcListView.Items.AddRange(new System.Windows.Forms.ListViewItem[] { listViewItem });
+            foreach (KeyValuePair<string, int> kvp in etcClient) {
+                ListViewItem listViewItem = new ListViewItem(new[] { kvp.Key, "" + kvp.Value }, -1);
+                EtcListView.Items.AddRange(new[] { listViewItem });
             }
         }
         //Temp
@@ -33,7 +33,7 @@ namespace MapleCLB.Forms
             UseListView.Items.Clear();
             EquipListView.Items.Clear();
         }
-        public Information(){
+        public Information() {
             InitializeComponent();
         }
     }

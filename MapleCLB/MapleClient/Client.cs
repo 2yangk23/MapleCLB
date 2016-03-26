@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Diagnostics;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
-using MapleLib;
-using MapleLib.Packet;
-using MapleCLB.Tools;
-
+using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
+using MapleCLB.Tools;
 using MapleCLB.Types;
+using MapleLib;
+using MapleLib.Packet;
 using Timer = System.Timers.Timer;
-using MapleCLB.MapleClient.Scripts;
 
 namespace MapleCLB.MapleClient {
     internal enum ClientMode : byte {
@@ -23,7 +22,7 @@ namespace MapleCLB.MapleClient {
         CONNECTED,
         LOGIN,
         CASHSHOP,
-        GAME,
+        GAME
     }
 
     public class Client {
@@ -31,86 +30,90 @@ namespace MapleCLB.MapleClient {
         private const int CHANNEL_TIMEOUT = 10000;
 
         /* UI Info */
-        private readonly ClientForm CForm;
+        private readonly ClientForm cForm;
+
+        internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>();
+        //slot/ign -> uid
+
         internal readonly IProgress<bool> ConnectToggle;
-        internal readonly IProgress<string> WriteLog;
-        internal readonly IProgress<byte[]> WriteSend, WriteRecv;
 
-        internal readonly IProgress<Mapler> UpdateMapler;
-        
-        internal readonly IProgress<byte> UpdateChannel;
-        internal readonly IProgress<long> UpdateExp;
-        internal readonly IProgress<int> UpdateItems;
-        internal readonly IProgress<int> UpdatePeople;
-        internal readonly IProgress<string> UpdateWorking;
+        internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>();
+        //Dictionary of CLIENTS Data, Name -> Quantity
 
+        internal readonly Dictionary<string, int> currentEtcInventory = new Dictionary<string, int>();
+        internal readonly Dictionary<string, int> currentSetUpInventory = new Dictionary<string, int>();
+        internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
 
         /* Client Info */
-        private readonly Handshake HandshakeHandler;
-        private readonly Packet PacketHandler;
+        private readonly Handshake handshakeHandler;
+        private readonly Packet packetHandler;
 
-        private Session Session;
-        internal ScriptManager ScriptManager;
-        internal ClientMode Mode;
-
-        internal IProgress<List<Tuple<short[], string>>> MapRush; 
-
-        /* Timers */
-        public Timer dcst;
-        public int autoDCtime;
-
-        public Timer displayTimer;
-        public int displayTime;
-
-        /* User Info */
-        internal Account Account;
-        internal Mapler Mapler;
-        internal int UserId;
-        internal long SessionId;
-
-        internal byte Channel, doWhat;
-
-        internal int PortalCrc;
-        internal byte PortalCount = 1;
-
-        internal int totalItemCount;
-        internal int totalPeopleCount;
-
-        internal bool ShowInformation = false;
-        internal bool ShowFMFunctions = false;
-
-        internal bool hasFMShop = false;
-
-        Stopwatch stopWatch = new Stopwatch();
+        private readonly Stopwatch stopWatch = new Stopwatch();
 
         /* Dictionaries */
         internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
-        internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>(); //slot/ign -> uid
 
-        internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>(); //Dictionary of CLIENTS Data, Name -> Quantity
-        internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
-        internal readonly Dictionary<string, int> currentSetUpInventory = new Dictionary<string, int>();
-        internal readonly Dictionary<string, int> currentEtcInventory = new Dictionary<string, int>();
+        internal readonly IProgress<byte> UpdateChannel;
+        internal readonly IProgress<long> UpdateExp;
+        internal readonly IProgress<int> UpdateItems;
+
+        internal readonly IProgress<Mapler> UpdateMapler;
+        internal readonly IProgress<int> UpdatePeople;
+        internal readonly IProgress<string> UpdateWorking;
+        internal readonly IProgress<string> WriteLog;
+        internal readonly IProgress<byte[]> WriteSend, WriteRecv;
+
+        /* User Info */
+        internal Account Account;
+        public int autoDCtime;
+
+        internal byte Channel, doWhat;
+
+        /* Timers */
+        public Timer dcst;
+        public int displayTime;
+
+        public Timer displayTimer;
+
+        internal bool hasFMShop = false;
+        internal Mapler Mapler;
+
+        internal IProgress<List<PortalInfo>> MapRush;
+        internal ClientMode Mode;
+        internal byte PortalCount = 1;
+
+        internal int PortalCrc;
+        internal ScriptManager ScriptManager;
+
+        private Session session;
+        internal long SessionId;
+        internal bool ShowFMFunctions = false;
+
+        internal bool ShowInformation = false;
+
+        internal int totalItemCount;
+        internal int totalPeopleCount;
+        internal int UserId;
 
         internal Client(ClientForm form) {
             /* Initialize Form */
-            CForm = form;
+            cForm = form;
 
-            ConnectToggle   = form.ConnectToggle;
-            WriteLog        = form.WriteLog;
-            WriteSend       = form.WriteSend;
-            WriteRecv       = form.WriteRecv;
-            UpdateMapler    = form.UpdateMapler;
-            UpdateChannel   = form.UpdateCh;
-            UpdateExp       = form.UpdateExp;
-            UpdateItems     = form.UpdateItems;
-            UpdatePeople    = form.UpdatePeople;
-            UpdateWorking   = form.UpdateWorking;
+            ConnectToggle = form.ConnectToggle;
+            WriteLog = form.WriteLog;
+            WriteSend = form.WriteSend;
+            WriteRecv = form.WriteRecv;
+            UpdateMapler = form.UpdateMapler;
+            UpdateChannel = form.UpdateCh;
+            UpdateExp = form.UpdateExp;
+            UpdateItems = form.UpdateItems;
+            UpdatePeople = form.UpdatePeople;
+            UpdateWorking = form.UpdateWorking;
 
             /* Initialize Client */
             ScriptManager = new ScriptManager(this);
-            HandshakeHandler = new Handshake(this);
-            PacketHandler = new Packet(this);
+            handshakeHandler = new Handshake(this);
+            packetHandler = new Packet(this);
 
             autoDCtime = 1800000; //30 minutes
             displayTime = 60; //1 Second
@@ -129,9 +132,11 @@ namespace MapleCLB.MapleClient {
         internal void Initialize(Account account) {
             Account = account;
 
-            MapRush = new Progress<List<Tuple<short[], string>>>(list => {
-                if (list == null) return;
-                foreach (Tuple<short[], string> data in list) {
+            MapRush = new Progress<List<PortalInfo>>(list => {
+                if (list == null) {
+                    return;
+                }
+                foreach (var data in list) {
                     SendPacket(Portal.Enter(PortalCount, PortalCrc, data));
                     if (PortalCount++ == 255) {
                         PortalCount = 1; // wrap around
@@ -145,87 +150,22 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
             //ScriptManager.Get<SpotStealerBot>().Start();
-            ScriptManager.Get<MesoVac>().Start();
+            //ScriptManager.Get<MesoVac>().Start();
         }
 
-        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB,bool SCMode, bool takeAnyCB){
+        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode,
+                                  bool takeAnyCB) {
             //change to w.e you wanted? not exactly sure.. :D
-            ScriptManager.Get<SpotStealerBot>().IGN = IGN;
-            ScriptManager.Get<SpotStealerBot>().shopName = shopNAME;
-            ScriptManager.Get<SpotStealerBot>().FH = FH;
+            ScriptManager.Get<SpotStealerBot>().Ign = IGN;
+            ScriptManager.Get<SpotStealerBot>().ShopName = shopNAME;
+            ScriptManager.Get<SpotStealerBot>().Fh = FH;
             ScriptManager.Get<SpotStealerBot>().X = X;
             ScriptManager.Get<SpotStealerBot>().Y = Y;
-            ScriptManager.Get<SpotStealerBot>().PermitCB = PermitCB;
-            ScriptManager.Get<SpotStealerBot>().SCMode = SCMode;
-            ScriptManager.Get<SpotStealerBot>().takeAnyCB = takeAnyCB;
+            ScriptManager.Get<SpotStealerBot>().PermitCb = PermitCB;
+            ScriptManager.Get<SpotStealerBot>().ScMode = SCMode;
+            ScriptManager.Get<SpotStealerBot>().TakeAnyCb = takeAnyCB;
             //SpotStealerBot script = get<SpotStealerBot>(); ???
             ScriptManager.Get<SpotStealerBot>().Start();
-        }
-
-        internal void Connect() {
-            ConnectToggle.Report(false);
-            WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
-            var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
-            conn.OnConnected += OnConnected;
-            conn.OnError += OnError;
-
-            try {
-                conn.Connect(SERVER_TIMEOUT);
-                Mode = ClientMode.CONNECTED;
-            } catch {
-                WriteLog.Report("Failed to connect.");
-                if (CForm.AutoRestart.Checked) {
-                    Connect(); //Start connection again
-                } else {
-                    ConnectToggle.Report(true);
-                }
-            }
-        }
-
-        // TODO: Try to reuse same session
-        internal void Reconnect(string ip, short port) {
-            WriteLog.Report("Reconnecting to " + ip + ":" + port);
-            Session.Disconnect(false);
-
-            var newIp = IPAddress.Parse(ip);
-            var conn = new Connector(newIp, port, Program.AesCipher);
-            conn.OnConnected += OnConnected;
-            conn.OnError += OnError;
-
-            try {
-                conn.Connect(CHANNEL_TIMEOUT);
-            } catch {
-                WriteLog.Report("Bug Hunting 3");
-                Session.Disconnect();
-            }
-        }
-
-        internal void Disconnect() {
-            //Session.Disconnect();
-            SendPacket(General.ExitCS()); //Temp -.-
-        }
-
-        internal void SendPacket(byte[] packet) {
-            try {
-                if (CForm.IsLogSend) {
-                    byte[] copy = new byte[packet.Length];
-                    Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
-                    WriteSend.Report(copy);
-                }
-
-                Session.SendPacket(packet);
-            } catch {
-                WriteLog.Report("An error occured when attempting to send packet.");
-            }
-        }
-
-        internal void SendPacket(PacketWriter w) {
-            try {
-                WriteSend.Report(w.GetBuffer());
-                Session.SendPacket(w.ToArray());
-            } catch {
-                WriteLog.Report("An error occured when attempting to send packet.");
-            }
         }
 
         internal void ClearStats() {
@@ -240,46 +180,118 @@ namespace MapleCLB.MapleClient {
             totalPeopleCount = 0;
         }
 
-        /* Script Packet Funcs (Concurrent) */
-        internal bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
-            return PacketHandler.RegisterHandler(header, progress);
+        #region Client Connection
+        internal void Connect() {
+            ConnectToggle.Report(false);
+            WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
+            var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
+            conn.OnConnected += OnConnected;
+            conn.OnError += OnError;
+
+            try {
+                conn.Connect(SERVER_TIMEOUT);
+                Mode = ClientMode.CONNECTED;
+            } catch {
+                WriteLog.Report("Failed to connect.");
+                if (cForm.AutoRestart.Checked) {
+                    Connect(); //Start connection again
+                } else {
+                    ConnectToggle.Report(true);
+                }
+            }
         }
 
-        internal void RemoveScriptRecv(ushort header) {
-            PacketHandler.UnregisterHandler(header);
+        // TODO: Try to reuse same session
+        internal void Reconnect(string ip, short port) {
+            WriteLog.Report("Reconnecting to " + ip + ":" + port);
+            session.Disconnect(false);
+
+            var newIp = IPAddress.Parse(ip);
+            var conn = new Connector(newIp, port, Program.AesCipher);
+            conn.OnConnected += OnConnected;
+            conn.OnError += OnError;
+
+            try {
+                conn.Connect(CHANNEL_TIMEOUT);
+            } catch {
+                WriteLog.Report("Bug Hunting 3");
+                session.Disconnect();
+            }
         }
 
-        internal void WaitScriptRecv(ushort header, AutoResetEvent handle) {
-            PacketHandler.RegisterWait(header, handle);
+        internal void Disconnect() {
+            //Session.Disconnect();
+            SendPacket(General.ExitCS()); //Temp -.-
         }
 
-        internal void WaitScriptRecv2(ushort header, Blocking<PacketReader> reader) {
-            PacketHandler.RegisterWait(header, reader);
+        internal void SendPacket(byte[] packet) {
+            try {
+                if (cForm.IsLogSend) {
+                    byte[] copy = new byte[packet.Length];
+                    Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
+                    WriteSend.Report(copy);
+                }
+
+                session.SendPacket(packet);
+            } catch {
+                WriteLog.Report("An error occured when attempting to send packet.");
+            }
         }
 
-        /* Timer Handlers */
+        internal void SendPacket(PacketWriter w) {
+            try {
+                WriteSend.Report(w.Buffer);
+                session.SendPacket(w.ToArray());
+            } catch {
+                WriteLog.Report("An error occured when attempting to send packet.");
+            }
+        }
+        #endregion
+
+        #region Timer Handlers
         private void AutoDCForFMShop(object sender, ElapsedEventArgs e) {
-            if (doWhat == 1 && hasFMShop == false){
+            if (doWhat == 1 && hasFMShop == false) {
                 WriteLog.Report("Disconnecting 5 Minute Test!");
                 Disconnect();
                 Connect();
             }
         }
-        private void ConnectTimer(object sender, ElapsedEventArgs e){
-            TimeSpan ts = stopWatch.Elapsed;
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}",ts.Hours, ts.Minutes, ts.Seconds);
+
+        private void ConnectTimer(object sender, ElapsedEventArgs e) {
+            var ts = stopWatch.Elapsed;
+            string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}";
             UpdateWorking.Report(elapsedTime);
         }
+
         internal void StartWatch() {
             stopWatch.Start();
         }
+        #endregion
 
-        /* Event Handlers */
+        #region Script Packet Funcs (Concurrent)
+        internal bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
+            return packetHandler.RegisterHandler(header, progress);
+        }
+
+        internal void RemoveScriptRecv(ushort header) {
+            packetHandler.UnregisterHandler(header);
+        }
+
+        internal void WaitScriptRecv(ushort header, AutoResetEvent handle) {
+            packetHandler.RegisterWait(header, handle);
+        }
+
+        internal void WaitScriptRecv2(ushort header, Blocking<PacketReader> reader) {
+            packetHandler.RegisterWait(header, reader);
+        }
+        #endregion
+
+        #region Event Handlers
         private void OnConnected(object o, Session s) {
             WriteLog.Report("Connected to server.");
-            Session = s;
-            s.OnHandshake += HandshakeHandler.Handle;
-            s.OnPacket += PacketHandler.Handle;
+            session = s;
+            s.OnHandshake += handshakeHandler.Handle;
+            s.OnPacket += packetHandler.Handle;
             s.OnDisconnected += OnDisconnected;
         }
 
@@ -295,11 +307,12 @@ namespace MapleCLB.MapleClient {
             ClearStats();
             dcst.Enabled = false;
             displayTimer.Enabled = false;
-            if (CForm.AutoRestart.Checked) {
-                Connect();  //Start connection again
+            if (cForm.AutoRestart.Checked) {
+                Connect(); //Start connection again
             } else {
                 ConnectToggle.Report(true);
             }
         }
+        #endregion
     }
 }

@@ -12,7 +12,7 @@ namespace MapleCLB.Tools {
         public Blocking(T value) {
             this.value = value;
             waiter = new AutoResetEvent(true);
-        } 
+        }
 
         public T Get() {
             waiter.WaitOne();

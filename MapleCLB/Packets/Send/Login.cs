@@ -1,5 +1,5 @@
-﻿using MapleLib.Packet;
-using MapleCLB.Types;
+﻿using MapleCLB.Types;
+using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class Login {

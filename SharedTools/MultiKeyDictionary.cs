@@ -5,9 +5,9 @@ using System.Threading;
 namespace MapleCLB.Tools {
     public class MultiKeyDictionary<TK, TL, TV> {
         internal readonly Dictionary<TK, TV> BaseDictionary = new Dictionary<TK, TV>();
-        internal readonly Dictionary<TL, TK> SubDictionary = new Dictionary<TL, TK>();
         internal readonly Dictionary<TK, TL> PrimaryToSubkeyMapping = new Dictionary<TK, TL>();
         private readonly ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
+        internal readonly Dictionary<TL, TK> SubDictionary = new Dictionary<TL, TK>();
 
         public TV this[TL subKey] {
             get {
@@ -31,12 +31,35 @@ namespace MapleCLB.Tools {
             }
         }
 
+        public List<TV> Values {
+            get {
+                readerWriterLock.EnterReadLock();
+                try {
+                    return BaseDictionary.Values.ToList();
+                } finally {
+                    readerWriterLock.ExitReadLock();
+                }
+            }
+        }
+
+        public int Count {
+            get {
+                readerWriterLock.EnterReadLock();
+                try {
+                    return BaseDictionary.Count;
+                } finally {
+                    readerWriterLock.ExitReadLock();
+                }
+            }
+        }
+
         public void Associate(TL subKey, TK primaryKey) {
             readerWriterLock.EnterUpgradeableReadLock();
 
             try {
-                if (!BaseDictionary.ContainsKey(primaryKey))
+                if (!BaseDictionary.ContainsKey(primaryKey)) {
                     throw new KeyNotFoundException($"The base dictionary does not contain the key '{primaryKey}'");
+                }
 
                 if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) // Remove the old mapping first
                 {
@@ -89,13 +112,11 @@ namespace MapleCLB.Tools {
 
         public bool ContainsKey(TL subKey) {
             TV val;
-
             return TryGetValue(subKey, out val);
         }
 
         public bool ContainsKey(TK primaryKey) {
             TV val;
-
             return TryGetValue(primaryKey, out val);
         }
 
@@ -107,10 +128,8 @@ namespace MapleCLB.Tools {
                     if (SubDictionary.ContainsKey(PrimaryToSubkeyMapping[primaryKey])) {
                         SubDictionary.Remove(PrimaryToSubkeyMapping[primaryKey]);
                     }
-
                     PrimaryToSubkeyMapping.Remove(primaryKey);
                 }
-
                 BaseDictionary.Remove(primaryKey);
             } finally {
                 readerWriterLock.ExitWriteLock();
@@ -119,12 +138,9 @@ namespace MapleCLB.Tools {
 
         public void Remove(TL subKey) {
             readerWriterLock.EnterWriteLock();
-
             try {
                 BaseDictionary.Remove(SubDictionary[subKey]);
-
                 PrimaryToSubkeyMapping.Remove(SubDictionary[subKey]);
-
                 SubDictionary.Remove(subKey);
             } finally {
                 readerWriterLock.ExitWriteLock();
@@ -133,7 +149,6 @@ namespace MapleCLB.Tools {
 
         public void Add(TK primaryKey, TV val) {
             readerWriterLock.EnterWriteLock();
-
             try {
                 BaseDictionary.Add(primaryKey, val);
             } finally {
@@ -143,16 +158,13 @@ namespace MapleCLB.Tools {
 
         public void Add(TK primaryKey, TL subKey, TV val) {
             Add(primaryKey, val);
-
             Associate(subKey, primaryKey);
         }
 
         public TV[] CloneValues() {
             readerWriterLock.EnterReadLock();
-
             try {
                 TV[] values = new TV[BaseDictionary.Values.Count];
-
                 BaseDictionary.Values.CopyTo(values, 0);
 
                 return values;
@@ -161,24 +173,10 @@ namespace MapleCLB.Tools {
             }
         }
 
-        public List<TV> Values {
-            get {
-                readerWriterLock.EnterReadLock();
-
-                try {
-                    return BaseDictionary.Values.ToList();
-                } finally {
-                    readerWriterLock.ExitReadLock();
-                }
-            }
-        }
-
         public TK[] ClonePrimaryKeys() {
             readerWriterLock.EnterReadLock();
-
             try {
                 TK[] values = new TK[BaseDictionary.Keys.Count];
-
                 BaseDictionary.Keys.CopyTo(values, 0);
 
                 return values;
@@ -189,10 +187,8 @@ namespace MapleCLB.Tools {
 
         public TL[] CloneSubKeys() {
             readerWriterLock.EnterReadLock();
-
             try {
                 TL[] values = new TL[SubDictionary.Keys.Count];
-
                 SubDictionary.Keys.CopyTo(values, 0);
 
                 return values;
@@ -203,33 +199,17 @@ namespace MapleCLB.Tools {
 
         public void Clear() {
             readerWriterLock.EnterWriteLock();
-
             try {
                 BaseDictionary.Clear();
-
                 SubDictionary.Clear();
-
                 PrimaryToSubkeyMapping.Clear();
             } finally {
                 readerWriterLock.ExitWriteLock();
             }
         }
 
-        public int Count {
-            get {
-                readerWriterLock.EnterReadLock();
-
-                try {
-                    return BaseDictionary.Count;
-                } finally {
-                    readerWriterLock.ExitReadLock();
-                }
-            }
-        }
-
         public IEnumerator<KeyValuePair<TK, TV>> GetEnumerator() {
             readerWriterLock.EnterReadLock();
-
             try {
                 return BaseDictionary.GetEnumerator();
             } finally {

@@ -4,24 +4,25 @@ using MapleCLB.MapleClient;
 
 namespace MapleCLB.ScriptLib {
     internal class ScriptManager {
-        private readonly ConcurrentDictionary<Type, Lazy<Script>> Scripts = new ConcurrentDictionary<Type, Lazy<Script>>();
-        private readonly Client Client;
+        private readonly Client client;
+        private readonly ConcurrentDictionary<Type, Lazy<Script>> scripts;
 
         internal ScriptManager(Client client) {
-            Client = client;
+            scripts = new ConcurrentDictionary<Type, Lazy<Script>>();
+            this.client = client;
         }
 
         internal T Get<T>() where T : Script {
             var k = typeof (T);
 
-            return (T) Scripts.GetOrAdd(k, 
-                t => new Lazy<Script>(() => (T) Activator.CreateInstance(t, Client))).Value;
+            return (T) scripts.GetOrAdd(k,
+                t => new Lazy<Script>(() => (T) Activator.CreateInstance(t, client))).Value;
         }
 
         // This will have to do until i figure out way to use generics
         internal void Release(Type t) {
             Lazy<Script> trash;
-            Scripts.TryRemove(t, out trash);
+            scripts.TryRemove(t, out trash);
         }
     }
 }

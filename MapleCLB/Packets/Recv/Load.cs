@@ -1,11 +1,12 @@
 ﻿using MapleCLB.MapleClient;
-using MapleLib.Packet;
 using MapleCLB.Resources;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
+using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv {
     internal class Load {
+        private const int MAGIC_NUM = -1770422;
         //[Header (2)] 00 [Char count (1)] [UID (4)] [IGN (13)] ...
         public static void Charlist(Client c, PacketReader pr) {
             pr.Skip(1);
@@ -49,15 +50,14 @@ namespace MapleCLB.Packets.Recv {
                 return;
             }
 
-            pr.Skip(18);    //[02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
+            pr.Skip(18); // [02 00 01 00 00 00 00 00 00 00 02 00 00 00 00 00 00 00]
             int channel = pr.ReadInt(); //CH Connected To
-            pr.Skip(10);    // [00 00 00 00 00 01 00 00 00 00]
-            pr.Skip(8);     // Unknown 8 Bytes that change
-            pr.Skip(3);     // [01 00 00]
-            pr.Skip(12);    // Unknown 12 bytes something to do with connection
-            pr.Skip(8);     // [FF FF FF FF FF FF FF FF]
-            pr.Skip(13);    // [00 F1 FF FF FF F1 FF FF FF F1 FF FF FF] Where F1 Changes to random Fx Value
-            pr.Skip(7);     // [00 00 00 00 00 00 00]
+            /* [00 00 00 00 00 01 00 00 00 00] Unknown 8 Bytes that change
+             * [01 00 00] Unknown 12 bytes something to do with connection
+             * [FF FF FF FF FF FF FF FF] [00 FX FF FF FF FX FF FF FF FX FF FF FF]
+             * [00 00 00 00 00 00 00]
+             */
+            pr.Skip(18 + 15 + 21 + 7);
 
             /* Character Stats */
             var m = Mapler.Parse(pr);
@@ -76,12 +76,11 @@ namespace MapleCLB.Packets.Recv {
 
             /* Inventory Info */
             m.Meso = pr.ReadLong();
-            pr.Skip(12);    // [Zero (12)]
-            pr.Skip(4);     // [uid (4)]
-            pr.Skip(31);    // [Zero (28)] 00 00 00
-            pr.Skip(5);     // [Equip Slots (1)] [Use Slots (1)] [Set-up Slots (1)] [Etc Slots (1)] [Cash Slots (1)]
-            pr.Skip(8);     // [Timestamp (8)]
-            pr.Skip(1);     // [00]
+            /* [Zero (12)] [uid (4)] [Zero (28)] 00 00 00
+             * [Equip Slots (1)] [Use Slots (1)] [Set-up Slots (1)] [Etc Slots (1)] [Cash Slots (1)]
+             * [Timestamp (8)] 00
+             */
+            pr.Skip(47 + 5 + 9);
 
             /* Equipped Items */
             short slot;
@@ -91,10 +90,11 @@ namespace MapleCLB.Packets.Recv {
                 itemTest.Slot = slot;
                 c.totalItemCount = c.totalItemCount + 1;
                 //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
-                c.WriteLog.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
+                c.WriteLog.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type +
+                                  " Potential: " + itemTest.Potential);
             }
             /* Equipped CS Items */
-            //To Do : Equipped Inventory 
+            //TODO : Equipped Inventory 
             while ((slot = pr.ReadShort()) != 0) {
                 byte type = pr.ReadByte();
                 var itemTest = Equip.Parse(pr, type);
@@ -103,11 +103,11 @@ namespace MapleCLB.Packets.Recv {
                 //c.currentEquipInventory[itemTest.Id] = 1; 
                 //c.WriteLog.Report("Cash Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
             }
-            
+
             /* Equip Inventory */
             while ((slot = pr.ReadShort()) != 0) {
                 byte type = pr.ReadByte();
-                var itemTest = Equip.Parse(pr,type);
+                var itemTest = Equip.Parse(pr, type);
                 itemTest.Slot = slot;
                 c.currentEquipInventory[ItemData.Equip[itemTest.Id]] = 1;
                 c.totalItemCount = c.totalItemCount + 1;
@@ -118,7 +118,7 @@ namespace MapleCLB.Packets.Recv {
             /* Use Inventory */
             while ((slot = pr.ReadByte()) != 0) {
                 byte type = pr.ReadByte();
-                var itemTest = Other.Parse(pr,type);
+                var itemTest = Other.Parse(pr, type);
                 itemTest.Slot = slot;
                 c.currentUseInventory[ItemData.Use[itemTest.Id]] = itemTest.Quantity;
                 c.totalItemCount = c.totalItemCount + itemTest.Quantity;
@@ -143,16 +143,15 @@ namespace MapleCLB.Packets.Recv {
                 //c.WriteLog.Report("Etc: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
             }
             /* Cash Inventory */
-            //To Do : Create Cash Inventory NOT USING Equips
+            //TODO : Create Cash Inventory NOT USING Equips
             while ((slot = pr.ReadByte()) != 0) {
                 byte type = pr.ReadByte();
-                if (type == 3){
+                if (type == 3) {
                     var itemTest = Pet.Parse(pr, type);
                     itemTest.Slot = slot;
                     c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = 1;
                     c.totalItemCount = c.totalItemCount + 1;
-                }
-                else{
+                } else {
                     var itemTest = Other.Parse(pr, type);
                     itemTest.Slot = slot;
                     c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = itemTest.Quantity;
@@ -168,7 +167,6 @@ namespace MapleCLB.Packets.Recv {
             c.UpdateChannel.Report(c.Channel);
         }
 
-        private const int MAGIC_NUM = -1770422;
         public static void Seed(object o, PacketReader pr) {
             var c = o as Client;
             int seed = pr.ReadInt();

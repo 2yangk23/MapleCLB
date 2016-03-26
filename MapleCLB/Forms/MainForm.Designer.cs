@@ -2,7 +2,7 @@
 
 namespace MapleCLB.Forms
 {
-    partial class MainForm
+    sealed partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -31,8 +31,8 @@ namespace MapleCLB.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.AccountTabs = new System.Windows.Forms.TabControl();
-            this.Account1 = new System.Windows.Forms.TabPage();
+            this.AccountTabs = new TabControl();
+            this.Account1 = new TabPage();
             this.clientForm1 = new MapleCLB.Forms.ClientForm();
             this.AccountTabs.SuspendLayout();
             this.Account1.SuspendLayout();
@@ -52,7 +52,7 @@ namespace MapleCLB.Forms
             this.Account1.Controls.Add(this.clientForm1);
             this.Account1.Location = new System.Drawing.Point(4, 22);
             this.Account1.Name = "Account1";
-            this.Account1.Padding = new System.Windows.Forms.Padding(3);
+            this.Account1.Padding = new Padding(3);
             this.Account1.Size = new System.Drawing.Size(645, 383);
             this.Account1.TabIndex = 0;
             this.Account1.Text = "Some Acc";
@@ -69,14 +69,14 @@ namespace MapleCLB.Forms
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 423);
             this.Controls.Add(this.AccountTabs);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "[171.0.1] MapleStory Clientless Bot";
+            this.Text = "MapleStory Clientless Bot";
             this.AccountTabs.ResumeLayout(false);
             this.Account1.ResumeLayout(false);
             this.ResumeLayout(false);

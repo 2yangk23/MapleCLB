@@ -2,27 +2,27 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Recv;
 using MapleCLB.Packets.Recv.Connection;
 using MapleCLB.Packets.Recv.Map;
 using MapleCLB.Tools;
+using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {
         /* Client Headers */
-        private readonly Dictionary<ushort, EventHandler<PacketReader>> HeaderMap;
+        private readonly Dictionary<ushort, EventHandler<PacketReader>> headerMap;
         /* Script Headers */
-        private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> ScriptHandler;
-        private readonly ConcurrentDictionary<ushort, List<AutoResetEvent>> ScriptWait;
-        private readonly ConcurrentDictionary<ushort, List<Blocking<PacketReader>>> ScriptWait2;
+        private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> scriptHandler;
+        private readonly ConcurrentDictionary<ushort, List<AutoResetEvent>> scriptWait;
+        private readonly ConcurrentDictionary<ushort, List<Blocking<PacketReader>>> scriptWait2;
 
         internal Packet(Client client) : base(client) {
-            HeaderMap = new Dictionary<ushort, EventHandler<PacketReader>>();
-            ScriptWait = new ConcurrentDictionary<ushort, List<AutoResetEvent>>();
-            ScriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
-            ScriptWait2 = new ConcurrentDictionary<ushort, List<Blocking<PacketReader>>>();
+            headerMap = new Dictionary<ushort, EventHandler<PacketReader>>();
+            scriptWait = new ConcurrentDictionary<ushort, List<AutoResetEvent>>();
+            scriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
+            scriptWait2 = new ConcurrentDictionary<ushort, List<Blocking<PacketReader>>>();
 
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
@@ -41,62 +41,62 @@ namespace MapleCLB.MapleClient.Handlers {
         }
 
         internal override void Handle(object session, byte[] packet) {
-            ushort header = (ushort)(packet[1] << 8 | packet[0]);
+            ushort header = (ushort) (packet[1] << 8 | packet[0]);
             Client.WriteRecv.Report(packet);
 
-            if (HeaderMap.ContainsKey(header)) {
-                HeaderMap[header](Client, new PacketReader(packet, 2));
+            if (headerMap.ContainsKey(header)) {
+                headerMap[header](Client, new PacketReader(packet, 2));
             }
-            if (ScriptHandler.ContainsKey(header)) {
-                ScriptHandler[header].Report(new PacketReader(packet, 2));
+            if (scriptHandler.ContainsKey(header)) {
+                scriptHandler[header].Report(new PacketReader(packet, 2));
             }
-            if (ScriptWait.ContainsKey(header)) {
+            if (scriptWait.ContainsKey(header)) {
                 // Ordering is necessary to prevent race condition
                 List<AutoResetEvent> waitList;
-                ScriptWait.TryRemove(header, out waitList);
+                scriptWait.TryRemove(header, out waitList);
                 waitList.ForEach(e => e.Set());
             }
-            if (ScriptWait2.ContainsKey(header)) {
+            if (scriptWait2.ContainsKey(header)) {
                 // Ordering is necessary to prevent race condition
                 List<Blocking<PacketReader>> waitList;
-                ScriptWait2.TryRemove(header, out waitList);
+                scriptWait2.TryRemove(header, out waitList);
                 waitList.ForEach(r => r.Set(new PacketReader(packet, 2)));
             }
         }
 
         internal void Register(ushort header, EventHandler<PacketReader> handler) {
-            HeaderMap[header] = handler;
+            headerMap[header] = handler;
         }
 
         internal void Unregister(ushort header) {
-            HeaderMap.Remove(header);
+            headerMap.Remove(header);
         }
 
         internal bool RegisterHandler(ushort header, IProgress<PacketReader> progress) {
-            if (ScriptHandler.ContainsKey(header)) {
+            if (scriptHandler.ContainsKey(header)) {
                 return false;
             }
-            ScriptHandler[header] = progress;
+            scriptHandler[header] = progress;
             return true;
         }
 
         internal void UnregisterHandler(ushort header) {
             IProgress<PacketReader> trash;
-            ScriptHandler.TryRemove(header, out trash);
+            scriptHandler.TryRemove(header, out trash);
         }
 
         internal void RegisterWait(ushort header, AutoResetEvent handle) {
-            if (!ScriptWait.ContainsKey(header)) {
-                ScriptWait[header] = new List<AutoResetEvent>(2);
+            if (!scriptWait.ContainsKey(header)) {
+                scriptWait[header] = new List<AutoResetEvent>(2);
             }
-            ScriptWait[header].Add(handle);
+            scriptWait[header].Add(handle);
         }
 
         internal void RegisterWait(ushort header, Blocking<PacketReader> reader) {
-            if (!ScriptWait2.ContainsKey(header)) {
-                ScriptWait2[header] = new List<Blocking<PacketReader>>(2);
+            if (!scriptWait2.ContainsKey(header)) {
+                scriptWait2[header] = new List<Blocking<PacketReader>>(2);
             }
-            ScriptWait2[header].Add(reader);
+            scriptWait2[header].Add(reader);
         }
     }
 }

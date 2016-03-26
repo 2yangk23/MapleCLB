@@ -3,22 +3,22 @@ using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using MapleCLB.MapleClient;
-using MapleLib.Packet;
 using MapleCLB.Tools;
+using MapleLib.Packet;
 
 namespace MapleCLB.ScriptLib {
     [Synchronization(true)]
     internal abstract class Script {
-        private readonly AutoResetEvent Waiter = new AutoResetEvent(false);
-        private readonly Blocking<PacketReader> Reader = new Blocking<PacketReader>();
-        private readonly ScriptManager Manager;
+        private readonly ScriptManager manager;
+        private readonly Blocking<PacketReader> reader = new Blocking<PacketReader>();
+        private readonly AutoResetEvent waiter = new AutoResetEvent(false);
 
         protected Client Client;
         protected bool Running;
 
         protected Script(Client client) {
             Client = client;
-            Manager = client.ScriptManager;
+            manager = client.ScriptManager;
         }
 
         internal bool Start() {
@@ -27,12 +27,22 @@ namespace MapleCLB.ScriptLib {
 
         // Wakes up script that is waiting on any header
         internal void Wake() {
-            Waiter.Set();
+            waiter.Set();
         }
 
-        /* Shared Implementations */
+        #region Script Run
+        private void Run() {
+            Execute();
+            Complete();
+            Running = false;
+        }
+        #endregion
+
+        #region Shared Implementations
         protected bool Start(Action run) {
-            if (Running) return false;
+            if (Running) {
+                return false;
+            }
             Running = true;
             WriteLog($"[SCRIPT] Started {GetType().Name}.");
             Task.Run(run);
@@ -40,11 +50,11 @@ namespace MapleCLB.ScriptLib {
         }
 
         protected void Complete() {
-            Manager.Release(GetType());
+            manager.Release(GetType());
         }
 
         protected T Requires<T>() where T : Script {
-            var script = Manager.Get<T>();
+            var script = manager.Get<T>();
             var complex = script as ComplexScript;
 
             // Make sure script is started
@@ -56,23 +66,17 @@ namespace MapleCLB.ScriptLib {
 
             return script;
         }
+        #endregion
 
-        /* Script Run */
-        private void Run() {
-            Execute();
-            Complete();
-            Running = false;
-        }
-
-        /* Scripting Functions */
+        #region Scripting Functions
         protected void WaitRecv(ushort header) {
-            Client.WaitScriptRecv(header, Waiter);
-            Waiter.WaitOne();
+            Client.WaitScriptRecv(header, waiter);
+            waiter.WaitOne();
         }
 
         protected PacketReader WaitRecv2(ushort header) {
-            Client.WaitScriptRecv2(header, Reader);
-            return Reader.Get();
+            Client.WaitScriptRecv2(header, reader);
+            return reader.Get();
         }
 
         protected void WriteLog(string value) {
@@ -88,5 +92,6 @@ namespace MapleCLB.ScriptLib {
         }
 
         protected abstract void Execute();
+        #endregion
     }
 }

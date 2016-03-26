@@ -40,7 +40,7 @@ namespace MapleLib.Crypto {
         public unsafe void Transform(byte[] data) {
             aesCipher.Transform(data, iv);
 
-            byte[] newIV = {0xF2, 0x53, 0x50, 0xC6};
+            byte[] newIV = { 0xF2, 0x53, 0x50, 0xC6 };
 
             for (int i = 0; i < IV_LENGTH; i++) {
                 byte input = iv[i];

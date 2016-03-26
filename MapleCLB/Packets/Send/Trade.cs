@@ -30,7 +30,7 @@ namespace MapleCLB.Packets.Send {
             return pw.ToArray();
         }
 
-        public static byte[] PutItem(byte inventory,byte type, short slot, short amount, short stacks, long price) {
+        public static byte[] PutItem(byte inventory, byte type, short slot, short amount, short stacks, long price) {
             var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(type); //This Might change? 41 = permit, 21 = mush
             pw.WriteByte(inventory);
@@ -50,7 +50,7 @@ namespace MapleCLB.Packets.Send {
             return pw.ToArray();
         }
 
-        public static byte[] OpenShop2(){
+        public static byte[] OpenShop2() {
             var pw = new PacketWriter(SendOps.TRADE);
             pw.WriteByte(82);
 

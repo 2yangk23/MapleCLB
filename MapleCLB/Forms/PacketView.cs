@@ -5,11 +5,11 @@ using MapleLib.Packet;
 
 namespace MapleCLB.Forms {
     public partial class PacketView : UserControl {
-        private TextBox PacketInput;
-        internal bool LogSend, LogRecv;
-        private TreeView UsedTree;
+        private TextBox packetInput;
+        private TreeView usedTree;
 
-        public Progress<byte[]> WriteSend, WriteRecv;
+        internal bool LogSend, LogRecv;
+        internal Progress<byte[]> WriteSend, WriteRecv;
 
         public PacketView() {
             InitializeComponent();
@@ -18,12 +18,12 @@ namespace MapleCLB.Forms {
             SendTree.NodeMouseClick += (sender, args) => SendTree.SelectedNode = args.Node;
             RecvTree.NodeMouseClick += (sender, args) => RecvTree.SelectedNode = args.Node;
 
-            UsedTree = SendTree;
+            usedTree = SendTree;
         }
 
         // TODO: Allow user to switch between TreeView and ListView
         public void SetInput(TextBox packetInput) {
-            PacketInput = packetInput;
+            this.packetInput = packetInput;
         }
 
         // TODO: Try doing this without PacketReader
@@ -56,11 +56,11 @@ namespace MapleCLB.Forms {
         private void PacketTabs_SelectedIndexChanged(object sender, EventArgs e) {
             switch (PacketTabs.SelectedIndex) {
                 case 0:
-                    UsedTree = SendTree;
+                    usedTree = SendTree;
                     LogPacket.Checked = LogSend;
                     break;
                 case 1:
-                    UsedTree = RecvTree;
+                    usedTree = RecvTree;
                     LogPacket.Checked = LogRecv;
                     break;
             }
@@ -68,13 +68,13 @@ namespace MapleCLB.Forms {
 
         private void PacketTree_MouseDoubleClick(object sender, MouseEventArgs e) {
             if (SendTree.SelectedNode != null && SendTree.SelectedNode.Level > 0 && 
-                PacketTabs.SelectedIndex == 0 && PacketInput != null) {
-                PacketInput.Text = SendTree.SelectedNode.Text;
+                PacketTabs.SelectedIndex == 0 && packetInput != null) {
+                packetInput.Text = SendTree.SelectedNode.Text;
             }
         }
 
         private void PacketMenu_Opening(object sender, CancelEventArgs e) {
-            RemovePacket.Enabled = UsedTree.SelectedNode != null;
+            RemovePacket.Enabled = usedTree.SelectedNode != null;
         }
 
         // This will allow you to manage ignored packets
@@ -87,11 +87,11 @@ namespace MapleCLB.Forms {
         }
 
         private void RemovePacket_Click(object sender, EventArgs e) {
-            UsedTree.SelectedNode.Remove();
+            usedTree.SelectedNode.Remove();
         }
 
         private void ClearPacket_Click(object sender, EventArgs e) {
-            UsedTree.Nodes.Clear();
+            usedTree.Nodes.Clear();
         }
 
         private void LogPacket_CheckedChanged(object sender, EventArgs e) {

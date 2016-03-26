@@ -1,12 +1,9 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace MapleCLB.Tools {
-    /// <summary>
-    /// Win32 support code.
-    /// (C) 2003 Bob Bradley / ZBobb@hotmail.com
-    /// </summary>
     public class Win32 {
         public const int WM_MOUSEMOVE = 0x0200;
         public const int WM_LBUTTONDOWN = 0x0201;
@@ -21,9 +18,6 @@ namespace MapleCLB.Tools {
 
         public const int WM_PRINT = 0x0317;
 
-        //const int EN_HSCROLL                  = 0x0601;
-        //const int EN_VSCROLL                  = 0x0602;
-
         public const int WM_HSCROLL = 0x0114;
         public const int WM_VSCROLL = 0x0115;
 
@@ -36,8 +30,12 @@ namespace MapleCLB.Tools {
         public const int EM_SETCUEBANNER = 0x1501;
         public const int EM_GETCUEBANNER = 0x1502;
 
+        public const long PRF_CLIENT = 0x00000004L;
+        public const long PRF_ERASEBKGND = 0x00000008L;
+
         [DllImport("USER32.DLL", CharSet = CharSet.Auto)]
-        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam,
+                                             [MarshalAs(UnmanagedType.LPWStr)] string lParam);
 
         [DllImport("USER32.DLL", EntryPoint = "PostMessage")]
         public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -48,15 +46,12 @@ namespace MapleCLB.Tools {
         [DllImport("USER32.DLL", EntryPoint = "GetCaretBlinkTime")]
         public static extern uint GetCaretBlinkTime();
 
-        public const long PRF_CLIENT = 0x00000004L;
-        public const long PRF_ERASEBKGND = 0x00000008L;
-
-        public static bool CaptureWindow(System.Windows.Forms.Control control, ref Bitmap bitmap) {
+        public static bool CaptureWindow(Control control, ref Bitmap bitmap) {
             //This function captures the contents of a window or control
             var g2 = Graphics.FromImage(bitmap);
 
             //PRF_CHILDREN // PRF_NONCLIENT
-            const int meint = (int)(PRF_CLIENT | PRF_ERASEBKGND); //| PRF_OWNED ); //  );
+            const int meint = (int) (PRF_CLIENT | PRF_ERASEBKGND); //| PRF_OWNED ); //  );
             var meptr = new IntPtr(meint);
 
             var hdc = g2.GetHdc();

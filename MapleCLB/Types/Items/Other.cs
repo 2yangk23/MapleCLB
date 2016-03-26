@@ -1,5 +1,5 @@
-﻿using System;
-using MapleLib.Packet;
+﻿using MapleLib.Packet;
+using SharedTools;
 
 namespace MapleCLB.Types.Items {
     public enum Flag : short {
@@ -19,28 +19,12 @@ namespace MapleCLB.Types.Items {
         SHIELD = 0x2000,            // 0010 0000 0000 0000
         SCROLL_PROTECTION = 0x4000, // 0100 0000 0000 0000
 
-        KARMA_USE = 0x2,
+        KARMA_USE = 0x2
     }
 
     public class Other : Item {
         public short Quantity { get; set; }
         public Flag Flag { get; set; }
-
-        public new static Other Parse(PacketReader pr, byte temp) {
-            var o = Item.Parse(pr,temp) as Other;
-            if (o == null) {
-                throw new InvalidCastException("Error casting item-type Other.");
-            }
-
-            o.Quantity = pr.ReadShort();
-            pr.ReadMapleString();
-            o.Flag = (Flag) pr.ReadShort();
-            if (o.IsThrowingStar || o.IsFamiliar || o.IsBullet) {
-                pr.Skip(8);
-            }
-
-            return o;
-        }
 
         public int IdBase => Id / 10000;
 
@@ -52,5 +36,19 @@ namespace MapleCLB.Types.Items {
         public bool IsBullet => IdBase == 233;
         public bool IsMonsterCard => IdBase == 238;
         public bool IsFamiliar => IdBase == 287;
+
+        public new static Other Parse(PacketReader pr, byte temp) {
+            var o = Item.Parse(pr, temp) as Other;
+            Precondition.NotNull(o, "Error casting item-type Other.");
+
+            o.Quantity = pr.ReadShort();
+            pr.ReadMapleString();
+            o.Flag = (Flag) pr.ReadShort();
+            if (o.IsThrowingStar || o.IsFamiliar || o.IsBullet) {
+                pr.Skip(8);
+            }
+
+            return o;
+        }
     }
 }

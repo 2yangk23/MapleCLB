@@ -15,7 +15,7 @@ namespace MapleCLB.Types.Items {
 
         protected static Item Parse(PacketReader pr, byte temp) {
             // [Type (1)] [Id (4)] [Flag (1) ? UniqueId (8)] [Timestamp (8)] FF FF FF FF
-            var type = (Type)temp;
+            var type = (Type) temp;
             int id = pr.ReadInt();
             if (pr.ReadBool()) {
                 pr.ReadLong();
@@ -29,14 +29,12 @@ namespace MapleCLB.Types.Items {
                         Id = id
                     };
                 case Type.OTHER:
-                    return new Other
-                    {
+                    return new Other {
                         Type = type,
                         Id = id
                     };
                 case Type.PET:
-                    return new Pet
-                    {
+                    return new Pet {
                         Type = type,
                         Id = id
                     };

@@ -3,9 +3,9 @@ using System.Threading;
 
 namespace MapleCLB.Tools {
     public class BlockingLinkedList<T> {
+        private readonly object accessLock = new object();
         private readonly LinkedList<T> list = new LinkedList<T>();
         private readonly ManualResetEvent waiter = new ManualResetEvent(false);
-        private readonly object accessLock = new object();
 
         public T GetFirst() {
             waiter.WaitOne();

@@ -6,10 +6,9 @@ using MapleLib.Crypto;
 
 namespace MapleLib {
     public sealed class Connector {
+        private readonly AesCipher aesCipher;
         private readonly IPAddress ip;
         private readonly int port;
-        private readonly AesCipher aesCipher;
-
 
         public event EventHandler<Session> OnConnected;
         public event EventHandler<SocketError> OnError;

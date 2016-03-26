@@ -4,7 +4,7 @@ using MapleCLB.Tools;
 namespace MapleCLB.Types {
     public enum SelectMode : byte {
         SLOT = 0,
-        NAME = 1,
+        NAME = 1
         //UID = 2
     }
 
@@ -38,6 +38,7 @@ namespace MapleCLB.Types {
                 username = value;
             }
         }
+
         public string Password { get; set; }
         public string Pic { get; set; }
 

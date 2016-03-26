@@ -6,14 +6,14 @@ using MapleCLB.Resources;
 
 namespace MapleCLB.Forms {
     public partial class RusherView : UserControl {
-        private Client Client;
+        private Client client;
 
         public RusherView() {
             InitializeComponent();
         }
 
         public void SetClient(Client client) {
-            Client = client;
+            this.client = client;
         }
 
         public void Update(int srcMap) {
@@ -35,13 +35,16 @@ namespace MapleCLB.Forms {
         }
 
         private void RushTree_MouseDoubleClick(object sender, MouseEventArgs e) {
-            if (RushTree.SelectedNode == null || RushTree.SelectedNode.Level <= 0) return;
+            if (RushTree.SelectedNode == null || RushTree.SelectedNode.Level <= 0) {
+                return;
+            }
+
             SetEnabled(false);
 
             //TODO: Fix ghetto parse on dst
             int src = int.Parse(MapStatus.Text);
             int dst = int.Parse(RushTree.SelectedNode.Text.Split(':')[0]);
-            Client.MapRush.Report(MapRusher.Pathfind(src, dst));
+            client.MapRush.Report(MapRusher.Pathfind(src, dst));
         }
 
         private void SetEnabled(bool enabled) {

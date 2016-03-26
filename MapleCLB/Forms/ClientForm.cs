@@ -8,7 +8,7 @@ using MapleCLB.Types;
 
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
-        private readonly Client Client;
+        private readonly Client client;
         public Progress<bool> ConnectToggle;
         public Progress<string> WriteLog;
         public Progress<byte[]> WriteSend, WriteRecv;
@@ -20,9 +20,9 @@ namespace MapleCLB.Forms {
         public Progress<int> UpdatePeople;
         public Progress<string> UpdateWorking;
 
-        public FreeMarketForm FMFunctions;
+        public FreeMarketForm FmFunctions;
 
-        public Information test = new Information();
+        public Information Test = new Information();
         public bool IsLogSend => PacketView.LogSend;
 
         public ClientForm() {
@@ -36,11 +36,11 @@ namespace MapleCLB.Forms {
             Win32.SendMessage(PacketInput.Handle, Win32.EM_SETCUEBANNER, 0, "Enter packet to send...");
             Win32.SendMessage(DelayInput.Handle, Win32.EM_SETCUEBANNER, 0, "Delay");
 
-            Client = new Client(this);
+            client = new Client(this);
             PacketView.SetInput(PacketInput);
-            RusherView.SetClient(Client);
+            RusherView.SetClient(client);
 
-            FMFunctions = new FreeMarketForm(this);
+            FmFunctions = new FreeMarketForm(this);
 
 #if DEBUG
             /*Use this for testing account 
@@ -123,56 +123,56 @@ namespace MapleCLB.Forms {
                     World       = (byte) WorldList.SelectedIndex
                 };
 
-                Client.doWhat = (byte) ModeList.SelectedIndex;
+                client.doWhat = (byte) ModeList.SelectedIndex;
 
                 Task.Factory.StartNew(() => {
-                    Client.Initialize(account);
-                    Client.Connect();
+                    client.Initialize(account);
+                    client.Connect();
                 }, TaskCreationOptions.LongRunning);
             } else {
-                Client.Disconnect();
+                client.Disconnect();
             }
         }
 
         private void InitTestBtn_Click(object sender, EventArgs e) {
-            Task.Factory.StartNew(() => Client.Initialize(null), TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(() => client.Initialize(null), TaskCreationOptions.LongRunning);
         }
 
         private void CcBtn_Click(object sender, EventArgs e) {
-            Client.WriteLog.Report("Changing to Ch 2");
-            Client.SendPacket(General.ChangeChannel(0x01));
+            client.WriteLog.Report("Changing to Ch 2");
+            client.SendPacket(General.ChangeChannel(0x01));
         }
 
         private void MoveBtn_Click(object sender, EventArgs e) {
-            Client.SendPacket(Movement.beforeTeleport());
-            Client.SendPacket(Movement.beforeTeleport());
-            Client.SendPacket(Movement.Teleport(Client.PortalCount, 0x26F611E3, 80, 34, 52));
+            client.SendPacket(Movement.beforeTeleport());
+            client.SendPacket(Movement.beforeTeleport());
+            client.SendPacket(Movement.Teleport(client.PortalCount, 0x26F611E3, 80, 34, 52));
         }
 
         private void Information_Click(object sender, EventArgs e){
-            if (Client.ShowInformation == false) {
-                test.updateInventory(Client.currentEquipInventory, Client.currentUseInventory, Client.currentSetUpInventory, Client.currentEtcInventory);
-                test.Show();
-                Client.ShowInformation = true;}
+            if (client.ShowInformation == false) {
+                Test.UpdateInventory(client.currentEquipInventory, client.currentUseInventory, client.currentSetUpInventory, client.currentEtcInventory);
+                Test.Show();
+                client.ShowInformation = true;}
             else{
-                test.Clear();
-                test.Hide();
-                Client.ShowInformation = false;}
+                Test.Clear();
+                Test.Hide();
+                client.ShowInformation = false;}
         }
 
         private void FMFunctions_Click(object sender, EventArgs e){
-            if (Client.ShowFMFunctions == false){
-                FMFunctions.Show();
-                Client.ShowFMFunctions = true;
+            if (client.ShowFMFunctions == false){
+                FmFunctions.Show();
+                client.ShowFMFunctions = true;
             }
             else {
-                FMFunctions.Hide();
-                Client.ShowFMFunctions = false;
+                FmFunctions.Hide();
+                client.ShowFMFunctions = false;
             }
         }
         
         internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode, bool takeAnyCB){
-            Client.StartScript(IGN,shopNAME,FH,X,Y,PermitCB,SCMode,takeAnyCB);
+            client.StartScript(IGN,shopNAME,FH,X,Y,PermitCB,SCMode,takeAnyCB);
         }
 
         //Temp
@@ -188,7 +188,7 @@ namespace MapleCLB.Forms {
         private void SendSpamBtn_Click(object sender, EventArgs e) {
             if (PacketInput.Text.Length == 0) return;
 
-            Client.SendPacket(HexEncoding.ToByteArray(PacketInput.Text));
+            client.SendPacket(HexEncoding.ToByteArray(PacketInput.Text));
             /*if (!sMenuSpam.Checked) {
                 C.SendPacket(sendPacket.Text);
             } else {

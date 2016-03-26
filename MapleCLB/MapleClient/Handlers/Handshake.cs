@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
-using MapleLib;
+using System.Threading;
 using MapleCLB.Packets.Send;
+using MapleLib;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Handshake : Handler<ServerInfo> {
@@ -15,7 +16,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     string authCode = Auth.GetAuth(Client.Account);
                     Client.Mode = ClientMode.LOGIN;
                     Debug.WriteLine(authCode);
-                    System.Threading.Thread.Sleep(1000);
+                    Thread.Sleep(1000);
                     SendPacket(Login.ClientLogin(Client.Account, authCode));
                     break;
 
@@ -33,9 +34,9 @@ namespace MapleCLB.MapleClient.Handlers {
                     break;
 
                 case ClientMode.CASHSHOP:
-                    System.Threading.Thread.Sleep(2000);
+                    Thread.Sleep(2000);
                     SendPacket(Login.EnterServer(Client.Account, Client.UserId, Client.SessionId));
-                    System.Threading.Thread.Sleep(2000);
+                    Thread.Sleep(2000);
                     SendPacket(General.ExitCS());
                     Client.Mode = ClientMode.GAME;
                     Client.WriteLog.Report("Left CS!");

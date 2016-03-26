@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using MapleCLB.Tools;
+using SharedTools;
 
 namespace MapleLib.Packet {
     public class PacketReader {
@@ -15,18 +16,13 @@ namespace MapleLib.Packet {
         }
 
         private void CheckLength(int length) {
-            if (Position + length > Buffer.Length || length < 0) {
-                throw new IndexOutOfRangeException("Not enough space in packet: " + ToString() + 
-                    "\n" + Position + length + " > " + Buffer.Length + " OR " + length + " < 0");
-            }
+            Precondition.InRange(Position + length, Position, Buffer.Length,
+                $"Not enough space in packet: {ToString()}\n");
         }
 
         private void CheckRange(int length) {
-            int seek = Position + length;
-            if (seek > Buffer.Length || seek < 0) {
-                throw new IndexOutOfRangeException("Not enough space in packet: " + ToString() +
-                    "\n" + seek + " > " + Buffer.Length + " OR " + seek + " < 0");
-            }
+            Precondition.InRange(Position + length, 0, Buffer.Length, 
+                $"Not enough space in packet: {ToString()}\n");
         }
 
         public byte ReadByte() {
@@ -49,7 +45,7 @@ namespace MapleLib.Packet {
         public unsafe short ReadShort() {
             CheckLength(2);
             fixed (byte* ptr = Buffer) {
-                short value = *(short*)(ptr + Position);
+                short value = *(short*) (ptr + Position);
                 Position += 2;
                 return value;
             }
@@ -58,7 +54,7 @@ namespace MapleLib.Packet {
         public unsafe ushort ReadUShort() {
             CheckLength(2);
             fixed (byte* ptr = Buffer) {
-                ushort value = *(ushort*)(ptr + Position);
+                ushort value = *(ushort*) (ptr + Position);
                 Position += 2;
                 return value;
             }
@@ -67,7 +63,7 @@ namespace MapleLib.Packet {
         public unsafe short ReadShortBigEndian() {
             CheckLength(2);
             fixed (byte* ptr = Buffer) {
-                short value = (short)(*(ptr + Position) << 8 | *(ptr + Position + 1));
+                short value = (short) (*(ptr + Position) << 8 | *(ptr + Position + 1));
                 Position += 2;
                 return value;
             }
@@ -76,7 +72,7 @@ namespace MapleLib.Packet {
         public unsafe int ReadInt() {
             CheckLength(4);
             fixed (byte* ptr = Buffer) {
-                int value = *(int*)(ptr + Position);
+                int value = *(int*) (ptr + Position);
                 Position += 4;
                 return value;
             }
@@ -85,7 +81,7 @@ namespace MapleLib.Packet {
         public unsafe uint ReadUInt() {
             CheckLength(4);
             fixed (byte* ptr = Buffer) {
-                uint value = *(uint*)(ptr + Position);
+                uint value = *(uint*) (ptr + Position);
                 Position += 4;
                 return value;
             }
@@ -94,7 +90,8 @@ namespace MapleLib.Packet {
         public unsafe int ReadIntBigEndian() {
             CheckLength(4);
             fixed (byte* ptr = Buffer) {
-                int value = *(ptr + Position) << 24 | *(ptr + Position + 1) << 16 | *(ptr + Position + 2) << 8 | *(ptr + Position + 3);
+                int value = *(ptr + Position) << 24 | *(ptr + Position + 1) << 16 | 
+                            *(ptr + Position + 2) << 8 | *(ptr + Position + 3);
                 Position += 4;
                 return value;
             }
@@ -103,7 +100,7 @@ namespace MapleLib.Packet {
         public unsafe long ReadLong() {
             CheckLength(8);
             fixed (byte* ptr = Buffer) {
-                long value = *(long*)(ptr + Position);
+                long value = *(long*) (ptr + Position);
                 Position += 8;
                 return value;
             }

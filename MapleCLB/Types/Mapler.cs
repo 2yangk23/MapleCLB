@@ -24,6 +24,10 @@ namespace MapleCLB.Types {
 
         public long Meso { get; set; }
 
+        public bool IsDemon => Job == 3001 || Job / 100 == 31;
+        public bool IsXenon => Job == 3002 || Job / 100 == 36;
+        public bool IsBeastTamer => Job == 11000 || Job / 100 == 112;
+
         public static Mapler Parse(PacketReader pr) {
             var m = new Mapler();
 
@@ -49,10 +53,12 @@ namespace MapleCLB.Types {
             m.Ap = pr.ReadShort();
 
             byte temp = pr.ReadByte(); // Separated SP
-            if (temp > 4)
+            if (temp > 4) {
                 temp = pr.ReadByte();
-            for (int j = 0; j < temp; ++j)
+            }
+            for (int j = 0; j < temp; ++j) {
                 pr.Skip(5);
+            }
 
             /* Correct way to do separated sp
             pw.WriteShort(chr.AP);
@@ -73,15 +79,16 @@ namespace MapleCLB.Types {
                 pr.Skip(4);
             }
 
-            pr.Skip(5);     // [Fatigue (1)] [Date (4)]
-            pr.Skip(24);    // [Ambition (4)] [Insight (4)] [Willpower (4)] [Dilligence (4)] [Empathy (4)] [Charm (4)]
-            pr.Skip(21);    // [Zeros (13)] [00 40 E0 FD] [3B 37 4F 01]
-            pr.Skip(15);    // [PvP Exp (4)] [PvP Rank (1)] [Battle Pts (4)] [Byte (1)] [Byte (1)] [Int (4)]
-            pr.Skip(1);     // part time job action of resting = 1, herbalism= 2, Mining = 3, general store = 4, Weapon and armor store = 5
-            pr.Skip(13);    // [3B 37 4F 01] [00 40 E0 FD] [00 00 00 00] [00]
-            pr.Skip(81);    // AddPlayer Cards 9 bytes each
-            pr.Skip(8);     // [Last Login (8)]
-            pr.Skip(1);     // 00
+            /* [Fatigue (1)] [Date (4)]
+             * [Ambition (4)] [Insight (4)] [Willpower (4)] [Dilligence (4)] [Empathy (4)] [Charm (4)]
+             * [Zeros (13)] [00 40 E0 FD] [3B 37 4F 01]
+             * [PvP Exp (4)] [PvP Rank (1)] [Battle Pts (4)] [Byte (1)] [Byte (1)] [Int (4)]
+             * part time job action of resting = 1, herbalism= 2, Mining = 3, general store = 4, Weapon and armor store = 5
+             * [3B 37 4F 01] [00 40 E0 FD] [00 00 00 00] [00]
+             * Character Cards 9 bytes each
+             * [Last Login (8)] 00
+             */
+            pr.Skip(5 + 24 + 21 + 15 + 1 + 13 + 81 + 9);
 
             return m;
         }
@@ -103,13 +110,10 @@ namespace MapleCLB.Types {
             pr.Skip(3); // ?? ?? ??
         }
 
-        public bool IsDemon => Job == 3001 || Job / 100 == 31;
-        public bool IsXenon => Job == 3002 || Job / 100 == 36;
-        public bool IsBeastTamer => Job == 11000 || Job / 100 == 112;
-
         public void Print() {
             Console.WriteLine("Id: {0}, Name: {1}, Job: {2}, Level: {3}", Id, Name, Job, Level);
-            Console.WriteLine("Str[{0}] Dex[{1}] Int[{2}] Luk[{3}], {4} / {5} Hp, {6} / {7} Mp", Str, Dex, Int, Luk, Hp, MaxHp, Mp, MaxMp);
+            Console.WriteLine("Str[{0}] Dex[{1}] Int[{2}] Luk[{3}], {4} / {5} Hp, {6} / {7} Mp", 
+                Str, Dex, Int, Luk, Hp, MaxHp, Mp, MaxMp);
             Console.WriteLine("Ap: {0}, Exp: {1}, Fame: {2}, Map: {3}", Ap, Exp, Fame, Map);
         }
     }

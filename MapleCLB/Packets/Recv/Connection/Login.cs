@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading;
 using MapleCLB.MapleClient;
-using MapleLib.Packet;
 using MapleCLB.Types;
+using MapleLib.Packet;
 
+// TODO: The Thread.Sleep here will cause UI to freeze
 namespace MapleCLB.Packets.Recv.Connection {
     internal class Login {
         public static void LoginSecond(object o, PacketReader r) {
@@ -23,7 +24,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             r.Skip(10);
             r.ReadMapleString();
             r.Skip(12);
-            
+
             c.SessionId = r.ReadLong(); //Get session ID from login recieve
         }
 

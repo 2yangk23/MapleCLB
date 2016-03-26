@@ -8,20 +8,20 @@ using MapleLib.Packet;
 
 namespace MapleCLB.ScriptLib {
     internal abstract class ComplexScript : Script {
-        private readonly List<ushort> Headers;
-        private BlockingCollection<Action> Scheduler;
+        private readonly List<ushort> headers;
+        private BlockingCollection<Action> scheduler;
 
         internal ComplexScript(Client client) : base(client) {
-            Headers = new List<ushort>();
+            headers = new List<ushort>();
         }
 
         internal new bool Start() {
             return Start(Run);
         }
 
-        /* Script Managing Functions */
+        #region Script Managing Functions
         private void Run() {
-            Scheduler = new BlockingCollection<Action>();
+            scheduler = new BlockingCollection<Action>();
             CancellationTokenSource source = null;
             try {
                 // Initialize script
@@ -45,7 +45,7 @@ namespace MapleCLB.ScriptLib {
         private void StartHandler(CancellationToken token) {
             while (!token.IsCancellationRequested) {
                 Action handle;
-                if (!Scheduler.TryTake(out handle, 10000)) {
+                if (!scheduler.TryTake(out handle, 10000)) {
                     continue;
                 }
                 if (!token.IsCancellationRequested) {
@@ -56,29 +56,29 @@ namespace MapleCLB.ScriptLib {
 
         private void Release(CancellationTokenSource source) {
             // Unregisters all headers
-            Headers.ForEach(d => Client.RemoveScriptRecv(d));
-            Headers.Clear();
+            headers.ForEach(d => Client.RemoveScriptRecv(d));
+            headers.Clear();
             // Stops handler
             source?.Cancel();
         }
+        #endregion
 
-        /* Scripting Functions */
+        #region Scripting Functions
         protected void RegisterRecv(ushort header, Action<PacketReader> handler) {
-            Progress<PacketReader> progress = new Progress<PacketReader>(r => {
-                Scheduler.Add(() => handler(r));
-            });
+            Progress<PacketReader> progress = new Progress<PacketReader>(r => { scheduler.Add(() => handler(r)); });
             if (Client.AddScriptRecv(header, progress)) {
-                Headers.Add(header);
+                headers.Add(header);
             } else {
                 throw new InvalidOperationException($"Failed to register header {header:X4}.");
             }
         }
 
         protected void UnregisterRecv(ushort header) {
-            Headers.Remove(header);
+            headers.Remove(header);
             Client.RemoveScriptRecv(header);
         }
 
         protected abstract void Init();
+        #endregion
     }
 }
