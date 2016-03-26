@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using MapleCLB.MapleLib;
+using MapleLib;
 using MapleCLB.Packets.Send;
 
 namespace MapleCLB.MapleClient.Handlers {

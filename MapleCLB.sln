@@ -1,18 +1,42 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapleCLB", "MapleCLB\MapleCLB.csproj", "{0E6A99E3-156D-49C6-8CBD-83F74D609790}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedTools", "SharedTools\SharedTools.shproj", "{83C9EA29-2F0F-431B-96B6-1707F72E8062}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MapleLib", "MapleLib\MapleLib.shproj", "{78A7284E-C54B-4B98-8573-4AF8E0243C71}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MapleLib\MapleLib.projitems*{0e6a99e3-156d-49c6-8cbd-83f74d609790}*SharedItemsImports = 4
+		SharedTools\SharedTools.projitems*{0e6a99e3-156d-49c6-8cbd-83f74d609790}*SharedItemsImports = 4
+		SharedTools\SharedTools.projitems*{83c9ea29-2f0f-431b-96b6-1707f72e8062}*SharedItemsImports = 13
+		MapleLib\MapleLib.projitems*{78a7284e-c54b-4b98-8573-4af8e0243c71}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|x64.Build.0 = Debug|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Debug|x86.Build.0 = Debug|Any CPU
 		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|x64.ActiveCfg = Release|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|x64.Build.0 = Release|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|x86.ActiveCfg = Release|Any CPU
+		{0E6A99E3-156D-49C6-8CBD-83F74D609790}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

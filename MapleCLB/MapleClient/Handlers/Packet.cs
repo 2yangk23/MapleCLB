@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Recv;
 using MapleCLB.Packets.Recv.Connection;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MapleCLB.MapleClient;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 
 namespace MapleCLB.ScriptLib {
     internal abstract class ComplexScript : Script {

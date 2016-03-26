@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace MapleCLB.MapleLib.Crypto {
+namespace MapleLib.Crypto {
     public sealed class AesCipher {
-        private readonly ICryptoTransform Crypto;
+        private readonly ICryptoTransform crypto;
 
         public AesCipher(byte[] aesKey) {
             if (aesKey == null) {
                 throw new ArgumentNullException(nameof(aesKey));
             }
-
             if (aesKey.Length != 32) {
                 throw new ArgumentOutOfRangeException(nameof(aesKey), "Key length needs to be 32");
             }
@@ -21,7 +20,7 @@ namespace MapleCLB.MapleLib.Crypto {
             };
 
             using (aes) {
-                Crypto = aes.CreateEncryptor();
+                crypto = aes.CreateEncryptor();
             }
         }
 
@@ -40,7 +39,7 @@ namespace MapleCLB.MapleLib.Crypto {
 
                 for (int index = start; index < start + length; index++) {
                     if ((index - start) % 16 == 0)
-                        Crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
+                        crypto.TransformBlock(morphKey, 0, 16, morphKey, 0);
 
                     data[index] ^= morphKey[(index - start) % 16];
                 }

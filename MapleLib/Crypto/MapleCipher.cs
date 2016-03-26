@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace MapleCLB.MapleLib.Crypto {
+namespace MapleLib.Crypto {
     internal sealed class MapleCipher {
         public const int IV_LENGTH = 4;
 
-        private static readonly byte[] ShiftKey = {
+        private static readonly byte[] shiftKey = {
             0xEC, 0x3F, 0x77, 0xA4, 0x45, 0xD0, 0x71, 0xBF, 0xB7, 0x98, 0x20, 0xFC, 0x4B, 0xE9, 0xB3, 0xE1,
             0x5C, 0x22, 0xF7, 0x0C, 0x44, 0x1B, 0x81, 0xBD, 0x63, 0x8D, 0xD4, 0xC3, 0xF2, 0x10, 0x19, 0xE0,
             0xFB, 0xA1, 0x6E, 0x66, 0xEA, 0xAE, 0xD6, 0xCE, 0x06, 0x18, 0x4E, 0xEB, 0x78, 0x95, 0xDB, 0xBA,
@@ -23,43 +23,43 @@ namespace MapleCLB.MapleLib.Crypto {
             0x84, 0x7F, 0x61, 0x1E, 0xCF, 0xC5, 0xD1, 0x56, 0x3D, 0xCA, 0xF4, 0x05, 0xC6, 0xE5, 0x08, 0x49
         };
 
-        private readonly AesCipher AesCipher;
-        private readonly byte[] IV;
+        private readonly AesCipher aesCipher;
+        private readonly byte[] iv;
 
-        private readonly short MajorVersion;
+        private readonly short majorVersion;
 
         public MapleCipher(short majorVersion, byte[] iv, AesCipher aes) {
-            MajorVersion = majorVersion;
+            this.majorVersion = majorVersion;
 
-            IV = new byte[IV_LENGTH];
-            Buffer.BlockCopy(iv, 0, IV, 0, IV_LENGTH);
+            this.iv = new byte[IV_LENGTH];
+            Buffer.BlockCopy(iv, 0, this.iv, 0, IV_LENGTH);
 
-            AesCipher = aes;
+            aesCipher = aes;
         }
 
         public unsafe void Transform(byte[] data) {
-            AesCipher.Transform(data, IV);
+            aesCipher.Transform(data, iv);
 
             byte[] newIV = {0xF2, 0x53, 0x50, 0xC6};
 
             for (int i = 0; i < IV_LENGTH; i++) {
-                byte input = IV[i];
-                byte tableInput = ShiftKey[input];
+                byte input = iv[i];
+                byte tableInput = shiftKey[input];
 
-                newIV[0] += (byte) (ShiftKey[newIV[1]] - input);
+                newIV[0] += (byte) (shiftKey[newIV[1]] - input);
                 newIV[1] -= (byte) (newIV[2] ^ tableInput);
-                newIV[2] ^= (byte) (ShiftKey[newIV[3]] + input);
+                newIV[2] ^= (byte) (shiftKey[newIV[3]] + input);
                 newIV[3] -= (byte) (newIV[0] - tableInput);
 
                 fixed (byte* ptr = newIV)
                     *(uint*) ptr = (*(uint*) ptr << 3) | (*(uint*) ptr >> 32 - 3); //RC6 ROL 3
             }
 
-            Buffer.BlockCopy(newIV, 0, IV, 0, IV_LENGTH);
+            Buffer.BlockCopy(newIV, 0, iv, 0, IV_LENGTH);
         }
 
         public void GetHeaderToClient(int size, byte[] packet) {
-            int a = (IV[3] * 0x100 + IV[2]) ^ -(MajorVersion + 1);
+            int a = (iv[3] * 0x100 + iv[2]) ^ -(majorVersion + 1);
             int b = a ^ size;
             packet[0] = (byte) a;
             packet[1] = (byte) ((a - packet[0]) / 0x100);
@@ -68,7 +68,7 @@ namespace MapleCLB.MapleLib.Crypto {
         }
 
         public void GetHeaderToServer(int size, byte[] packet) {
-            int a = (IV[3] * 0x100 + IV[2]) ^ MajorVersion;
+            int a = (iv[3] * 0x100 + iv[2]) ^ majorVersion;
             int b = a ^ size;
 
             packet[0] = (byte) (a % 0x100);

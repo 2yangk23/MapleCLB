@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.ScriptLib;
 using MapleCLB.Packets.Send;

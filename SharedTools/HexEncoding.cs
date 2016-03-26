@@ -4,9 +4,9 @@ using System.Threading;
 namespace MapleCLB.Tools {
     public static class HexEncoding {
         private static int seed = Environment.TickCount;
-        private static readonly ThreadLocal<Random> Rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+        private static readonly ThreadLocal<Random> rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
-        private static readonly uint[] HexLookup = {
+        private static readonly uint[] hexLookup = {
             3145776, 3211312, 3276848, 3342384, 3407920, 3473456, 3538992, 3604528, 3670064, 3735600, 4259888, 4325424,
             4390960, 4456496, 4522032, 4587568, 3145777, 3211313, 3276849, 3342385, 3407921, 3473457, 3538993, 3604529,
             3670065, 3735601, 4259889, 4325425, 4390961, 4456497, 4522033, 4587569, 3145778, 3211314, 3276850, 3342386,
@@ -31,7 +31,7 @@ namespace MapleCLB.Tools {
             4390982, 4456518, 4522054, 4587590
         };
 
-        private static readonly byte[] NybbleLookup = {
+        private static readonly byte[] nybbleLookup = {
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
             255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -50,7 +50,7 @@ namespace MapleCLB.Tools {
                 throw new ArgumentException("Hex byte string must have 1-2 characters");
             }
 
-            fixed (byte* lookupPtr = NybbleLookup) {
+            fixed (byte* lookupPtr = nybbleLookup) {
                 return hex.Length == 1 ? lookupPtr[hex[0]] : (byte) (lookupPtr[hex[0]] << 4 | lookupPtr[hex[1]]);
             }
         }
@@ -58,7 +58,7 @@ namespace MapleCLB.Tools {
         public static unsafe string ToHex(byte b) {
             string result = new string('\0', 2);
             fixed (char* ptr = result)
-            fixed (uint* lookupPtr = HexLookup) {
+            fixed (uint* lookupPtr = hexLookup) {
                 *(uint*)ptr = lookupPtr[b];
             }
             return result;
@@ -71,7 +71,7 @@ namespace MapleCLB.Tools {
             }
 
             byte[] result = new byte[hex.Length / 2];
-            fixed (byte* lookupPtr = NybbleLookup) {
+            fixed (byte* lookupPtr = nybbleLookup) {
                 for (int i = 0, j = 0; i < result.Length; i++) {
                     result[i] = (byte) (lookupPtr[hex[j++]] << 4 | lookupPtr[hex[j++]]);
                 }
@@ -93,7 +93,7 @@ namespace MapleCLB.Tools {
             string result = new string('\0', bytes.Length * 2);
             fixed (byte* bytesPtr = bytes)
             fixed (char* resultPtr = result)
-            fixed (uint* lookupPtr = HexLookup) {
+            fixed (uint* lookupPtr = hexLookup) {
                 for (int i = 0, j = 0; i < bytes.Length; i++) {
                     *(uint*)(resultPtr + j) = lookupPtr[bytesPtr[i]];
                     j += 2;
@@ -106,7 +106,7 @@ namespace MapleCLB.Tools {
             string result = new string(sep, bytes.Length * 3 - 1);
             fixed (byte* bytesPtr = bytes)
             fixed (char* resultPtr = result)
-            fixed (uint* lookupPtr = HexLookup) {
+            fixed (uint* lookupPtr = hexLookup) {
                 for (int i = 0, j = 0; i < bytes.Length; i++) {
                     *(uint*)(resultPtr + j) = lookupPtr[bytesPtr[i]];
                     j += 3;
@@ -117,14 +117,14 @@ namespace MapleCLB.Tools {
 
         public static string RandomHexString(int length) {
             byte[] buffer = new byte[length];
-            Rng.Value.NextBytes(buffer);
+            rng.Value.NextBytes(buffer);
 
             return ToHexString(buffer, ' ');
         }
 
         public static string RandomHexString(int length, char sep) {
             byte[] buffer = new byte[length];
-            Rng.Value.NextBytes(buffer);
+            rng.Value.NextBytes(buffer);
 
             return ToHexString(buffer, sep);
         }
@@ -133,7 +133,7 @@ namespace MapleCLB.Tools {
             fixed (char* pch = packet) {
                 for (int i = 0; i < packet.Length; i++) { // randomizes wildcards
                     if (pch[i] == '*') {
-                        pch[i] = $"{Rng.Value.Next(0xF):X}"[0];
+                        pch[i] = $"{rng.Value.Next(0xF):X}"[0];
                     }
                 }
             }

@@ -1,5 +1,5 @@
 ﻿using MapleCLB.MapleClient;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv.Connection {
     internal class PortIp {

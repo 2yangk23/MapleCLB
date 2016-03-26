@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Threading;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;

@@ -1,60 +1,62 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net.Sockets;
-using MapleCLB.MapleLib.Crypto;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Crypto;
+using MapleLib.Packet;
 
 
-namespace MapleCLB.MapleLib {
+namespace MapleLib {
+    public enum SessionType { CLIENT, SERVER }
+
     public sealed class Session {
-        private static readonly Random Random = new Random();
-        public const short RECEIVE_SIZE = 1024;
+        private const short RECEIVE_SIZE = 1024;
         private const int HANDSHAKE_HEADER_SIZE = 2;
         private const int PACKET_HEADER_SIZE = 4;
 
-        private readonly Socket Socket;
+        private readonly Socket socket;
+        private readonly AesCipher aesCipher;
+        private readonly object sendLock;
+        private readonly byte[] recvBuffer;
 
+        private MapleCipher clientCipher;
+        private MapleCipher serverCipher;
+        private byte[] packetBuffer;
+        private int cursor;
+
+        public readonly SessionType SessionType;
         public bool Connected { get; private set; }
         public bool Encrypted { get; private set; }
-
-        public SessionType SessionType { get; }
-
-        private MapleCipher ClientCipher;
-        private MapleCipher ServerCipher;
-
-        private readonly object SendLock;
-        private readonly byte[] RecvBuffer;
-        private byte[] PacketBuffer;
-        private int Cursor;
 
         public event EventHandler<ServerInfo> OnHandshake;
         public event EventHandler<byte[]> OnPacket;
         public event EventHandler OnDisconnected;
         public event EventHandler<Session> OnReconnect;
 
-        internal Session(Socket socket, SessionType type) {
-            Socket = socket;
+        internal Session(Socket socket, SessionType type, AesCipher aesCipher) {
+            this.socket = socket;
             SessionType = type;
 
             Encrypted = type != SessionType.CLIENT;
+            this.aesCipher = aesCipher;
             Connected = true;
 
-            SendLock = new object();
-            PacketBuffer = new byte[RECEIVE_SIZE];
-            RecvBuffer = new byte[RECEIVE_SIZE];
-            Cursor = 0;
+            sendLock = new object();
+            packetBuffer = new byte[RECEIVE_SIZE];
+            recvBuffer = new byte[RECEIVE_SIZE];
+            cursor = 0;
         }
 
         internal void Start(ServerInfo info) {
             if (info != null) {
                 byte[] siv = new byte[4];
                 byte[] riv = new byte[4];
+                var rng = new Random();
 
-                Random.NextBytes(siv);
-                Random.NextBytes(riv);
+                rng.NextBytes(siv);
+                rng.NextBytes(riv);
 
-                ClientCipher = new MapleCipher(info.Version, siv, Program.AesCipher);
-                ServerCipher = new MapleCipher(info.Version, riv, Program.AesCipher);
+                clientCipher = new MapleCipher(info.Version, siv, aesCipher);
+                serverCipher = new MapleCipher(info.Version, riv, aesCipher);
 
                 var p = new PacketWriter(14, 16);
                 p.WriteShort(info.Version);
@@ -73,7 +75,7 @@ namespace MapleCLB.MapleLib {
             if (!Connected) return;
 
             SocketError error;
-            Socket.BeginReceive(RecvBuffer, 0, RECEIVE_SIZE, SocketFlags.None, out error, PacketCallback, null);
+            socket.BeginReceive(recvBuffer, 0, RECEIVE_SIZE, SocketFlags.None, out error, PacketCallback, null);
             if (error != SocketError.Success) {
                 Console.WriteLine("Bug Testing 101");
                 Disconnect();
@@ -87,7 +89,7 @@ namespace MapleCLB.MapleLib {
             // TODO: Fix Diposed Socket Bug
             // If client is in process of receiving packet right when you disconnect
             // Socket will be disposed, and throw exception
-            int length = Socket.EndReceive(iar, out error);
+            int length = socket.EndReceive(iar, out error);
             if (length == 0 || error != SocketError.Success) {
                 Console.WriteLine("Bug Testing 102");
                 Disconnect();
@@ -99,52 +101,52 @@ namespace MapleCLB.MapleLib {
         }
 
         private void Append(int length) {
-            if (PacketBuffer.Length - Cursor < length) {
-                int newSize = PacketBuffer.Length * 2;
-                while (newSize < Cursor + length) {
+            if (packetBuffer.Length - cursor < length) {
+                int newSize = packetBuffer.Length * 2;
+                while (newSize < cursor + length) {
                     newSize *= 2;
                 }
                 byte[] newBuffer = new byte[newSize];
-                Buffer.BlockCopy(PacketBuffer, 0, newBuffer, 0, Cursor);
-                PacketBuffer = newBuffer;
+                Buffer.BlockCopy(packetBuffer, 0, newBuffer, 0, cursor);
+                packetBuffer = newBuffer;
             }
-            Buffer.BlockCopy(RecvBuffer, 0, PacketBuffer, Cursor, length);
-            Cursor += length;
+            Buffer.BlockCopy(recvBuffer, 0, packetBuffer, cursor, length);
+            cursor += length;
         }
 
         private void ManipulateBuffer() {
             if (Encrypted) {
                 ProcessPacket();
-            } else if (Cursor >= HANDSHAKE_HEADER_SIZE) {
+            } else if (cursor >= HANDSHAKE_HEADER_SIZE) {
                 ProcessHandshake();
             }
         }
 
         private void ProcessPacket() {
-            while (Cursor > PACKET_HEADER_SIZE && Connected) {
-                int packetSize = MapleCipher.GetPacketLength(PacketBuffer);
-                if (Cursor < packetSize + PACKET_HEADER_SIZE || OnPacket == null) {
+            while (cursor > PACKET_HEADER_SIZE && Connected) {
+                int packetSize = MapleCipher.GetPacketLength(packetBuffer);
+                if (cursor < packetSize + PACKET_HEADER_SIZE || OnPacket == null) {
                     return;
                 }
 
                 byte[] buffer = new byte[packetSize];
-                Buffer.BlockCopy(PacketBuffer, PACKET_HEADER_SIZE, buffer, 0, packetSize);
-                ServerCipher.Transform(buffer);
+                Buffer.BlockCopy(packetBuffer, PACKET_HEADER_SIZE, buffer, 0, packetSize);
+                serverCipher.Transform(buffer);
 
-                Cursor -= packetSize + PACKET_HEADER_SIZE;
-                if (Cursor > 0) {
-                    Buffer.BlockCopy(PacketBuffer, packetSize + PACKET_HEADER_SIZE, PacketBuffer, 0, Cursor);
+                cursor -= packetSize + PACKET_HEADER_SIZE;
+                if (cursor > 0) {
+                    Buffer.BlockCopy(packetBuffer, packetSize + PACKET_HEADER_SIZE, packetBuffer, 0, cursor);
                 }
                 OnPacket(this, buffer);
             }
         }
 
         private void ProcessHandshake() {
-            short packetSize = BitConverter.ToInt16(PacketBuffer, 0);
-            if (Cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) return;
+            short packetSize = BitConverter.ToInt16(packetBuffer, 0);
+            if (cursor < packetSize + HANDSHAKE_HEADER_SIZE || OnHandshake == null) return;
 
             byte[] buffer = new byte[packetSize];
-            Buffer.BlockCopy(PacketBuffer, HANDSHAKE_HEADER_SIZE, buffer, 0, packetSize);
+            Buffer.BlockCopy(packetBuffer, HANDSHAKE_HEADER_SIZE, buffer, 0, packetSize);
 
             var packet = new PacketReader(buffer);
             var info = new ServerInfo {
@@ -155,12 +157,12 @@ namespace MapleCLB.MapleLib {
                 Locale = packet.ReadByte()
             };
 
-            ClientCipher = new MapleCipher(info.Version, info.SIV, Program.AesCipher);
-            ServerCipher = new MapleCipher(info.Version, info.RIV, Program.AesCipher);
+            clientCipher = new MapleCipher(info.Version, info.SIV, aesCipher);
+            serverCipher = new MapleCipher(info.Version, info.RIV, aesCipher);
             Encrypted = true; //start waiting for encrypted packets
 
             OnHandshake(this, info);
-            Cursor = 0; //reset stream
+            cursor = 0; //reset stream
         }
 
         public void SendPacket(PacketWriter packet) {
@@ -178,19 +180,19 @@ namespace MapleCLB.MapleLib {
                 throw new ArgumentOutOfRangeException(nameof(packet), @"Packet length must be greater than 2");
             }
 
-            lock (SendLock) {
+            lock (sendLock) {
                 byte[] final = new byte[packet.Length + PACKET_HEADER_SIZE];
 
                 switch (SessionType) {
                     case SessionType.CLIENT:
-                        ClientCipher.GetHeaderToServer(packet.Length, final);
+                        clientCipher.GetHeaderToServer(packet.Length, final);
                         break;
                     case SessionType.SERVER:
-                        ClientCipher.GetHeaderToClient(packet.Length, final);
+                        clientCipher.GetHeaderToClient(packet.Length, final);
                         break;
                 }
 
-                ClientCipher.Transform(packet);
+                clientCipher.Transform(packet);
                 Buffer.BlockCopy(packet, 0, final, PACKET_HEADER_SIZE, packet.Length);
                 SendRawPacket(final);
             }
@@ -200,7 +202,7 @@ namespace MapleCLB.MapleLib {
             int offset = 0;
             while (offset < packet.Length) {
                 SocketError errorCode;
-                int sent = Socket.Send(packet, offset, packet.Length - offset, SocketFlags.None, out errorCode);
+                int sent = socket.Send(packet, offset, packet.Length - offset, SocketFlags.None, out errorCode);
 
                 if (sent == 0 || errorCode != SocketError.Success) {
                     Console.WriteLine("Bug Testing 103");
@@ -214,10 +216,10 @@ namespace MapleCLB.MapleLib {
         public void Disconnect(bool finished = true) {
             if (!Connected) return;
 
-            Cursor = 0;
-            Socket.Shutdown(SocketShutdown.Both);
-            Socket.Disconnect(false);
-            Socket.Dispose();
+            cursor = 0;
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Disconnect(false);
+            socket.Dispose();
 
             if (!Encrypted && OnReconnect != null) {
                 OnReconnect(this, null);
@@ -231,11 +233,9 @@ namespace MapleCLB.MapleLib {
 
             if (!finished) return;
 
-            ClientCipher = null;
-            ServerCipher = null;
-            if (OnDisconnected != null) {
-                OnDisconnected(this,null);
-            }
+            clientCipher = null;
+            serverCipher = null;
+            OnDisconnected?.Invoke(this,null);
         }
     }
 }

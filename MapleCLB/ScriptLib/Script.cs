@@ -3,7 +3,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using MapleCLB.MapleClient;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Tools;
 
 namespace MapleCLB.ScriptLib {

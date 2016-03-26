@@ -1,4 +1,4 @@
-﻿using MapleCLB.MapleLib.Packet;
+﻿using MapleLib.Packet;
 using MapleCLB.Types;
 
 namespace MapleCLB.Packets.Send {

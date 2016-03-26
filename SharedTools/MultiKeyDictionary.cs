@@ -7,8 +7,7 @@ namespace MapleCLB.Tools {
         internal readonly Dictionary<TK, TV> BaseDictionary = new Dictionary<TK, TV>();
         internal readonly Dictionary<TL, TK> SubDictionary = new Dictionary<TL, TK>();
         internal readonly Dictionary<TK, TL> PrimaryToSubkeyMapping = new Dictionary<TK, TL>();
-
-        readonly ReaderWriterLockSlim ReaderWriterLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim readerWriterLock = new ReaderWriterLockSlim();
 
         public TV this[TL subKey] {
             get {
@@ -17,7 +16,7 @@ namespace MapleCLB.Tools {
                     return item;
                 }
 
-                throw new KeyNotFoundException("sub key not found: " + subKey.ToString());
+                throw new KeyNotFoundException("sub key not found: " + subKey);
             }
         }
 
@@ -28,12 +27,12 @@ namespace MapleCLB.Tools {
                     return item;
                 }
 
-                throw new KeyNotFoundException("primary key not found: " + primaryKey.ToString());
+                throw new KeyNotFoundException("primary key not found: " + primaryKey);
             }
         }
 
         public void Associate(TL subKey, TK primaryKey) {
-            ReaderWriterLock.EnterUpgradeableReadLock();
+            readerWriterLock.EnterUpgradeableReadLock();
 
             try {
                 if (!BaseDictionary.ContainsKey(primaryKey))
@@ -41,7 +40,7 @@ namespace MapleCLB.Tools {
 
                 if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) // Remove the old mapping first
                 {
-                    ReaderWriterLock.EnterWriteLock();
+                    readerWriterLock.EnterWriteLock();
 
                     try {
                         if (SubDictionary.ContainsKey(PrimaryToSubkeyMapping[primaryKey])) {
@@ -50,21 +49,21 @@ namespace MapleCLB.Tools {
 
                         PrimaryToSubkeyMapping.Remove(primaryKey);
                     } finally {
-                        ReaderWriterLock.ExitWriteLock();
+                        readerWriterLock.ExitWriteLock();
                     }
                 }
 
                 SubDictionary[subKey] = primaryKey;
                 PrimaryToSubkeyMapping[primaryKey] = subKey;
             } finally {
-                ReaderWriterLock.ExitUpgradeableReadLock();
+                readerWriterLock.ExitUpgradeableReadLock();
             }
         }
 
         public bool TryGetValue(TL subKey, out TV val) {
             val = default(TV);
 
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 TK primaryKey;
@@ -72,19 +71,19 @@ namespace MapleCLB.Tools {
                     return BaseDictionary.TryGetValue(primaryKey, out val);
                 }
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
 
             return false;
         }
 
         public bool TryGetValue(TK primaryKey, out TV val) {
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 return BaseDictionary.TryGetValue(primaryKey, out val);
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
         }
 
@@ -101,7 +100,7 @@ namespace MapleCLB.Tools {
         }
 
         public void Remove(TK primaryKey) {
-            ReaderWriterLock.EnterWriteLock();
+            readerWriterLock.EnterWriteLock();
 
             try {
                 if (PrimaryToSubkeyMapping.ContainsKey(primaryKey)) {
@@ -114,12 +113,12 @@ namespace MapleCLB.Tools {
 
                 BaseDictionary.Remove(primaryKey);
             } finally {
-                ReaderWriterLock.ExitWriteLock();
+                readerWriterLock.ExitWriteLock();
             }
         }
 
         public void Remove(TL subKey) {
-            ReaderWriterLock.EnterWriteLock();
+            readerWriterLock.EnterWriteLock();
 
             try {
                 BaseDictionary.Remove(SubDictionary[subKey]);
@@ -128,17 +127,17 @@ namespace MapleCLB.Tools {
 
                 SubDictionary.Remove(subKey);
             } finally {
-                ReaderWriterLock.ExitWriteLock();
+                readerWriterLock.ExitWriteLock();
             }
         }
 
         public void Add(TK primaryKey, TV val) {
-            ReaderWriterLock.EnterWriteLock();
+            readerWriterLock.EnterWriteLock();
 
             try {
                 BaseDictionary.Add(primaryKey, val);
             } finally {
-                ReaderWriterLock.ExitWriteLock();
+                readerWriterLock.ExitWriteLock();
             }
         }
 
@@ -149,7 +148,7 @@ namespace MapleCLB.Tools {
         }
 
         public TV[] CloneValues() {
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 TV[] values = new TV[BaseDictionary.Values.Count];
@@ -158,24 +157,24 @@ namespace MapleCLB.Tools {
 
                 return values;
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
         }
 
         public List<TV> Values {
             get {
-                ReaderWriterLock.EnterReadLock();
+                readerWriterLock.EnterReadLock();
 
                 try {
                     return BaseDictionary.Values.ToList();
                 } finally {
-                    ReaderWriterLock.ExitReadLock();
+                    readerWriterLock.ExitReadLock();
                 }
             }
         }
 
         public TK[] ClonePrimaryKeys() {
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 TK[] values = new TK[BaseDictionary.Keys.Count];
@@ -184,12 +183,12 @@ namespace MapleCLB.Tools {
 
                 return values;
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
         }
 
         public TL[] CloneSubKeys() {
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 TL[] values = new TL[SubDictionary.Keys.Count];
@@ -198,12 +197,12 @@ namespace MapleCLB.Tools {
 
                 return values;
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
         }
 
         public void Clear() {
-            ReaderWriterLock.EnterWriteLock();
+            readerWriterLock.EnterWriteLock();
 
             try {
                 BaseDictionary.Clear();
@@ -212,29 +211,29 @@ namespace MapleCLB.Tools {
 
                 PrimaryToSubkeyMapping.Clear();
             } finally {
-                ReaderWriterLock.ExitWriteLock();
+                readerWriterLock.ExitWriteLock();
             }
         }
 
         public int Count {
             get {
-                ReaderWriterLock.EnterReadLock();
+                readerWriterLock.EnterReadLock();
 
                 try {
                     return BaseDictionary.Count;
                 } finally {
-                    ReaderWriterLock.ExitReadLock();
+                    readerWriterLock.ExitReadLock();
                 }
             }
         }
 
         public IEnumerator<KeyValuePair<TK, TV>> GetEnumerator() {
-            ReaderWriterLock.EnterReadLock();
+            readerWriterLock.EnterReadLock();
 
             try {
                 return BaseDictionary.GetEnumerator();
             } finally {
-                ReaderWriterLock.ExitReadLock();
+                readerWriterLock.ExitReadLock();
             }
         }
     }

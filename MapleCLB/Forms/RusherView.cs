@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleClient.Functions;

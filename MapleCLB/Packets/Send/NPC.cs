@@ -1,4 +1,4 @@
-﻿using MapleCLB.MapleLib.Packet;
+﻿using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class Npc {

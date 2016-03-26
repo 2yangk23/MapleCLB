@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using MapleCLB.MapleLib.Packet;
+﻿using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
-using System;
-
 
 namespace MapleCLB.MapleClient.Scripts {
     internal sealed class SpotStealerBot : ComplexScript {

@@ -1,5 +1,5 @@
 ﻿using MapleCLB.MapleClient;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Packets.Send;
 
 namespace MapleCLB.Packets.Recv.Map {

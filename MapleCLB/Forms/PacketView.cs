@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 
 namespace MapleCLB.Forms {
     public partial class PacketView : UserControl {

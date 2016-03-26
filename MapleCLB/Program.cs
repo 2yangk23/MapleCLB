@@ -2,7 +2,7 @@
 using System.Net;
 using System.Windows.Forms;
 using MapleCLB.Forms;
-using MapleCLB.MapleLib.Crypto;
+using MapleLib.Crypto;
 
 namespace MapleCLB {
     internal static class Program {

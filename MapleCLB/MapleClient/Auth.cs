@@ -4,8 +4,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using MapleCLB.MapleLib.Crypto;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Crypto;
+using MapleLib.Packet;
 using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient {

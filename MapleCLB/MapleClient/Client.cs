@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
-using MapleCLB.MapleLib;
-using MapleCLB.MapleLib.Packet;
+using MapleLib;
+using MapleLib.Packet;
 using MapleCLB.Tools;
 
 using MapleCLB.Packets.Send;
@@ -145,7 +145,7 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
             //ScriptManager.Get<SpotStealerBot>().Start();
-            //ScriptManager.Get<MesoVac>().Start();
+            ScriptManager.Get<MesoVac>().Start();
         }
 
         internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB,bool SCMode, bool takeAnyCB){
@@ -165,7 +165,7 @@ namespace MapleCLB.MapleClient {
         internal void Connect() {
             ConnectToggle.Report(false);
             WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
-            var conn = new Connector(Program.LoginIp, Program.LoginPort);
+            var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
             conn.OnConnected += OnConnected;
             conn.OnError += OnError;
 
@@ -188,7 +188,7 @@ namespace MapleCLB.MapleClient {
             Session.Disconnect(false);
 
             var newIp = IPAddress.Parse(ip);
-            var conn = new Connector(newIp, port);
+            var conn = new Connector(newIp, port, Program.AesCipher);
             conn.OnConnected += OnConnected;
             conn.OnError += OnError;
 

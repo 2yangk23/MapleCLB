@@ -2,25 +2,28 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using MapleLib.Crypto;
 
-namespace MapleCLB.MapleLib {
+namespace MapleLib {
     public sealed class Connector {
-        readonly IPAddress Ip;
-        readonly int Port;
+        private readonly IPAddress ip;
+        private readonly int port;
+        private readonly AesCipher aesCipher;
+
 
         public event EventHandler<Session> OnConnected;
         public event EventHandler<SocketError> OnError;
 
-
-        public Connector(IPAddress ip, int port) {
-            Ip = ip;
-            Port = port;
+        public Connector(IPAddress ip, int port, AesCipher aesCipher) {
+            this.ip = ip;
+            this.port = port;
+            this.aesCipher = aesCipher;
         }
 
         public void Connect(int timeout = 13000) {
-            Debug.WriteLine("Connecting to: " + Ip + ":" + Port);
+            Debug.WriteLine("Connecting to: " + ip + ":" + port);
             var client = new TcpClient(AddressFamily.InterNetwork);
-            var iar = client.BeginConnect(Ip, Port, EndConnect, client);
+            var iar = client.BeginConnect(ip, port, EndConnect, client);
             iar.AsyncWaitHandle.WaitOne(timeout, true);
             if (!client.Connected) {
                 Debug.WriteLine("Bug Testing");
@@ -30,14 +33,12 @@ namespace MapleCLB.MapleLib {
         }
 
         // TODO: Try to reuse same session
-        public void OnReconnect(object sender, Session s)
-        {
-            Debug.WriteLine("Test Reconnecting to: " + Ip + ":" + Port);
+        public void OnReconnect(object sender, Session s) {
+            Debug.WriteLine("Test Reconnecting to: " + ip + ":" + port);
             var client = new TcpClient(AddressFamily.InterNetwork);
-            var iar = client.BeginConnect(Ip, Port, EndConnect, client);
+            var iar = client.BeginConnect(ip, port, EndConnect, client);
             iar.AsyncWaitHandle.WaitOne(13000, true);
-            if (!client.Connected)
-            {
+            if (!client.Connected) {
                 Debug.WriteLine("Bug Testing");
                 client.Close(); //Do I want to close the client?
                 throw new SocketException(10060); //Connection timeout
@@ -49,20 +50,16 @@ namespace MapleCLB.MapleLib {
             try {
                 client.EndConnect(iar);
                 if (client.Connected) {
-                    var session = new Session(client.Client, SessionType.CLIENT);
+                    var session = new Session(client.Client, SessionType.CLIENT, aesCipher);
                     session.OnReconnect += OnReconnect;
-                    if (OnConnected != null) {
-                        OnConnected(this, session);
-                    }
+                    OnConnected?.Invoke(this, session);
                     session.Start(null);
                 } else {
                     Debug.WriteLine("Failed to connect, let's try again?");
                     Connect();
                 }
             } catch (SocketException ex) {
-                if (OnError != null) {
-                    OnError(this, ex.SocketErrorCode);
-                }
+                OnError?.Invoke(this, ex.SocketErrorCode);
             }
         }
     }

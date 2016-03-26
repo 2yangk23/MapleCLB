@@ -2,7 +2,7 @@
 using System.Text;
 using MapleCLB.Tools;
 
-namespace MapleCLB.MapleLib.Packet {
+namespace MapleLib.Packet {
     public class PacketReader {
         public byte[] Buffer { get; }
         public int Position { get; private set; }

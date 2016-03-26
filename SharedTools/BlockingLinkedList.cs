@@ -4,17 +4,16 @@ using System.Threading;
 namespace MapleCLB.Tools {
     public class BlockingLinkedList<T> {
         private readonly LinkedList<T> list = new LinkedList<T>();
-        private readonly AutoResetEvent waiter = new AutoResetEvent(false);
+        private readonly ManualResetEvent waiter = new ManualResetEvent(false);
         private readonly object accessLock = new object();
 
         public T GetFirst() {
             waiter.WaitOne();
-
             lock (accessLock) {
                 var result = list.First.Value;
                 list.RemoveFirst();
-                if (list.Count > 0) {
-                    waiter.Set();
+                if (list.Count == 0) {
+                    waiter.Reset();
                 }
                 return result;
             }

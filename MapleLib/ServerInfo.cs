@@ -1,4 +1,4 @@
-﻿namespace MapleCLB.MapleLib {
+﻿namespace MapleLib {
     public sealed class ServerInfo {
         public short Version { get; set; }
         public string Subversion { get; set; }

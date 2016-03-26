@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using MapleCLB.MapleClient;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 using MapleCLB.Types;
 
 namespace MapleCLB.Packets.Recv.Connection {

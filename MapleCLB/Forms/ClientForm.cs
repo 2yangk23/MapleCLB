@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
-using MapleCLB.MapleClient.Functions;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 using MapleCLB.Types;
-using MapleCLB.Resources;
-
 
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
@@ -95,7 +90,7 @@ namespace MapleCLB.Forms {
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
                     MesoStatus.Text = m.Meso.ToString("N0");
-                    ExpStatus.Text = ((decimal.Divide(m.Exp,Resources.Exp.PlayerExp[m.Level]))*100).ToString("F")+"%";
+                    ExpStatus.Text = (decimal.Divide(m.Exp, Resources.Exp.PlayerExp[m.Level]) * 100).ToString("F") + '%';
                     RusherView.Update(m.Map);
                 } else {
                     NameStat.Text = "Unknown";

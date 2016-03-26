@@ -1,5 +1,5 @@
 ﻿using System;
-using MapleCLB.MapleLib.Packet;
+using MapleLib.Packet;
 
 namespace MapleCLB.Types {
     public sealed class Mapler {
