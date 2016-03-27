@@ -2,12 +2,12 @@
 using System.Threading;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 using MapleCLB.Tools;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class MesoVac : ComplexScript {
+    internal class MesoVac : ComplexScript<Client> {
         private readonly BlockingLinkedList<Item> lootQueue = new BlockingLinkedList<Item>();
 
         public MesoVac(Client client) : base(client) { }

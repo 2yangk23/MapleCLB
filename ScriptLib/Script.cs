@@ -2,23 +2,25 @@
 using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
-using MapleCLB.MapleClient;
 using MapleCLB.Tools;
 using MapleLib.Packet;
+using SharedTools;
 
-namespace MapleCLB.ScriptLib {
+namespace ScriptLib {
     [Synchronization(true)]
-    internal abstract class Script {
-        private readonly ScriptManager manager;
+    internal abstract class Script<TClient> where TClient : IScriptClient {
+        private int refs = 1;
+        private readonly ScriptManager<TClient> manager;
         private readonly Blocking<PacketReader> reader = new Blocking<PacketReader>();
         private readonly AutoResetEvent waiter = new AutoResetEvent(false);
 
-        protected Client Client;
+        protected TClient Client;
         protected bool Running;
 
-        protected Script(Client client) {
+        protected Script(TClient client) {
+            manager = client.GetScriptManager<TClient>();
+            Precondition.NotNull(manager);
             Client = client;
-            manager = client.ScriptManager;
         }
 
         internal bool Start() {
@@ -40,11 +42,12 @@ namespace MapleCLB.ScriptLib {
 
         #region Shared Implementations
         protected bool Start(Action run) {
+            Interlocked.Increment(ref refs);
             if (Running) {
                 return false;
             }
             Running = true;
-            WriteLog($"[SCRIPT] Started {GetType().Name}.");
+            Client.WriteLog($"[SCRIPT] Started {GetType().Name}.");
             Task.Run(run);
             return true;
         }
@@ -53,9 +56,9 @@ namespace MapleCLB.ScriptLib {
             manager.Release(GetType());
         }
 
-        protected T Requires<T>() where T : Script {
-            var script = manager.Get<T>();
-            var complex = script as ComplexScript;
+        protected TScript Requires<TScript>() where TScript : Script<TClient> {
+            var script = manager.Get<TScript>();
+            ComplexScript<TClient> complex = script as ComplexScript<TClient>;
 
             // Make sure script is started
             if (complex != null) {
@@ -69,18 +72,10 @@ namespace MapleCLB.ScriptLib {
         #endregion
 
         #region Scripting Functions
-        protected void WaitRecv(ushort header) {
-            Client.WaitScriptRecv(header, waiter);
-            waiter.WaitOne();
-        }
-
-        protected PacketReader WaitRecv2(ushort header) {
-            Client.WaitScriptRecv2(header, reader);
+        // Returns 'null' if returnPacket is FALSE, else returns received packet
+        protected PacketReader WaitRecv(ushort header, bool returnPacket = false) {
+            Client.WaitScriptRecv(header, reader, returnPacket);
             return reader.Get();
-        }
-
-        protected void WriteLog(string value) {
-            Client.WriteLog.Report(value);
         }
 
         protected void SendPacket(byte[] packet) {

@@ -1,10 +1,10 @@
 ﻿using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class ChatBot : ComplexScript {
+    internal class ChatBot : ComplexScript<Client> {
         private readonly PlayerLoader playerLoader;
 
         public ChatBot(Client client) : base(client) {
@@ -38,7 +38,7 @@ namespace MapleCLB.MapleClient.Scripts {
                 return;
             }
 
-            WriteLog(ign + ": " + msg);
+            Client.WriteLog(ign + ": " + msg);
             SendPacket(Chat.All(msg));
         }
     }

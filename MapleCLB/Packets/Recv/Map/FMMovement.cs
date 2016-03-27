@@ -12,7 +12,7 @@ namespace MapleCLB.Packets.Recv.Map {
                 c.SendPacket(Movement.Teleport(c.PortalCount, SendOps.FM1_CRC, 80, 34, 52)); //Lands on the ground
             } 
             else if (c.doWhat == 1 && c.Mapler.Map != 910000001){
-                c.WriteLog.Report("Not in FM Room 1, Disconnecting");
+                c.Log.Report("Not in FM Room 1, Disconnecting");
                 c.dcst.Enabled = false;
                 c.Disconnect();
             }

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using MapleLib.Packet;
 using MapleCLB.Packets;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 using MapleCLB.Packets.Send;
 using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class PlayerLoader : ComplexScript {
+    internal class PlayerLoader : ComplexScript<Client> {
         // All public fields should be thread-safe
         public readonly IDictionary<int, string> UidMap = new ConcurrentDictionary<int, string>(); //Player-UID's -> ign
         public readonly IDictionary<int, byte[]> UidMovementPacket = new Dictionary<int, byte[]>(); //Player-UID's -> MovementPacket
@@ -34,7 +34,7 @@ namespace MapleCLB.MapleClient.Scripts {
             Client.UpdatePeople.Report(Client.totalPeopleCount);
 
             UidMap.Remove(uid);
-            WriteLog($"[{uid:X8}] removed.");
+            Client.WriteLog($"[{uid:X8}] removed.");
         }
 
         private void SpawnMushy(PacketReader r) {
@@ -50,7 +50,7 @@ namespace MapleCLB.MapleClient.Scripts {
             UidMushMap[uid] = ign;
             UidMushMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
 
-            WriteLog("Added Mushroom : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
+            Client.WriteLog("Added Mushroom : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
 
         private void SpawnPlayer(PacketReader r)
@@ -96,7 +96,7 @@ namespace MapleCLB.MapleClient.Scripts {
             Client.UpdatePeople.Report(Client.totalPeopleCount);
 
             UidMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
-            WriteLog("Added : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
+            Client.WriteLog("Added : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
     } 
 }

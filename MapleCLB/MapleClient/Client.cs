@@ -9,7 +9,7 @@ using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 using MapleCLB.Tools;
 using MapleCLB.Types;
 using MapleLib;
@@ -25,7 +25,7 @@ namespace MapleCLB.MapleClient {
         GAME
     }
 
-    public class Client {
+    public class Client : IScriptClient {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
@@ -60,7 +60,7 @@ namespace MapleCLB.MapleClient {
         internal readonly IProgress<Mapler> UpdateMapler;
         internal readonly IProgress<int> UpdatePeople;
         internal readonly IProgress<string> UpdateWorking;
-        internal readonly IProgress<string> WriteLog;
+        internal readonly IProgress<string> Log;
         internal readonly IProgress<byte[]> WriteSend, WriteRecv;
 
         /* User Info */
@@ -83,7 +83,7 @@ namespace MapleCLB.MapleClient {
         internal byte PortalCount = 1;
 
         internal int PortalCrc;
-        internal ScriptManager ScriptManager;
+        private readonly ScriptManager<Client> scriptManager;
 
         private Session session;
         internal long SessionId;
@@ -100,7 +100,7 @@ namespace MapleCLB.MapleClient {
             cForm = form;
 
             ConnectToggle = form.ConnectToggle;
-            WriteLog = form.WriteLog;
+            Log = form.WriteLog;
             WriteSend = form.WriteSend;
             WriteRecv = form.WriteRecv;
             UpdateMapler = form.UpdateMapler;
@@ -111,7 +111,7 @@ namespace MapleCLB.MapleClient {
             UpdateWorking = form.UpdateWorking;
 
             /* Initialize Client */
-            ScriptManager = new ScriptManager(this);
+            scriptManager = new ScriptManager<Client>(this);
             handshakeHandler = new Handshake(this);
             packetHandler = new Packet(this);
 
@@ -156,16 +156,16 @@ namespace MapleCLB.MapleClient {
         internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode,
                                   bool takeAnyCB) {
             //change to w.e you wanted? not exactly sure.. :D
-            ScriptManager.Get<SpotStealerBot>().Ign = IGN;
-            ScriptManager.Get<SpotStealerBot>().ShopName = shopNAME;
-            ScriptManager.Get<SpotStealerBot>().Fh = FH;
-            ScriptManager.Get<SpotStealerBot>().X = X;
-            ScriptManager.Get<SpotStealerBot>().Y = Y;
-            ScriptManager.Get<SpotStealerBot>().PermitCb = PermitCB;
-            ScriptManager.Get<SpotStealerBot>().ScMode = SCMode;
-            ScriptManager.Get<SpotStealerBot>().TakeAnyCb = takeAnyCB;
+            scriptManager.Get<SpotStealerBot>().Ign = IGN;
+            scriptManager.Get<SpotStealerBot>().ShopName = shopNAME;
+            scriptManager.Get<SpotStealerBot>().Fh = FH;
+            scriptManager.Get<SpotStealerBot>().X = X;
+            scriptManager.Get<SpotStealerBot>().Y = Y;
+            scriptManager.Get<SpotStealerBot>().PermitCb = PermitCB;
+            scriptManager.Get<SpotStealerBot>().ScMode = SCMode;
+            scriptManager.Get<SpotStealerBot>().TakeAnyCb = takeAnyCB;
             //SpotStealerBot script = get<SpotStealerBot>(); ???
-            ScriptManager.Get<SpotStealerBot>().Start();
+            scriptManager.Get<SpotStealerBot>().Start();
         }
 
         internal void ClearStats() {
@@ -183,7 +183,7 @@ namespace MapleCLB.MapleClient {
         #region Client Connection
         internal void Connect() {
             ConnectToggle.Report(false);
-            WriteLog.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
+            Log.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
             var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
             conn.OnConnected += OnConnected;
             conn.OnError += OnError;
@@ -192,7 +192,7 @@ namespace MapleCLB.MapleClient {
                 conn.Connect(SERVER_TIMEOUT);
                 Mode = ClientMode.CONNECTED;
             } catch {
-                WriteLog.Report("Failed to connect.");
+                Log.Report("Failed to connect.");
                 if (cForm.AutoRestart.Checked) {
                     Connect(); //Start connection again
                 } else {
@@ -203,7 +203,7 @@ namespace MapleCLB.MapleClient {
 
         // TODO: Try to reuse same session
         internal void Reconnect(string ip, short port) {
-            WriteLog.Report("Reconnecting to " + ip + ":" + port);
+            Log.Report("Reconnecting to " + ip + ":" + port);
             session.Disconnect(false);
 
             var newIp = IPAddress.Parse(ip);
@@ -214,7 +214,7 @@ namespace MapleCLB.MapleClient {
             try {
                 conn.Connect(CHANNEL_TIMEOUT);
             } catch {
-                WriteLog.Report("Bug Hunting 3");
+                Log.Report("Bug Hunting 3");
                 session.Disconnect();
             }
         }
@@ -224,7 +224,11 @@ namespace MapleCLB.MapleClient {
             SendPacket(General.ExitCS()); //Temp -.-
         }
 
-        internal void SendPacket(byte[] packet) {
+        public void WriteLog(string message) {
+            Log.Report(message);
+        }
+
+        public void SendPacket(byte[] packet) {
             try {
                 if (cForm.IsLogSend) {
                     byte[] copy = new byte[packet.Length];
@@ -234,16 +238,16 @@ namespace MapleCLB.MapleClient {
 
                 session.SendPacket(packet);
             } catch {
-                WriteLog.Report("An error occured when attempting to send packet.");
+                Log.Report("An error occured when attempting to send packet.");
             }
         }
 
-        internal void SendPacket(PacketWriter w) {
+        public void SendPacket(PacketWriter w) {
             try {
                 WriteSend.Report(w.Buffer);
                 session.SendPacket(w.ToArray());
             } catch {
-                WriteLog.Report("An error occured when attempting to send packet.");
+                Log.Report("An error occured when attempting to send packet.");
             }
         }
         #endregion
@@ -251,7 +255,7 @@ namespace MapleCLB.MapleClient {
         #region Timer Handlers
         private void AutoDCForFMShop(object sender, ElapsedEventArgs e) {
             if (doWhat == 1 && hasFMShop == false) {
-                WriteLog.Report("Disconnecting 5 Minute Test!");
+                Log.Report("Disconnecting 5 Minute Test!");
                 Disconnect();
                 Connect();
             }
@@ -269,26 +273,27 @@ namespace MapleCLB.MapleClient {
         #endregion
 
         #region Script Packet Funcs (Concurrent)
-        internal bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
+        // TODO: This is very prone to bugs, how to self reference generics?
+        public ScriptManager<T> GetScriptManager<T>() where T : IScriptClient {
+            return scriptManager as ScriptManager<T>;
+        }
+
+        public bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
             return packetHandler.RegisterHandler(header, progress);
         }
 
-        internal void RemoveScriptRecv(ushort header) {
+        public void RemoveScriptRecv(ushort header) {
             packetHandler.UnregisterHandler(header);
         }
 
-        internal void WaitScriptRecv(ushort header, AutoResetEvent handle) {
-            packetHandler.RegisterWait(header, handle);
-        }
-
-        internal void WaitScriptRecv2(ushort header, Blocking<PacketReader> reader) {
-            packetHandler.RegisterWait(header, reader);
+        public void WaitScriptRecv(ushort header, Blocking<PacketReader> reader, bool returnPacket) {
+            packetHandler.RegisterWait(header, reader, returnPacket);
         }
         #endregion
 
         #region Event Handlers
         private void OnConnected(object o, Session s) {
-            WriteLog.Report("Connected to server.");
+            Log.Report("Connected to server.");
             session = s;
             s.OnHandshake += handshakeHandler.Handle;
             s.OnPacket += packetHandler.Handle;
@@ -296,12 +301,12 @@ namespace MapleCLB.MapleClient {
         }
 
         private void OnError(object c, SocketError e) {
-            WriteLog.Report("Connection error code " + e);
+            Log.Report("Connection error code " + e);
             ConnectToggle.Report(false);
         }
 
         private void OnDisconnected(object o, EventArgs e) {
-            WriteLog.Report("Disconnected from server.");
+            Log.Report("Disconnected from server.");
             Mode = ClientMode.DISCONNECTED;
             CharMap.Clear();
             ClearStats();

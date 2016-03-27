@@ -117,9 +117,6 @@
     <Compile Include="Resources\Exp.cs" />
     <Compile Include="Resources\ItemData.cs" />
     <Compile Include="Resources\MapData.cs" />
-    <Compile Include="ScriptLib\ScriptManager.cs" />
-    <Compile Include="ScriptLib\ComplexScript.cs" />
-    <Compile Include="ScriptLib\Script.cs" />
     <Compile Include="MapleClient\Scripts\PlayerLoader.cs" />
     <Compile Include="Packets\Recv\Connection\Login.cs" />
     <Compile Include="Packets\Recv\Connection\Request.cs" />
@@ -214,6 +211,7 @@
   </ItemGroup>
   <Import Project="..\SharedTools\SharedTools.projitems" Label="Shared" />
   <Import Project="..\MapleLib\MapleLib.projitems" Label="Shared" />
+  <Import Project="..\ScriptLib\ScriptLib.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

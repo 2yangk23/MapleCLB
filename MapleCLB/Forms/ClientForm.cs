@@ -139,7 +139,7 @@ namespace MapleCLB.Forms {
         }
 
         private void CcBtn_Click(object sender, EventArgs e) {
-            client.WriteLog.Report("Changing to Ch 2");
+            client.Log.Report("Changing to Ch 2");
             client.SendPacket(General.ChangeChannel(0x01));
         }
 

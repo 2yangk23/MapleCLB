@@ -15,14 +15,12 @@ namespace MapleCLB.MapleClient.Handlers {
         private readonly Dictionary<ushort, EventHandler<PacketReader>> headerMap;
         /* Script Headers */
         private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> scriptHandler;
-        private readonly ConcurrentDictionary<ushort, List<AutoResetEvent>> scriptWait;
-        private readonly ConcurrentDictionary<ushort, List<Blocking<PacketReader>>> scriptWait2;
+        private readonly ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>> scriptWait;
 
         internal Packet(Client client) : base(client) {
             headerMap = new Dictionary<ushort, EventHandler<PacketReader>>();
-            scriptWait = new ConcurrentDictionary<ushort, List<AutoResetEvent>>();
             scriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
-            scriptWait2 = new ConcurrentDictionary<ushort, List<Blocking<PacketReader>>>();
+            scriptWait = new ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>>();
 
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
             Register(RecvOps.SERVER_IP, PortIp.ServerIp);
@@ -33,7 +31,6 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.LOGIN_STATUS, Login.LoginStatus);
             Register(RecvOps.LOGIN_SECOND, Login.LoginSecond);
 
-            //To Do : Rename this to something else
             Register(RecvOps.CHAR_INFO, MapCheck.Check);
 
             //Temp
@@ -52,15 +49,9 @@ namespace MapleCLB.MapleClient.Handlers {
             }
             if (scriptWait.ContainsKey(header)) {
                 // Ordering is necessary to prevent race condition
-                List<AutoResetEvent> waitList;
+                List<Tuple<bool, Blocking<PacketReader>>> waitList;
                 scriptWait.TryRemove(header, out waitList);
-                waitList.ForEach(e => e.Set());
-            }
-            if (scriptWait2.ContainsKey(header)) {
-                // Ordering is necessary to prevent race condition
-                List<Blocking<PacketReader>> waitList;
-                scriptWait2.TryRemove(header, out waitList);
-                waitList.ForEach(r => r.Set(new PacketReader(packet, 2)));
+                waitList.ForEach(r => { r.Item2.Set(r.Item1 ? new PacketReader(packet, 2) : null); });
             }
         }
 
@@ -85,18 +76,11 @@ namespace MapleCLB.MapleClient.Handlers {
             scriptHandler.TryRemove(header, out trash);
         }
 
-        internal void RegisterWait(ushort header, AutoResetEvent handle) {
+        internal void RegisterWait(ushort header, Blocking<PacketReader> reader, bool returnPacket) {
             if (!scriptWait.ContainsKey(header)) {
-                scriptWait[header] = new List<AutoResetEvent>(2);
+                scriptWait[header] = new List<Tuple<bool, Blocking<PacketReader>>>(2);
             }
-            scriptWait[header].Add(handle);
-        }
-
-        internal void RegisterWait(ushort header, Blocking<PacketReader> reader) {
-            if (!scriptWait2.ContainsKey(header)) {
-                scriptWait2[header] = new List<Blocking<PacketReader>>(2);
-            }
-            scriptWait2[header].Add(reader);
+            scriptWait[header].Add(new Tuple<bool, Blocking<PacketReader>>(returnPacket, reader));
         }
     }
 }

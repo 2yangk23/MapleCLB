@@ -39,7 +39,7 @@ namespace MapleCLB.MapleClient.Handlers {
                     Thread.Sleep(2000);
                     SendPacket(General.ExitCS());
                     Client.Mode = ClientMode.GAME;
-                    Client.WriteLog.Report("Left CS!");
+                    Client.Log.Report("Left CS!");
                     break;
             }
         }

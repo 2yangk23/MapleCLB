@@ -1,10 +1,10 @@
 ﻿using MapleLib.Packet;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal sealed class SpotStealerBot : ComplexScript {
+    internal sealed class SpotStealerBot : ComplexScript<Client> {
         private readonly PlayerLoader playerLoader;
         private const int FM1_CRC = 0x2A7AC228;
 
@@ -43,9 +43,8 @@ namespace MapleCLB.MapleClient.Scripts {
                     SendPacket(Trade.OpenShop2());
                 SendPacket(Trade.OpenShop());
                 Client.hasFMShop = true;
-                WriteLog("Shop Open For Business!");
-            }
-            else {
+                Client.WriteLog("Shop Open For Business!");
+            } else {
                 if (!PermitCb)
                     WaitRecv(RecvOps.BLUE_POP);
                 WaitRecv(RecvOps.FINISH_LOAD_PERMIT);
@@ -55,7 +54,7 @@ namespace MapleCLB.MapleClient.Scripts {
                     SendPacket(Trade.OpenShop2());
                 SendPacket(Trade.OpenShop());
                 Client.hasFMShop = true;
-                WriteLog("Shop Open For Business!");
+                Client.WriteLog("Shop Open For Business!");
             }
         }
 
@@ -75,7 +74,7 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         private void StealSpot(PacketReader r) {
-            WriteLog("Permit Dropped!");
+            Client.WriteLog("Permit Dropped!");
             int uid = r.ReadInt();
             if (TakeAnyCb) {
                 SendPacket(Movement.beforeTeleport());
@@ -97,21 +96,17 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
 
-        private void StealSpotMush(PacketReader r)
-        {
-            WriteLog("Mush Dropped!");
+        private void StealSpotMush(PacketReader r) {
+            Client.WriteLog("Mush Dropped!");
             int uid = r.ReadInt();
-            if (TakeAnyCb)
-            {
+            if (TakeAnyCb) {
                 SendPacket(Movement.beforeTeleport());
                 SendPacket(playerLoader.UidMushMovementPacket[uid]);
                 if (PermitCb)
                     SendPacket(Trade.CreateShop(5, ShopName, 1, 5140000));
                 else
                     SendPacket(Trade.UseMushy(1));
-            }
-            else if (Ign.Equals(playerLoader.UidMushMap[uid]))
-            {
+            } else if (Ign.Equals(playerLoader.UidMushMap[uid])) {
                 SendPacket(Movement.beforeTeleport());
                 SendPacket(playerLoader.UidMushMovementPacket[uid]);
                 if (PermitCb)

@@ -90,7 +90,7 @@ namespace MapleCLB.Packets.Recv {
                 itemTest.Slot = slot;
                 c.totalItemCount = c.totalItemCount + 1;
                 //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
-                c.WriteLog.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type +
+                c.Log.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type +
                                   " Potential: " + itemTest.Potential);
             }
             /* Equipped CS Items */

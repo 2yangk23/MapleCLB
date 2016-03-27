@@ -3,15 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MapleCLB.MapleClient;
 using MapleLib.Packet;
+using SharedTools;
 
-namespace MapleCLB.ScriptLib {
-    internal abstract class ComplexScript : Script {
+namespace ScriptLib {
+    internal abstract class ComplexScript<TClient> : Script<TClient> where TClient : IScriptClient {
         private readonly List<ushort> headers;
         private BlockingCollection<Action> scheduler;
 
-        internal ComplexScript(Client client) : base(client) {
+        internal ComplexScript(TClient client) : base(client) {
             headers = new List<ushort>();
         }
 
@@ -31,7 +31,7 @@ namespace MapleCLB.ScriptLib {
                 // Execute script body
                 Execute();
             } catch (InvalidOperationException ex) {
-                WriteLog("Error running script. Terminated.");
+                Client.WriteLog("Error running script. Terminated.");
                 Console.WriteLine(ex.ToString());
             }
             // Clean-up script
@@ -66,11 +66,9 @@ namespace MapleCLB.ScriptLib {
         #region Scripting Functions
         protected void RegisterRecv(ushort header, Action<PacketReader> handler) {
             Progress<PacketReader> progress = new Progress<PacketReader>(r => { scheduler.Add(() => handler(r)); });
-            if (Client.AddScriptRecv(header, progress)) {
-                headers.Add(header);
-            } else {
-                throw new InvalidOperationException($"Failed to register header {header:X4}.");
-            }
+            Precondition.Check<InvalidOperationException>(Client.AddScriptRecv(header, progress), 
+                $"Failed to register header {header:X4}.");
+            headers.Add(header);
         }
 
         protected void UnregisterRecv(ushort header) {

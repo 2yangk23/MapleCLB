@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
 using MapleCLB.Packets;
-using MapleCLB.ScriptLib;
+using ScriptLib;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class IgnBot : Script {
+    internal class IgnBot : Script<Client> {
         private const string NAME = "dismyign123";
         private readonly byte[] creationPacket, okPacket;
 
@@ -42,7 +42,7 @@ namespace MapleCLB.MapleClient.Scripts {
                 w.WriteMapleString(NAME);
                 SendPacket(w.ToArray());
 
-                var r = WaitRecv2(0x10);
+                var r = WaitRecv(0x10, true);
                 Console.WriteLine(r.ToString());
                 r.ReadMapleString();
 

@@ -11,10 +11,10 @@ namespace MapleCLB.Packets.Recv.Connection {
             var c = o as Client;
             switch (r.ReadByte()) {
                 case 0x01:
-                    c.WriteLog.Report("Incorrect password");
+                    c.Log.Report("Incorrect password");
                     return;
                 case 0x07:
-                    c.WriteLog.Report("Already logged in. Restart in 1 min...");
+                    c.Log.Report("Already logged in. Restart in 1 min...");
                     Thread.Sleep(60000);
                     c.Disconnect();
                     return;
@@ -32,13 +32,13 @@ namespace MapleCLB.Packets.Recv.Connection {
             var c = o as Client;
             switch (r.ReadByte()) {
                 case 0x01:
-                    c.WriteLog.Report("Incorrect Password");
+                    c.Log.Report("Incorrect Password");
                     return; // Don't try to login again
                 case 0x02:
-                    c.WriteLog.Report("Banned R.I.P");
+                    c.Log.Report("Banned R.I.P");
                     break;
                 case 0x07:
-                    c.WriteLog.Report("Already logged in. Restart in 2 mins...");
+                    c.Log.Report("Already logged in. Restart in 2 mins...");
                     Thread.Sleep(120000);
                     break;
                 case 0x09:
@@ -54,7 +54,7 @@ namespace MapleCLB.Packets.Recv.Connection {
 
         public static void SelectCharacter(object o, PacketReader r) {
             var c = o as Client;
-            c.WriteLog.Report("Selecting Character...");
+            c.Log.Report("Selecting Character...");
             //no new thread here, MUST finish loading chars
             Load.Charlist(c, r);
 
@@ -73,7 +73,7 @@ namespace MapleCLB.Packets.Recv.Connection {
                 }
                 c.SendPacket(Send.Login.SelectCharacter(c.Account, c.UserId));
             } catch {
-                c.WriteLog.Report("Error selecting character. Restart in 1 min...");
+                c.Log.Report("Error selecting character. Restart in 1 min...");
                 Thread.Sleep(60000);
                 c.Disconnect();
             }
