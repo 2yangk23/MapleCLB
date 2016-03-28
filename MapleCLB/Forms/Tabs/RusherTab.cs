@@ -4,11 +4,11 @@ using MapleCLB.MapleClient;
 using MapleCLB.MapleClient.Functions;
 using MapleCLB.Resources;
 
-namespace MapleCLB.Forms {
-    public partial class RusherView : UserControl {
+namespace MapleCLB.Forms.Tabs {
+    public partial class RusherTab : UserControl {
         private Client client;
 
-        public RusherView() {
+        public RusherTab() {
             InitializeComponent();
         }
 

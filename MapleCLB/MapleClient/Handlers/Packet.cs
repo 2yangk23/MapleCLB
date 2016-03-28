@@ -11,13 +11,15 @@ using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {
+        private readonly IProgress<byte[]> writeRecv;
         /* Client Headers */
         private readonly Dictionary<ushort, EventHandler<PacketReader>> headerMap;
         /* Script Headers */
         private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> scriptHandler;
         private readonly ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>> scriptWait;
 
-        internal Packet(Client client) : base(client) {
+        internal Packet(Client client, IProgress<byte[]> log) : base(client) {
+            writeRecv = log;
             headerMap = new Dictionary<ushort, EventHandler<PacketReader>>();
             scriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
             scriptWait = new ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>>();
@@ -39,7 +41,7 @@ namespace MapleCLB.MapleClient.Handlers {
 
         internal override void Handle(object session, byte[] packet) {
             ushort header = (ushort) (packet[1] << 8 | packet[0]);
-            Client.WriteRecv.Report(packet);
+            writeRecv.Report(packet);
 
             if (headerMap.ContainsKey(header)) {
                 headerMap[header](Client, new PacketReader(packet, 2));

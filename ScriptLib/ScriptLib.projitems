@@ -11,7 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ComplexScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Script.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ScriptClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IScriptClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptManager.cs" />
   </ItemGroup>
 </Project>

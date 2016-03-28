@@ -3,15 +3,15 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using MapleLib.Packet;
 
-namespace MapleCLB.Forms {
-    public partial class PacketView : UserControl {
+namespace MapleCLB.Forms.Tabs {
+    public partial class PacketTab : UserControl {
         private TextBox packetInput;
         private TreeView usedTree;
 
         internal bool LogSend, LogRecv;
-        internal Progress<byte[]> WriteSend, WriteRecv;
+        internal IProgress<byte[]> WriteSend, WriteRecv;
 
-        public PacketView() {
+        public PacketTab() {
             InitializeComponent();
             InitializeProgress();
 

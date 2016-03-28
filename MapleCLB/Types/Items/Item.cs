@@ -2,45 +2,45 @@
 using MapleLib.Packet;
 
 namespace MapleCLB.Types.Items {
-    public enum Type : byte {
+    public enum ItemType : byte {
+        UNKNOWN = 0,
         EQUIP = 1,
         OTHER = 2,
         PET = 3
     }
 
     public abstract class Item {
-        public Type Type { get; set; }
-        public int Id { get; set; }
-        public short Slot { get; set; }
+        public readonly ItemType ItemType;
+        public readonly int Id;
+        public readonly short Slot;
 
-        protected static Item Parse(PacketReader pr, byte temp) {
+        protected Item(ItemType type, int id, short slot) {
+            ItemType = type;
+            Id = id;
+            Slot = slot;
+        }
+
+        //TODO: Eliminate parameter with generics
+        public static T Parse<T>(PacketReader pr) where T : Item {
+            short slot = typeof(T) == typeof(Equip) ? pr.ReadShort() : pr.ReadByte();
+            if (slot == 0) {
+                return (T) Activator.CreateInstance(typeof(T), ItemType.UNKNOWN, 0, slot);
+            }
+
             // [Type (1)] [Id (4)] [Flag (1) ? UniqueId (8)] [Timestamp (8)] FF FF FF FF
-            var type = (Type) temp;
+            var type = (ItemType) pr.ReadByte();
             int id = pr.ReadInt();
             if (pr.ReadBool()) {
                 pr.ReadLong();
             }
-            pr.Skip(8); // Used to check for expiration?
-            pr.Skip(4);
-            switch (type) {
-                case Type.EQUIP:
-                    return new Equip {
-                        Type = type,
-                        Id = id
-                    };
-                case Type.OTHER:
-                    return new Other {
-                        Type = type,
-                        Id = id
-                    };
-                case Type.PET:
-                    return new Pet {
-                        Type = type,
-                        Id = id
-                    };
-                default:
-                    throw new InvalidOperationException("Unsupported item type: " + type);
-            }
+            pr.Skip(12); // Used to check for expiration?
+
+            var item = (T) Activator.CreateInstance(typeof(T), type, id, slot);
+            item.Parse(pr); // Parses remaining item info, and stores data
+
+            return item;
         }
+
+        protected abstract void Parse(PacketReader pr);
     }
 }

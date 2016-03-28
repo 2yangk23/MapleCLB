@@ -22,10 +22,10 @@ namespace MapleCLB.Types {
         public int Fame { get; private set; }
         public int Map { get; set; }
 
-        public long Meso { get; set; }
-
+        public bool IsAran => Job == 2000 || Job / 100 == 21;
         public bool IsDemon => Job == 3001 || Job / 100 == 31;
         public bool IsXenon => Job == 3002 || Job / 100 == 36;
+        public bool IsZero => Job == 10000 || Job / 100 == 101;
         public bool IsBeastTamer => Job == 11000 || Job / 100 == 112;
 
         public static Mapler Parse(PacketReader pr) {
@@ -52,21 +52,14 @@ namespace MapleCLB.Types {
 
             m.Ap = pr.ReadShort();
 
-            byte temp = pr.ReadByte(); // Separated SP
-            if (temp > 4) {
-                temp = pr.ReadByte();
+            /* Correct way to do separated sp */
+            if (!m.IsAran && !m.IsZero && !m.IsBeastTamer) {
+                for (int j = pr.ReadByte(); j > 0; j--) {
+                    pr.Skip(5);
+                }
+            } else {
+                pr.ReadShort();
             }
-            for (int j = 0; j < temp; ++j) {
-                pr.Skip(5);
-            }
-
-            /* Correct way to do separated sp
-            pw.WriteShort(chr.AP);
-            if (!chr.IsSeparatedSpJob)
-                pw.WriteShort((short)chr.SpTable[0]);
-            else
-                AddSeparatedSP(chr, pw);
-             */
 
             // [Exp (8)] [Fame (4)] [GachExp (4)] [?? (4)] [MapId (4)]
             m.Exp = pr.ReadLong();
@@ -83,7 +76,7 @@ namespace MapleCLB.Types {
              * [Ambition (4)] [Insight (4)] [Willpower (4)] [Dilligence (4)] [Empathy (4)] [Charm (4)]
              * [Zeros (13)] [00 40 E0 FD] [3B 37 4F 01]
              * [PvP Exp (4)] [PvP Rank (1)] [Battle Pts (4)] [Byte (1)] [Byte (1)] [Int (4)]
-             * part time job action of resting = 1, herbalism= 2, Mining = 3, general store = 4, Weapon and armor store = 5
+             * part time job - Resting = 1, Herbalism = 2, Mining = 3, General Store = 4, Weapon/Armor Store = 5
              * [3B 37 4F 01] [00 40 E0 FD] [00 00 00 00] [00]
              * Character Cards 9 bytes each
              * [Last Login (8)] 00

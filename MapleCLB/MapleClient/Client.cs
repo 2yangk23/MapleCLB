@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,12 +11,13 @@ using MapleCLB.Packets.Send;
 using ScriptLib;
 using MapleCLB.Tools;
 using MapleCLB.Types;
+using MapleCLB.Types.Items;
 using MapleLib;
 using MapleLib.Packet;
 using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
-    internal enum ClientMode : byte {
+    internal enum ClientState : byte {
         DISCONNECTED,
         CONNECTED,
         LOGIN,
@@ -32,100 +32,71 @@ namespace MapleCLB.MapleClient {
         /* UI Info */
         private readonly ClientForm cForm;
 
-        internal readonly MultiKeyDictionary<byte, string, int> CharMap = new MultiKeyDictionary<byte, string, int>();
-        //slot/ign -> uid
-
-        internal readonly IProgress<bool> ConnectToggle;
-
-        internal readonly Dictionary<string, int> currentEquipInventory = new Dictionary<string, int>();
-        //Dictionary of CLIENTS Data, Name -> Quantity
-
-        internal readonly Dictionary<string, int> currentEtcInventory = new Dictionary<string, int>();
-        internal readonly Dictionary<string, int> currentSetUpInventory = new Dictionary<string, int>();
-        internal readonly Dictionary<string, int> currentUseInventory = new Dictionary<string, int>();
-
-        /* Client Info */
-        private readonly Handshake handshakeHandler;
-        private readonly Packet packetHandler;
-
-        private readonly Stopwatch stopWatch = new Stopwatch();
-
-        /* Dictionaries */
-        internal readonly Dictionary<int, string> UidMap = new Dictionary<int, string>(); //uid -> ign
-
         internal readonly IProgress<byte> UpdateChannel;
         internal readonly IProgress<long> UpdateExp;
         internal readonly IProgress<int> UpdateItems;
-
+        internal readonly IProgress<long> UpdateMesos;
         internal readonly IProgress<Mapler> UpdateMapler;
         internal readonly IProgress<int> UpdatePeople;
-        internal readonly IProgress<string> UpdateWorking;
         internal readonly IProgress<string> Log;
-        internal readonly IProgress<byte[]> WriteSend, WriteRecv;
+
+        /* Client Info */
+        internal ClientState State;
+        private Session session;
+        internal long SessionId;
+
+        private readonly ScriptManager<Client> scriptManager;
+        private readonly Handshake handshakeHandler;
+        private readonly Packet packetHandler;
+
+        /* Dictionaries */
+        internal readonly MultiKeyDictionary<byte, string, int> CharMap; // slot/ign -> uid
+        internal readonly Dictionary<int, string> UidMap; //uid -> ign
 
         /* User Info */
         internal Account Account;
-        public int autoDCtime;
-
-        internal byte Channel, doWhat;
-
-        /* Timers */
-        public Timer dcst;
-        public int displayTime;
-
-        public Timer displayTimer;
-
-        internal bool hasFMShop = false;
         internal Mapler Mapler;
+        internal Inventory Inventory;
+
+        internal int UserId;
+        internal byte Channel;
 
         internal IProgress<List<PortalInfo>> MapRush;
-        internal ClientMode Mode;
         internal byte PortalCount = 1;
-
         internal int PortalCrc;
-        private readonly ScriptManager<Client> scriptManager;
 
-        private Session session;
-        internal long SessionId;
+        /* Random stuff */
+        public Timer dcst = new Timer(1800000); // 30 minutes
+        internal byte doWhat;
+
+        internal bool hasFMShop = false;
         internal bool ShowFMFunctions = false;
-
         internal bool ShowInformation = false;
 
-        internal int totalItemCount;
-        internal int totalPeopleCount;
-        internal int UserId;
+        internal int totalItemCount = 0;
+        internal int totalPeopleCount = 0;
 
         internal Client(ClientForm form) {
             /* Initialize Form */
             cForm = form;
 
-            ConnectToggle = form.ConnectToggle;
             Log = form.WriteLog;
-            WriteSend = form.WriteSend;
-            WriteRecv = form.WriteRecv;
             UpdateMapler = form.UpdateMapler;
             UpdateChannel = form.UpdateCh;
             UpdateExp = form.UpdateExp;
+            UpdateMesos = form.UpdateMesos;
             UpdateItems = form.UpdateItems;
             UpdatePeople = form.UpdatePeople;
-            UpdateWorking = form.UpdateWorking;
 
             /* Initialize Client */
+            CharMap = new MultiKeyDictionary<byte, string, int>();
+            UidMap = new Dictionary<int, string>();
+
             scriptManager = new ScriptManager<Client>(this);
             handshakeHandler = new Handshake(this);
-            packetHandler = new Packet(this);
+            packetHandler = new Packet(this, cForm.WriteRecv);
 
-            autoDCtime = 1800000; //30 minutes
-            displayTime = 60; //1 Second
-
-            totalItemCount = 0;
-            totalPeopleCount = 0;
-
-            dcst = new Timer(autoDCtime);
             dcst.Elapsed += AutoDCForFMShop;
-
-            displayTimer = new Timer(displayTime);
-            displayTimer.Elapsed += ConnectTimer;
         }
 
         // This must be called in client's thread
@@ -141,7 +112,7 @@ namespace MapleCLB.MapleClient {
                     if (PortalCount++ == 255) {
                         PortalCount = 1; // wrap around
                     }
-                    Thread.Sleep(50); // small delay just in case
+                    Thread.Sleep(30); // small delay just in case
                 }
             });
 
@@ -171,18 +142,14 @@ namespace MapleCLB.MapleClient {
         internal void ClearStats() {
             UpdateMapler.Report(null);
             UpdateChannel.Report(0);
-            stopWatch.Stop();
-            stopWatch.Reset();
-            currentEquipInventory.Clear();
-            currentUseInventory.Clear();
-            currentSetUpInventory.Clear();
-            currentEtcInventory.Clear();
+            UpdateMesos.Report(-1);
+            Inventory.Clear();
             totalPeopleCount = 0;
         }
 
         #region Client Connection
         internal void Connect() {
-            ConnectToggle.Report(false);
+            cForm.ConnectToggle.Report(false);
             Log.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
             var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
             conn.OnConnected += OnConnected;
@@ -190,13 +157,13 @@ namespace MapleCLB.MapleClient {
 
             try {
                 conn.Connect(SERVER_TIMEOUT);
-                Mode = ClientMode.CONNECTED;
+                State = ClientState.CONNECTED;
             } catch {
                 Log.Report("Failed to connect.");
                 if (cForm.AutoRestart.Checked) {
                     Connect(); //Start connection again
                 } else {
-                    ConnectToggle.Report(true);
+                    cForm.ConnectToggle.Report(true);
                 }
             }
         }
@@ -233,7 +200,7 @@ namespace MapleCLB.MapleClient {
                 if (cForm.IsLogSend) {
                     byte[] copy = new byte[packet.Length];
                     Buffer.BlockCopy(packet, 0, copy, 0, packet.Length);
-                    WriteSend.Report(copy);
+                    cForm.WriteSend.Report(copy);
                 }
 
                 session.SendPacket(packet);
@@ -244,31 +211,11 @@ namespace MapleCLB.MapleClient {
 
         public void SendPacket(PacketWriter w) {
             try {
-                WriteSend.Report(w.Buffer);
+                cForm.WriteSend.Report(w.Buffer);
                 session.SendPacket(w.ToArray());
             } catch {
                 Log.Report("An error occured when attempting to send packet.");
             }
-        }
-        #endregion
-
-        #region Timer Handlers
-        private void AutoDCForFMShop(object sender, ElapsedEventArgs e) {
-            if (doWhat == 1 && hasFMShop == false) {
-                Log.Report("Disconnecting 5 Minute Test!");
-                Disconnect();
-                Connect();
-            }
-        }
-
-        private void ConnectTimer(object sender, ElapsedEventArgs e) {
-            var ts = stopWatch.Elapsed;
-            string elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}";
-            UpdateWorking.Report(elapsedTime);
-        }
-
-        internal void StartWatch() {
-            stopWatch.Start();
         }
         #endregion
 
@@ -302,22 +249,29 @@ namespace MapleCLB.MapleClient {
 
         private void OnError(object c, SocketError e) {
             Log.Report("Connection error code " + e);
-            ConnectToggle.Report(false);
+            cForm.ConnectToggle.Report(false);
         }
 
         private void OnDisconnected(object o, EventArgs e) {
             Log.Report("Disconnected from server.");
-            Mode = ClientMode.DISCONNECTED;
+            State = ClientState.DISCONNECTED;
             CharMap.Clear();
             ClearStats();
             dcst.Enabled = false;
-            displayTimer.Enabled = false;
             if (cForm.AutoRestart.Checked) {
                 Connect(); //Start connection again
             } else {
-                ConnectToggle.Report(true);
+                cForm.ConnectToggle.Report(true);
             }
         }
         #endregion
+
+        private void AutoDCForFMShop(object sender, ElapsedEventArgs e) {
+            if (doWhat == 1 && hasFMShop == false) {
+                Log.Report("Disconnecting 5 Minute Test!");
+                Disconnect();
+                Connect();
+            }
+        }
     }
 }

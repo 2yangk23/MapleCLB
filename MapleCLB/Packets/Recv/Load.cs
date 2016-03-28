@@ -31,7 +31,7 @@ namespace MapleCLB.Packets.Recv {
                     pr.Skip(16); // [Rank (4)] [Rank Move (4)] [JobRank (4)] [JobRank Move (4)]
                 }
 
-                if (m.Job >= 10100 && m.Job <= 10112) { // Zero
+                if (m.IsZero) { // Zero
                     for (int j = 0; j < 6; ++j) { // I guess Zero has 2 extra appearance?
                         pr.Next(0xFF);
                     }
@@ -60,7 +60,7 @@ namespace MapleCLB.Packets.Recv {
             pr.Skip(18 + 15 + 21 + 7);
 
             /* Character Stats */
-            var m = Mapler.Parse(pr);
+            c.Mapler = Mapler.Parse(pr);
 
             /* Char Info */
             pr.Skip(1); // BL Size
@@ -75,95 +75,13 @@ namespace MapleCLB.Packets.Recv {
             }
 
             /* Inventory Info */
-            m.Meso = pr.ReadLong();
-            /* [Zero (12)] [uid (4)] [Zero (28)] 00 00 00
-             * [Equip Slots (1)] [Use Slots (1)] [Set-up Slots (1)] [Etc Slots (1)] [Cash Slots (1)]
-             * [Timestamp (8)] 00
-             */
-            pr.Skip(47 + 5 + 9);
+            c.Inventory = Inventory.Parse(pr);
 
-            /* Equipped Items */
-            short slot;
-            while ((slot = pr.ReadShort()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Equip.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.totalItemCount = c.totalItemCount + 1;
-                //c.currentEquipInventory[itemTest.Id] = 1; ToDo : Equipped Inventory
-                c.Log.Report("Equipped: " + itemTest.Id + " Item Type: " + itemTest.Type +
-                                  " Potential: " + itemTest.Potential);
-            }
-            /* Equipped CS Items */
-            //TODO : Equipped Inventory 
-            while ((slot = pr.ReadShort()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Equip.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.totalItemCount = c.totalItemCount + 1;
-                //c.currentEquipInventory[itemTest.Id] = 1; 
-                //c.WriteLog.Report("Cash Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
-            }
-
-            /* Equip Inventory */
-            while ((slot = pr.ReadShort()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Equip.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.currentEquipInventory[ItemData.Equip[itemTest.Id]] = 1;
-                c.totalItemCount = c.totalItemCount + 1;
-                //c.WriteLog.Report("Equip: " + itemTest.Id + " Item Type: " + itemTest.Type + " Potential: " + itemTest.Potential);
-            }
-            // [Zero (24)]
-            pr.Skip(24);
-            /* Use Inventory */
-            while ((slot = pr.ReadByte()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Other.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.currentUseInventory[ItemData.Use[itemTest.Id]] = itemTest.Quantity;
-                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
-                //c.WriteLog.Report("Use: " + itemTest.Id + " Item Type: " + itemTest.Type +" Quantity: " + itemTest.Quantity);
-            }
-            /* Set-up Inventory */
-            while ((slot = pr.ReadByte()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Other.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.currentSetUpInventory[ItemData.Setup[itemTest.Id]] = itemTest.Quantity;
-                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
-                //c.WriteLog.Report("Setup: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
-            }
-            /* Etc Inventory */
-            while ((slot = pr.ReadByte()) != 0) {
-                byte type = pr.ReadByte();
-                var itemTest = Other.Parse(pr, type);
-                itemTest.Slot = slot;
-                c.currentEtcInventory[ItemData.Etc[itemTest.Id]] = itemTest.Quantity;
-                c.totalItemCount = c.totalItemCount + itemTest.Quantity;
-                //c.WriteLog.Report("Etc: " + itemTest.Id + " Item Type: " + itemTest.Type + " Quantity: " + itemTest.Quantity);
-            }
-            /* Cash Inventory */
-            //TODO : Create Cash Inventory NOT USING Equips
-            while ((slot = pr.ReadByte()) != 0) {
-                byte type = pr.ReadByte();
-                if (type == 3) {
-                    var itemTest = Pet.Parse(pr, type);
-                    itemTest.Slot = slot;
-                    c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = 1;
-                    c.totalItemCount = c.totalItemCount + 1;
-                } else {
-                    var itemTest = Other.Parse(pr, type);
-                    itemTest.Slot = slot;
-                    c.currentEquipInventory[ItemData.Cash[itemTest.Id]] = itemTest.Quantity;
-                    c.totalItemCount = c.totalItemCount + itemTest.Quantity;
-                }
-            }
-
-            c.Mapler = m;
             c.Channel = (byte) (channel + 1);
 
+            c.UpdateMesos.Report(c.Inventory.Mesos);
             c.UpdateItems.Report(c.totalItemCount);
-            c.UpdateMapler.Report(m);
+            c.UpdateMapler.Report(c.Mapler);
             c.UpdateChannel.Report(c.Channel);
         }
 

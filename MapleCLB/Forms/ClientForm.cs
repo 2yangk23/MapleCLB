@@ -9,12 +9,15 @@ using MapleCLB.Types;
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
         private readonly Client client;
-        public Progress<bool> ConnectToggle;
+        private DateTime uptime;
+
+        public IProgress<bool> ConnectToggle;
+        public IProgress<byte[]> WriteSend, WriteRecv;
         public Progress<string> WriteLog;
-        public Progress<byte[]> WriteSend, WriteRecv;
         public Progress<Mapler> UpdateMapler; 
         public Progress<byte> UpdateCh;
 
+        public Progress<long> UpdateMesos; 
         public Progress<long> UpdateExp;
         public Progress<int> UpdateItems;
         public Progress<int> UpdatePeople;
@@ -38,7 +41,7 @@ namespace MapleCLB.Forms {
 
             client = new Client(this);
             PacketView.SetInput(PacketInput);
-            RusherView.SetClient(client);
+            RushView.SetClient(client);
 
             FmFunctions = new FreeMarketForm(this);
 
@@ -76,6 +79,7 @@ namespace MapleCLB.Forms {
                 WorldList.Enabled = b;
                 ChannelList.Enabled = b;
                 ModeList.Enabled = b;
+                UpTimer.Enabled = !b;
             });
 
             /* Writers */
@@ -89,25 +93,23 @@ namespace MapleCLB.Forms {
                     NameStat.Text = m.Name;
                     MapStat.Text = m.Map.ToString();
                     LevelStat.Text = m.Level.ToString();
-                    MesoStatus.Text = m.Meso.ToString("N0");
                     ExpStatus.Text = (decimal.Divide(m.Exp, Resources.Exp.PlayerExp[m.Level]) * 100).ToString("F") + '%';
-                    RusherView.Update(m.Map);
+                    RushView.Update(m.Map);
                 } else {
                     NameStat.Text = "Unknown";
                     MapStat.Text = "-1";
                     LevelStat.Text = "-1";
-                    MesoStatus.Text = "-1";
                     ExpStatus.Text = "-1";
                     //Just going to leave this here... :D
                     ItemsStatus.Text = "-1";
                     PeopleStatus.Text = "Not Active";
-                    WorkingStatus.Text = "-1";
+                    WorkingStatus.Text = "00:00:00";
                 }
             });
+            UpdateMesos = new Progress<long>(d => MesoStatus.Text = d.ToString());
             UpdateCh    = new Progress<byte>(d => ChannelStat.Text = d.ToString());
             UpdateItems = new Progress<int>(d => ItemsStatus.Text = d.ToString());
             UpdatePeople = new Progress<int>(d => PeopleStatus.Text = d.ToString());
-            UpdateWorking = new Progress<string>(d => WorkingStatus.Text = d);
         }
 
         /* Temporary stuff*/
@@ -151,7 +153,7 @@ namespace MapleCLB.Forms {
 
         private void Information_Click(object sender, EventArgs e){
             if (client.ShowInformation == false) {
-                Test.UpdateInventory(client.currentEquipInventory, client.currentUseInventory, client.currentSetUpInventory, client.currentEtcInventory);
+                Test.UpdateInventory(client.Inventory);
                 Test.Show();
                 client.ShowInformation = true;}
             else{
@@ -245,6 +247,11 @@ namespace MapleCLB.Forms {
             sendPacket.Width = 505;
             delay.Visible = false;
             sendSpam.Text = "Send";*/
+        }
+
+        private void UpTimer_Tick(object sender, EventArgs e) {
+            uptime = uptime.AddSeconds(1);
+            WorkingStatus.Text = uptime.ToString("HH:mm:ss");
         }
 
         private void SpamMenuItem_Click(object sender, EventArgs e) {

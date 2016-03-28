@@ -37,7 +37,7 @@
             this.ItemName_Etc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Quantity_Etc = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.setupTab = new System.Windows.Forms.TabPage();
-            this.SetUpListView = new System.Windows.Forms.ListView();
+            this.SetupListView = new System.Windows.Forms.ListView();
             this.ItemName_SetUp = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Quantity_SetUp = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.useTab = new System.Windows.Forms.TabPage();
@@ -114,7 +114,7 @@
             // 
             // setupTab
             // 
-            this.setupTab.Controls.Add(this.SetUpListView);
+            this.setupTab.Controls.Add(this.SetupListView);
             this.setupTab.Location = new System.Drawing.Point(4, 22);
             this.setupTab.Name = "setupTab";
             this.setupTab.Padding = new System.Windows.Forms.Padding(3);
@@ -125,16 +125,16 @@
             // 
             // listView2
             // 
-            this.SetUpListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.SetupListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ItemName_SetUp,
             this.Quantity_SetUp});
-            this.SetUpListView.GridLines = true;
-            this.SetUpListView.Location = new System.Drawing.Point(-4, 0);
-            this.SetUpListView.Name = "listView2";
-            this.SetUpListView.Size = new System.Drawing.Size(238, 266);
-            this.SetUpListView.TabIndex = 0;
-            this.SetUpListView.UseCompatibleStateImageBehavior = false;
-            this.SetUpListView.View = System.Windows.Forms.View.Details;
+            this.SetupListView.GridLines = true;
+            this.SetupListView.Location = new System.Drawing.Point(-4, 0);
+            this.SetupListView.Name = "listView2";
+            this.SetupListView.Size = new System.Drawing.Size(238, 266);
+            this.SetupListView.TabIndex = 0;
+            this.SetupListView.UseCompatibleStateImageBehavior = false;
+            this.SetupListView.View = System.Windows.Forms.View.Details;
             // 
             // ItemName_SetUp
             // 
@@ -254,7 +254,7 @@
         private System.Windows.Forms.TabPage etcTab;
         private System.Windows.Forms.ListView EtcListView;
         private System.Windows.Forms.TabPage setupTab;
-        private System.Windows.Forms.ListView SetUpListView;
+        private System.Windows.Forms.ListView SetupListView;
         private System.Windows.Forms.TabPage useTab;
         private System.Windows.Forms.ListView UseListView;
         private System.Windows.Forms.TabPage equipTab;

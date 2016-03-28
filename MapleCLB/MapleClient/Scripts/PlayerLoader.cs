@@ -53,8 +53,7 @@ namespace MapleCLB.MapleClient.Scripts {
             Client.WriteLog("Added Mushroom : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
 
-        private void SpawnPlayer(PacketReader r)
-        {
+        private void SpawnPlayer(PacketReader r) {
             int uid = r.ReadInt();
             r.ReadByte(); // [Level (1)]
             string ign = r.ReadMapleString(); // Name
@@ -88,8 +87,11 @@ namespace MapleCLB.MapleClient.Scripts {
             short y = r.ReadShort();
             r.Skip(1);//Type or stance?
             short fh = r.ReadShort();
-            r.Skip(18); //Unknown shit
-            int tradeId = r.ReadInt(); //tradeId used to enter shops
+            r.Skip(17); //Unknown shit
+            if (r.ReadByte() == 5) {
+                int tradeId = r.ReadInt(); //tradeId used to enter shops
+                string name = r.ReadMapleString();
+            }
             UidMap[uid] = ign;
 
             Client.totalItemCount = Client.totalPeopleCount++;

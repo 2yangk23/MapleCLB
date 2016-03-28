@@ -1,4 +1,6 @@
-﻿namespace MapleCLB.Forms {
+﻿using MapleCLB.Forms.Tabs;
+
+namespace MapleCLB.Forms {
     partial class ClientForm {
         /// <summary> 
         /// Required designer variable.
@@ -64,9 +66,9 @@
             this.AccountTab = new System.Windows.Forms.TabPage();
             this.InitTestBtn = new System.Windows.Forms.Button();
             this.PacketTab = new System.Windows.Forms.TabPage();
-            this.PacketView = new MapleCLB.Forms.PacketView();
+            this.PacketView = new PacketTab();
             this.RushTab = new System.Windows.Forms.TabPage();
-            this.RusherView = new MapleCLB.Forms.RusherView();
+            this.RushView = new RusherTab();
             this.LogTab = new System.Windows.Forms.TabPage();
             this.LogText = new System.Windows.Forms.TextBox();
             this.PacketInput = new System.Windows.Forms.TextBox();
@@ -74,6 +76,7 @@
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.UpTimer = new System.Windows.Forms.Timer(this.components);
             this.SendSpamBtn = new MapleCLB.Forms.SplitButton();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
@@ -259,9 +262,9 @@
             this.WorkingStatus.AutoSize = true;
             this.WorkingStatus.Location = new System.Drawing.Point(67, 166);
             this.WorkingStatus.Name = "WorkingStatus";
-            this.WorkingStatus.Size = new System.Drawing.Size(16, 13);
+            this.WorkingStatus.Size = new System.Drawing.Size(49, 13);
             this.WorkingStatus.TabIndex = 24;
-            this.WorkingStatus.Text = "-1";
+            this.WorkingStatus.Text = "00:00:00";
             // 
             // Working
             // 
@@ -495,9 +498,10 @@
             this.Tabs.Controls.Add(this.RushTab);
             this.Tabs.Controls.Add(this.LogTab);
             this.Tabs.Location = new System.Drawing.Point(0, 0);
+            this.Tabs.Margin = new System.Windows.Forms.Padding(0);
             this.Tabs.Name = "Tabs";
             this.Tabs.SelectedIndex = 0;
-            this.Tabs.Size = new System.Drawing.Size(639, 341);
+            this.Tabs.Size = new System.Drawing.Size(689, 346);
             this.Tabs.TabIndex = 16;
             // 
             // AccountTab
@@ -513,7 +517,7 @@
             this.AccountTab.Location = new System.Drawing.Point(4, 22);
             this.AccountTab.Name = "AccountTab";
             this.AccountTab.Padding = new System.Windows.Forms.Padding(3);
-            this.AccountTab.Size = new System.Drawing.Size(631, 315);
+            this.AccountTab.Size = new System.Drawing.Size(681, 320);
             this.AccountTab.TabIndex = 0;
             this.AccountTab.Text = "Account";
             this.AccountTab.UseVisualStyleBackColor = true;
@@ -534,41 +538,43 @@
             this.PacketTab.Location = new System.Drawing.Point(4, 22);
             this.PacketTab.Name = "PacketTab";
             this.PacketTab.Padding = new System.Windows.Forms.Padding(3);
-            this.PacketTab.Size = new System.Drawing.Size(631, 315);
+            this.PacketTab.Size = new System.Drawing.Size(681, 320);
             this.PacketTab.TabIndex = 1;
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
             // 
             // PacketView
             // 
-            this.PacketView.Location = new System.Drawing.Point(3, 3);
+            this.PacketView.AutoSize = true;
+            this.PacketView.Location = new System.Drawing.Point(0, 1);
+            this.PacketView.Margin = new System.Windows.Forms.Padding(0);
             this.PacketView.Name = "PacketView";
-            this.PacketView.Size = new System.Drawing.Size(628, 312);
+            this.PacketView.Size = new System.Drawing.Size(681, 319);
             this.PacketView.TabIndex = 0;
             // 
             // RushTab
             // 
-            this.RushTab.Controls.Add(this.RusherView);
+            this.RushTab.Controls.Add(this.RushView);
             this.RushTab.Location = new System.Drawing.Point(4, 22);
             this.RushTab.Name = "RushTab";
-            this.RushTab.Size = new System.Drawing.Size(631, 315);
+            this.RushTab.Size = new System.Drawing.Size(681, 320);
             this.RushTab.TabIndex = 3;
             this.RushTab.Text = "Rusher";
             this.RushTab.UseVisualStyleBackColor = true;
             // 
             // RusherView
             // 
-            this.RusherView.Location = new System.Drawing.Point(-1, -1);
-            this.RusherView.Name = "RusherView";
-            this.RusherView.Size = new System.Drawing.Size(633, 317);
-            this.RusherView.TabIndex = 0;
+            this.RushView.Location = new System.Drawing.Point(-1, -1);
+            this.RushView.Name = "RushView";
+            this.RushView.Size = new System.Drawing.Size(682, 321);
+            this.RushView.TabIndex = 0;
             // 
             // LogTab
             // 
             this.LogTab.Controls.Add(this.LogText);
             this.LogTab.Location = new System.Drawing.Point(4, 22);
             this.LogTab.Name = "LogTab";
-            this.LogTab.Size = new System.Drawing.Size(631, 315);
+            this.LogTab.Size = new System.Drawing.Size(681, 320);
             this.LogTab.TabIndex = 2;
             this.LogTab.Text = "Logs";
             this.LogTab.UseVisualStyleBackColor = true;
@@ -584,21 +590,21 @@
             this.LogText.Name = "LogText";
             this.LogText.ReadOnly = true;
             this.LogText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.LogText.Size = new System.Drawing.Size(632, 318);
+            this.LogText.Size = new System.Drawing.Size(682, 323);
             this.LogText.TabIndex = 12;
             // 
             // PacketInput
             // 
             this.PacketInput.Font = new System.Drawing.Font("Consolas", 8.5F);
-            this.PacketInput.Location = new System.Drawing.Point(3, 350);
+            this.PacketInput.Location = new System.Drawing.Point(3, 353);
             this.PacketInput.Name = "PacketInput";
-            this.PacketInput.Size = new System.Drawing.Size(555, 21);
+            this.PacketInput.Size = new System.Drawing.Size(601, 21);
             this.PacketInput.TabIndex = 20;
             // 
             // DelayInput
             // 
             this.DelayInput.Font = new System.Drawing.Font("Consolas", 8.5F);
-            this.DelayInput.Location = new System.Drawing.Point(513, 350);
+            this.DelayInput.Location = new System.Drawing.Point(559, 353);
             this.DelayInput.Name = "DelayInput";
             this.DelayInput.Size = new System.Drawing.Size(45, 21);
             this.DelayInput.TabIndex = 22;
@@ -628,11 +634,16 @@
             this.SpamMenuItem.Text = "Spam";
             this.SpamMenuItem.Click += new System.EventHandler(this.SpamMenuItem_Click);
             // 
+            // UpTimer
+            // 
+            this.UpTimer.Interval = 1000;
+            this.UpTimer.Tick += new System.EventHandler(this.UpTimer_Tick);
+            // 
             // SendSpamBtn
             // 
             this.SendSpamBtn.AutoSize = true;
             this.SendSpamBtn.ContextMenuStrip = this.SendMenu;
-            this.SendSpamBtn.Location = new System.Drawing.Point(564, 347);
+            this.SendSpamBtn.Location = new System.Drawing.Point(610, 350);
             this.SendSpamBtn.Name = "SendSpamBtn";
             this.SendSpamBtn.Size = new System.Drawing.Size(75, 27);
             this.SendSpamBtn.SplitMenuStrip = this.SendMenu;
@@ -651,7 +662,7 @@
             this.Controls.Add(this.PacketInput);
             this.Controls.Add(this.Tabs);
             this.Name = "ClientForm";
-            this.Size = new System.Drawing.Size(639, 375);
+            this.Size = new System.Drawing.Size(689, 377);
             this.AccountGroup.ResumeLayout(false);
             this.AccountGroup.PerformLayout();
             this.StatGroup.ResumeLayout(false);
@@ -661,6 +672,7 @@
             this.AccountTab.ResumeLayout(false);
             this.AccountTab.PerformLayout();
             this.PacketTab.ResumeLayout(false);
+            this.PacketTab.PerformLayout();
             this.RushTab.ResumeLayout(false);
             this.LogTab.ResumeLayout(false);
             this.LogTab.PerformLayout();
@@ -710,7 +722,7 @@
         private System.Windows.Forms.TabPage PacketTab;
         private System.Windows.Forms.Label Mesos;
         private System.Windows.Forms.Label MesoStatus;
-        private Forms.PacketView PacketView;
+        private PacketTab PacketView;
         private System.Windows.Forms.Button InitTestBtn;
         private System.Windows.Forms.Button Information;
         private System.Windows.Forms.Label ExpStatus;
@@ -722,6 +734,7 @@
         private System.Windows.Forms.Label Items;
         private System.Windows.Forms.Label WorkingStatus;
         private System.Windows.Forms.Label Working;
-        private RusherView RusherView;
+        private RusherTab RushView;
+        private System.Windows.Forms.Timer UpTimer;
     }
 }

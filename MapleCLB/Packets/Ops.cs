@@ -95,14 +95,14 @@
             CHAR_INFO = 0x019E,
             SEED = 0x0172,  //4A FC E4 FF is magic number  
 
-            BLUE_POP = 0x005F, //Not updated
+            BLUE_POP = 0x60,
             TEMP = 0x003F, //Not Updated, need to fix too
 
             /* shop */
             LOAD_MUSHY = 0x03B1,
             CLOSE_MUSHY = LOAD_MUSHY + 0x02,
             CLOSE_PERMIT = 0x01F2,
-            FINISH_LOAD_PERMIT = 0x04D6,
+            UPDATE_SHOP = 0x04D6,
 
             /* map */
             SPAWN_PLAYER = 0x01EE, 

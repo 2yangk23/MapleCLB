@@ -1,5 +1,4 @@
 ﻿using MapleLib.Packet;
-using SharedTools;
 
 namespace MapleCLB.Types.Items {
     public enum Flag : short {
@@ -23,8 +22,8 @@ namespace MapleCLB.Types.Items {
     }
 
     public class Other : Item {
-        public short Quantity { get; set; }
-        public Flag Flag { get; set; }
+        public short Quantity { get; private set; }
+        public Flag Flag { get; private set; }
 
         public int IdBase => Id / 10000;
 
@@ -37,18 +36,25 @@ namespace MapleCLB.Types.Items {
         public bool IsMonsterCard => IdBase == 238;
         public bool IsFamiliar => IdBase == 287;
 
-        public new static Other Parse(PacketReader pr, byte temp) {
-            var o = Item.Parse(pr, temp) as Other;
-            Precondition.NotNull(o, "Error casting item-type Other.");
+        public Other(ItemType type, int id, short slot) : base(type, id, slot) { }
 
-            o.Quantity = pr.ReadShort();
-            pr.ReadMapleString();
-            o.Flag = (Flag) pr.ReadShort();
-            if (o.IsThrowingStar || o.IsFamiliar || o.IsBullet) {
+        protected override void Parse(PacketReader pr) {
+            if (ItemType == ItemType.PET) {
+                Quantity = 1;
+                Flag = Flag.NONE;
+                pr.Skip(17);
                 pr.Skip(8);
+                pr.Skip(15);
+                pr.Skip(4);
+                pr.Skip(2);
+            } else {
+                Quantity = pr.ReadShort();
+                pr.ReadMapleString();
+                Flag = (Flag) pr.ReadShort();
+                if (IsThrowingStar || IsFamiliar || IsBullet) {
+                    pr.Skip(8);
+                }
             }
-
-            return o;
         }
     }
 }
