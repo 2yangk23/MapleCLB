@@ -56,7 +56,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             var c = o as Client;
             c.Log.Report("Selecting Character...");
             //no new thread here, MUST finish loading chars
-            Load.Charlist(c, r);
+            LoadCharlist(c, r);
 
             try {
                 switch (c.Account.Mode) {
@@ -76,6 +76,39 @@ namespace MapleCLB.Packets.Recv.Connection {
                 c.Log.Report("Error selecting character. Restart in 1 min...");
                 Thread.Sleep(60000);
                 c.Disconnect();
+            }
+        }
+
+        private static void LoadCharlist(Client c, PacketReader pr) {
+            pr.Skip(1);
+            pr.ReadMapleString(); // v170?
+            pr.Skip(18);
+
+            int temp = pr.ReadInt(); // Weird loopy shit (uids?) v167
+            for (int i = 0; i < temp; i++) {
+                pr.ReadInt();
+            }
+            byte count = pr.ReadByte();
+
+            for (byte i = 0; i < count; ++i) {
+                /* Character Stats */
+                var m = Mapler.Parse(pr);
+
+                /* AddPlayer Appearance */
+                Mapler.SkipAppearance(pr, m.Job);
+
+                bool hasRank = pr.ReadBool(); // [HasRanking (1)]
+                if (hasRank) {
+                    pr.Skip(16); // [Rank (4)] [Rank Move (4)] [JobRank (4)] [JobRank Move (4)]
+                }
+
+                if (m.IsZero) { // Zero
+                    for (int j = 0; j < 6; ++j) { // I guess Zero has 2 extra appearance?
+                        pr.Next(0xFF);
+                    }
+                }
+                // System.Diagnostics.Debug.WriteLine("" + chr.Id + " : " + chr.Job + " : " + chr.Name + Environment.NewLine);
+                c.CharMap.Add(i, m.Name.ToLower(), m.Id);
             }
         }
     }

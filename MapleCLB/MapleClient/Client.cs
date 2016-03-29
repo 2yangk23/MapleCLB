@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -7,6 +8,7 @@ using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleClient.Scripts;
+using MapleCLB.Packets.Send;
 using ScriptLib;
 using MapleCLB.Tools;
 using MapleCLB.Types;
@@ -50,7 +52,7 @@ namespace MapleCLB.MapleClient {
 
         /* Dictionaries */
         internal readonly MultiKeyDictionary<byte, string, int> CharMap; // slot/ign -> uid
-        internal readonly Dictionary<int, string> UidMap; //uid -> ign
+        internal readonly ConcurrentDictionary<int, string> UidMap; //uid -> ign
 
         /* User Info */
         internal Account Account;
@@ -89,7 +91,7 @@ namespace MapleCLB.MapleClient {
 
             /* Initialize Client */
             CharMap = new MultiKeyDictionary<byte, string, int>();
-            UidMap = new Dictionary<int, string>();
+            UidMap = new ConcurrentDictionary<int, string>();
 
             scriptManager = new ScriptManager<Client>(this);
             handshakeHandler = new Handshake(this);
@@ -123,19 +125,18 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<MesoVac>().Start();
         }
 
-        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode,
-                                  bool takeAnyCB) {
+        //TODO: This shouldn't be in client
+        internal void StartScript(string target, string shopName, short x, short y, short fh, StealMode mode, ShopType shopType) {
             //change to w.e you wanted? not exactly sure.. :D
-            scriptManager.Get<SpotStealerBot>().Ign = IGN;
-            scriptManager.Get<SpotStealerBot>().ShopName = shopNAME;
-            scriptManager.Get<SpotStealerBot>().Fh = FH;
-            scriptManager.Get<SpotStealerBot>().X = X;
-            scriptManager.Get<SpotStealerBot>().Y = Y;
-            scriptManager.Get<SpotStealerBot>().PermitCb = PermitCB;
-            scriptManager.Get<SpotStealerBot>().ScMode = SCMode;
-            scriptManager.Get<SpotStealerBot>().TakeAnyCb = takeAnyCB;
-            //SpotStealerBot script = get<SpotStealerBot>(); ???
-            scriptManager.Get<SpotStealerBot>().Start();
+            var script = scriptManager.Get<SpotStealer>();
+            script.Target = target;
+            script.ShopName = shopName;
+            script.X = x;
+            script.Y = y;
+            script.Fh = fh;
+            script.Mode = mode;
+            script.Type = shopType;
+            scriptManager.Get<SpotStealer>().Start();
         }
 
         internal void ClearStats() {

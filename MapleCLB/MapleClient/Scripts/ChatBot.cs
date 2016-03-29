@@ -5,11 +5,11 @@ using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
     internal class ChatBot : ComplexScript<Client> {
-        private readonly PlayerLoader playerLoader;
+        //private readonly PlayerLoader playerLoader;
 
         public ChatBot(Client client) : base(client) {
             /* ChatBot requires PlayerLoader for Uid -> Name Map */
-            playerLoader = Requires<PlayerLoader>();
+            //playerLoader = Requires<PlayerLoader>();
         }
 
         protected override void Init() {
@@ -30,7 +30,7 @@ namespace MapleCLB.MapleClient.Scripts {
             byte type = r.ReadByte();
 
             string ign;
-            if (type != 0xFF || !playerLoader.UidMap.TryGetValue(uid, out ign)) {
+            if (type != 0xFF || !Client.UidMap.TryGetValue(uid, out ign)) {
                 return;
             }
             // Don't respond to self

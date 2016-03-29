@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using MapleCLB.MapleClient.Scripts;
+using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 namespace MapleCLB.Forms
 {
@@ -22,7 +24,9 @@ namespace MapleCLB.Forms
             else if (FMStealIgnBox.Text.Equals("") && !NextSpotCB.Checked)
                 mParent.WriteLine("Incorrect Stealing Information");//Pop up eventually
             else{//string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode, bool takeAnyCB
-                mParent.StartScript(FMStealIgnBox.Text,NameOfShopTBox.Text,FHTBox.Text,XTBox.Text,YTBox.Text, PermitCB.Checked, false, NextSpotCB.Checked);
+                mParent.StartScript(FMStealIgnBox.Text, NameOfShopTBox.Text, short.Parse(XTBox.Text), 
+                    short.Parse(YTBox.Text), short.Parse(FHTBox.Text), StealMode.GREEDY, 
+                    PermitCB.Checked ? ShopType.PERMIT : ShopType.MUSHY);
             }
         }
 
@@ -32,7 +36,9 @@ namespace MapleCLB.Forms
             else if(FHTBox.Text.Equals("") || XTBox.Text.Equals("") || YTBox.Text.Equals(""))
                 mParent.WriteLine("Incorrect Stealing Information");//Pop up eventually
             else{
-                mParent.StartScript(FMStealIgnBox.Text, NameOfShopTBox.Text, FHTBox.Text, XTBox.Text, YTBox.Text, PermitCB.Checked, true, NextSpotCB.Checked);
+                mParent.StartScript(FMStealIgnBox.Text, NameOfShopTBox.Text, short.Parse(XTBox.Text),
+                    short.Parse(YTBox.Text), short.Parse(FHTBox.Text), StealMode.SERVER_CHECK,
+                    PermitCB.Checked ? ShopType.PERMIT : ShopType.MUSHY);
             }
         }
     }

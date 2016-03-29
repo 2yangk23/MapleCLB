@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapleCLB.MapleClient;
+using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
 using MapleCLB.Tools;
 using MapleCLB.Types;
@@ -176,8 +177,8 @@ namespace MapleCLB.Forms {
             }
         }
         
-        internal void StartScript(string IGN, string shopNAME, string FH, string X, string Y, bool PermitCB, bool SCMode, bool takeAnyCB){
-            client.StartScript(IGN,shopNAME,FH,X,Y,PermitCB,SCMode,takeAnyCB);
+        internal void StartScript(string target, string shopName, short x, short y, short fh, StealMode mode, ShopType shopType) {
+            client.StartScript(target, shopName, x, y, fh, mode, shopType);
         }
 
         //Temp

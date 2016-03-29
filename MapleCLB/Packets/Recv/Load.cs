@@ -4,43 +4,11 @@ using MapleCLB.Types.Items;
 using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Recv {
-    internal class Load {
+    internal static class Load {
         private const int MAGIC_NUM = -1770422;
-        //[Header (2)] 00 [Char count (1)] [UID (4)] [IGN (13)] ...
-        public static void Charlist(Client c, PacketReader pr) {
-            pr.Skip(1);
-            pr.ReadMapleString(); // v170?
-            pr.Skip(18);
 
-            int temp = pr.ReadInt(); // Weird loopy shit (uids?) v167
-            for (int i = 0; i < temp; i++) {
-                pr.ReadInt();
-            }
-            byte count = pr.ReadByte();
-
-            for (byte i = 0; i < count; ++i) {
-                /* Character Stats */
-                var m = Mapler.Parse(pr);
-
-                /* AddPlayer Appearance */
-                Mapler.SkipAppearance(pr, m.Job);
-
-                bool hasRank = pr.ReadBool(); // [HasRanking (1)]
-                if (hasRank) {
-                    pr.Skip(16); // [Rank (4)] [Rank Move (4)] [JobRank (4)] [JobRank Move (4)]
-                }
-
-                if (m.IsZero) { // Zero
-                    for (int j = 0; j < 6; ++j) { // I guess Zero has 2 extra appearance?
-                        pr.Next(0xFF);
-                    }
-                }
-                // System.Diagnostics.Debug.WriteLine("" + chr.Id + " : " + chr.Job + " : " + chr.Name + Environment.NewLine);
-                c.CharMap.Add(i, m.Name.ToLower(), m.Id);
-            }
-        }
-
-        public static void CharInfo(Client c, PacketReader pr) {
+        public static void CharInfo(object o, PacketReader pr) {
+            var c = o as Client;
             if (pr.Available < 100) {
                 pr.Skip(44);
                 c.Mapler.Map = pr.ReadInt();

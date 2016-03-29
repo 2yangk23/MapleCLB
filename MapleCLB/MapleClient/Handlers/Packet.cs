@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Recv;
 using MapleCLB.Packets.Recv.Connection;
-using MapleCLB.Packets.Recv.Map;
+using MapleCLB.Packets.Recv.Maps;
 using MapleCLB.Tools;
 using MapleLib.Packet;
 
@@ -32,9 +32,11 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.LOGIN_STATUS, Login.LoginStatus);
             Register(RecvOps.LOGIN_SECOND, Login.LoginSecond);
 
-            Register(RecvOps.CHAR_INFO, MapCheck.Check);
+            Register(RecvOps.REMOVE_PLAYER, Map.RemovePlayer);
+            Register(RecvOps.SPAWN_PLAYER, Map.SpawnPlayer);
+            Register(RecvOps.CHAR_INFO, Load.CharInfo);
 
-            //Temp
+            //Temp (Is this even working?)
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);
         }
 
