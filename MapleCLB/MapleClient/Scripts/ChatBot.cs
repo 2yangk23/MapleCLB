@@ -30,15 +30,15 @@ namespace MapleCLB.MapleClient.Scripts {
             byte type = r.ReadByte();
 
             string ign;
-            if (type != 0xFF || !Client.UidMap.TryGetValue(uid, out ign)) {
+            if (type != 0xFF || !client.UidMap.TryGetValue(uid, out ign)) {
                 return;
             }
             // Don't respond to self
-            if (ign.Equals(Client.Mapler.Name)) {
+            if (ign.Equals(client.Mapler.Name)) {
                 return;
             }
 
-            Client.WriteLog(ign + ": " + msg);
+            client.WriteLog(ign + ": " + msg);
             SendPacket(Chat.All(msg));
         }
     }

@@ -34,12 +34,12 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         protected override void Execute() {
-            if (Client.State != ClientState.GAME) {
+            if (client.State != ClientState.GAME) {
                 WaitRecv(RecvOps.FINISH_LOAD);
             }
             if (Mode == StealMode.SERVER_CHECK) {
                 SendPacket(Movement.beforeTeleport());
-                SendPacket(Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, X, Y, Fh));
+                SendPacket(Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, X, Y, Fh));
                 OpenShop();
             }
             WaitRecv(RecvOps.UPDATE_SHOP);
@@ -48,8 +48,8 @@ namespace MapleCLB.MapleClient.Scripts {
             SendPacket(Trade.OpenShop2());
             SendPacket(Trade.OpenShop());
 
-            Client.hasFMShop = true;
-            Client.WriteLog("Shop Open For Business!");
+            client.hasFMShop = true;
+            client.WriteLog("Shop Open For Business!");
         }
 
         private void StealSpot(int id) {
@@ -136,9 +136,9 @@ namespace MapleCLB.MapleClient.Scripts {
             r.Skip(17); // Unknown shit
             if (r.ReadByte() != 0) {
                 UidMap[uid] = ign;
-                UidMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
+                UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, x, y, fh);
 
-                Client.WriteLog("Added Permit : " + ign + " to shifted UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
+                client.WriteLog("Added Permit : " + ign + " to shifted UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
             }
         }
 
@@ -151,9 +151,9 @@ namespace MapleCLB.MapleClient.Scripts {
             string ign = r.ReadMapleString();
 
             UidMap[uid] = ign;
-            UidMovementPacket[uid] = Movement.Teleport(Client.PortalCount, SendOps.FM1_CRC, x, y, fh);
+            UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, x, y, fh);
 
-            Client.WriteLog("Added Mushy : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
+            client.WriteLog("Added Mushy : " + ign + " to UID : " + uid + "@ " + x + ", " + y + ", fh: " + fh);
         }
     }
 }

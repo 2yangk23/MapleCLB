@@ -14,13 +14,13 @@ namespace ScriptLib {
         private readonly Blocking<PacketReader> reader = new Blocking<PacketReader>();
         private readonly AutoResetEvent waiter = new AutoResetEvent(false);
 
-        protected TClient Client;
-        protected bool Running;
+        protected TClient client;
+        protected bool running;
 
         protected Script(TClient client) {
             manager = client.GetScriptManager<TClient>();
             Precondition.NotNull(manager);
-            Client = client;
+            this.client = client;
         }
 
         internal bool Start() {
@@ -36,18 +36,18 @@ namespace ScriptLib {
         private void Run() {
             Execute();
             Complete();
-            Running = false;
+            running = false;
         }
         #endregion
 
         #region Shared Implementations
         protected bool Start(Action run) {
             Interlocked.Increment(ref refs);
-            if (Running) {
+            if (running) {
                 return false;
             }
-            Running = true;
-            Client.WriteLog($"[SCRIPT] Started {GetType().Name}.");
+            running = true;
+            client.WriteLog($"[SCRIPT] Started {GetType().Name}.");
             Task.Run(run);
             return true;
         }
@@ -74,16 +74,16 @@ namespace ScriptLib {
         #region Scripting Functions
         // Returns 'null' if returnPacket is FALSE, else returns received packet
         protected PacketReader WaitRecv(ushort header, bool returnPacket = false) {
-            Client.WaitScriptRecv(header, reader, returnPacket);
+            client.WaitScriptRecv(header, reader, returnPacket);
             return reader.Get();
         }
 
         protected void SendPacket(byte[] packet) {
-            Client.SendPacket(packet);
+            client.SendPacket(packet);
         }
 
         protected void SendPacket(PacketWriter w) {
-            Client.SendPacket(w);
+            client.SendPacket(w);
         }
 
         protected abstract void Execute();

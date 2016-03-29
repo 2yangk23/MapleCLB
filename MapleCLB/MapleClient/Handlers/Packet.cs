@@ -45,7 +45,7 @@ namespace MapleCLB.MapleClient.Handlers {
             writeRecv.Report(packet);
 
             if (headerMap.ContainsKey(header)) {
-                headerMap[header](Client, new PacketReader(packet, 2));
+                headerMap[header](client, new PacketReader(packet, 2));
             }
             if (scriptHandler.ContainsKey(header)) {
                 scriptHandler[header].Report(new PacketReader(packet, 2));

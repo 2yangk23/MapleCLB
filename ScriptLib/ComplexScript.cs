@@ -31,13 +31,13 @@ namespace ScriptLib {
                 // Execute script body
                 Execute();
             } catch (InvalidOperationException ex) {
-                Client.WriteLog("Error running script. Terminated.");
+                client.WriteLog("Error running script. Terminated.");
                 Console.WriteLine(ex.ToString());
             }
             // Clean-up script
             Release(source);
             Complete();
-            Running = false;
+            running = false;
         }
 
         // TODO: Find better way to clear Scheduler
@@ -56,7 +56,7 @@ namespace ScriptLib {
 
         private void Release(CancellationTokenSource source) {
             // Unregisters all headers
-            headers.ForEach(d => Client.RemoveScriptRecv(d));
+            headers.ForEach(d => client.RemoveScriptRecv(d));
             headers.Clear();
             // Stops handler
             source?.Cancel();
@@ -66,14 +66,14 @@ namespace ScriptLib {
         #region Scripting Functions
         protected void RegisterRecv(ushort header, Action<PacketReader> handler) {
             Progress<PacketReader> progress = new Progress<PacketReader>(r => { scheduler.Add(() => handler(r)); });
-            Precondition.Check<InvalidOperationException>(Client.AddScriptRecv(header, progress), 
+            Precondition.Check<InvalidOperationException>(client.AddScriptRecv(header, progress), 
                 $"Failed to register header {header:X4}.");
             headers.Add(header);
         }
 
         protected void UnregisterRecv(ushort header) {
             headers.Remove(header);
-            Client.RemoveScriptRecv(header);
+            client.RemoveScriptRecv(header);
         }
 
         protected abstract void Init();
