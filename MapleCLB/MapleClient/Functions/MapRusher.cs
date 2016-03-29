@@ -5,8 +5,8 @@ using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient.Functions {
     internal class MapRusher {
-        internal static List<PortalInfo> Pathfind(int src, int dst) {
-            List<PortalInfo> directions = new List<PortalInfo>();
+        internal static List<Portal> Pathfind(int src, int dst) {
+            List<Portal> directions = new List<Portal>();
 
             // Already on destination map
             if (src == dst) {
@@ -14,7 +14,7 @@ namespace MapleCLB.MapleClient.Functions {
             }
 
             // Can move to map with 1 portal
-            ReadOnlyDictionary<int, PortalInfo> curPortals = MapData.Nodes[src].Portals;
+            ReadOnlyDictionary<int, Portal> curPortals = MapData.Nodes[src].Portals;
             if (curPortals.ContainsKey(dst)) {
                 directions.Add(curPortals[dst]);
                 return directions;
@@ -37,6 +37,9 @@ namespace MapleCLB.MapleClient.Functions {
         }
 
         internal static List<int> Reachable(int src) {
+            if (!MapData.Nodes.ContainsKey(src)) { // No dst in map
+                return new List<int>();
+            }
             return new List<int>(MapData.Nodes[src].Choice.Keys);
         }
     }

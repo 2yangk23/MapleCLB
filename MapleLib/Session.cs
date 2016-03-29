@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using MapleLib.Crypto;
 using MapleLib.Packet;
@@ -34,7 +35,6 @@ namespace MapleLib {
         public event EventHandler<ServerInfo> OnHandshake;
         public event EventHandler<byte[]> OnPacket;
         public event EventHandler OnDisconnected;
-        public event EventHandler<Session> OnReconnect;
 
         internal Session(Socket socket, SessionType type, AesCipher aesCipher) {
             this.socket = socket;
@@ -48,6 +48,34 @@ namespace MapleLib {
             packetBuffer = new byte[RECEIVE_SIZE];
             recvBuffer = new byte[RECEIVE_SIZE];
             cursor = 0;
+        }
+
+        public bool Reconnect(IPAddress ip, short port, int timeout = 10000) {
+            return Reconnect(new IPEndPoint(ip, port), timeout);
+        }
+
+        public bool Reconnect(EndPoint remoteEp, int timeout = 10000) {
+            if (!Connected) {
+                return false;
+            }
+
+            cursor = 0;
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Disconnect(true);
+
+            Encrypted = false;
+            Connected = false;
+
+            var handle = socket.BeginConnect(remoteEp, EndReconnect, socket); // Reconnect
+            handle.AsyncWaitHandle.WaitOne(timeout, true); // is true needed?
+
+            return socket.Connected;
+        }
+
+        private void EndReconnect(IAsyncResult iar) {
+            (iar.AsyncState as Socket)?.EndConnect(iar);
+            Connected = socket.Connected;
+            Start(null);
         }
 
         internal void Start(ServerInfo info) {
@@ -83,7 +111,6 @@ namespace MapleLib {
             SocketError error;
             socket.BeginReceive(recvBuffer, 0, RECEIVE_SIZE, SocketFlags.None, out error, PacketCallback, null);
             if (error != SocketError.Success) {
-                Console.WriteLine("Bug Testing 101");
                 Disconnect();
             }
         }
@@ -93,18 +120,22 @@ namespace MapleLib {
                 return;
             }
 
-            SocketError error;
-            // TODO: Fix Diposed Socket Bug
-            // If client is in process of receiving packet right when you disconnect
-            // Socket will be disposed, and throw exception
-            int length = socket.EndReceive(iar, out error);
-            if (length == 0 || error != SocketError.Success) {
-                Console.WriteLine("Bug Testing 102");
-                Disconnect();
-            } else {
-                Append(length);
-                ManipulateBuffer();
-                Receive();
+            try {
+                SocketError error;
+                int length = socket.EndReceive(iar, out error);
+                if (length == 0 || error != SocketError.Success) {
+                    // If handshake not received and you disconnect, reconnect
+                    if (!Encrypted && Reconnect(socket.RemoteEndPoint)) {
+                        return;
+                    }
+                    Disconnect();
+                } else {
+                    Append(length);
+                    ManipulateBuffer();
+                    Receive();
+                }
+            } catch (ObjectDisposedException) { // Occurs if RECV packet while force disconnect
+                Console.WriteLine("I think this should never happen since socket doesn't linger anymore");
             }
         }
 
@@ -175,10 +206,6 @@ namespace MapleLib {
             cursor = 0; //reset stream
         }
 
-        public void SendPacket(PacketWriter packet) {
-            SendPacket(packet.ToArray());
-        }
-
         public void SendPacket(byte[] packet) {
             Precondition.Check<InvalidOperationException>(Connected, "Socket is not connected");
             Precondition.Check<InvalidOperationException>(Encrypted, "Handshake has not been received yet");
@@ -209,7 +236,6 @@ namespace MapleLib {
                 int sent = socket.Send(packet, offset, packet.Length - offset, SocketFlags.None, out errorCode);
 
                 if (sent == 0 || errorCode != SocketError.Success) {
-                    Console.WriteLine("Bug Testing 103");
                     Disconnect();
                     return;
                 }
@@ -224,14 +250,7 @@ namespace MapleLib {
 
             cursor = 0;
             socket.Shutdown(SocketShutdown.Both);
-            socket.Disconnect(false);
-            socket.Dispose();
-
-            if (!Encrypted && OnReconnect != null) {
-                OnReconnect(this, null);
-                Debug.WriteLine("FORCING A RECONNECT");
-                return;
-            }
+            socket.Disconnect(!finished);
 
             Encrypted = false;
             Connected = false;

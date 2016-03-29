@@ -1,5 +1,4 @@
 ﻿using MapleCLB.MapleClient;
-using MapleCLB.Resources;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
 using MapleLib.Packet;
@@ -42,7 +41,6 @@ namespace MapleCLB.Packets.Recv {
         }
 
         public static void CharInfo(Client c, PacketReader pr) {
-            //TODO: Better fix for this? Although this should always work so maybe it's good enough
             if (pr.Available < 100) {
                 pr.Skip(44);
                 c.Mapler.Map = pr.ReadInt();

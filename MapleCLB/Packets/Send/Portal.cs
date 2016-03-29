@@ -1,9 +1,8 @@
-﻿using MapleCLB.Types;
-using MapleLib.Packet;
+﻿using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class Portal {
-        public static byte[] Enter(byte count, int crc, PortalInfo data) {
+        public static byte[] Enter(byte count, int crc, Types.Portal data) {
             var pw = new PacketWriter(SendOps.CHANGE_MAP);
             pw.WriteByte(count);
             pw.WriteInt(-1); // FF FF FF FF

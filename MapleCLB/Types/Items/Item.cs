@@ -20,7 +20,6 @@ namespace MapleCLB.Types.Items {
             Slot = slot;
         }
 
-        //TODO: Eliminate parameter with generics
         public static T Parse<T>(PacketReader pr) where T : Item {
             short slot = typeof(T) == typeof(Equip) ? pr.ReadShort() : pr.ReadByte();
             if (slot == 0) {

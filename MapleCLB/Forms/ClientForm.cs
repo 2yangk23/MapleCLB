@@ -55,8 +55,11 @@ namespace MapleCLB.Forms {
             channel.SelectedIndex   = 0;*/
 #endif
 
-            string[] users = {"T.heOldKingCoal@gmail.com","Th.eOldKingCoal@gmail.com", "t.hemapleblc@gmail.com",
-                "t.h.emapleblc@gmail.com", "t.h.e.mapleblc@gmail.com" };
+            string[] users = {
+                "T.heOldKingCoal@gmail.com",
+                "t.hemapleblc@gmail.com",
+                "t.h.emapleblc@gmail.com"
+            };
 
             UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
             PassInput.Text = "maplestory";
@@ -80,6 +83,7 @@ namespace MapleCLB.Forms {
                 ChannelList.Enabled = b;
                 ModeList.Enabled = b;
                 UpTimer.Enabled = !b;
+                uptime = new DateTime(); // reset time after disconnect?
             });
 
             /* Writers */
@@ -103,7 +107,6 @@ namespace MapleCLB.Forms {
                     //Just going to leave this here... :D
                     ItemsStatus.Text = "-1";
                     PeopleStatus.Text = "Not Active";
-                    WorkingStatus.Text = "00:00:00";
                 }
             });
             UpdateMesos = new Progress<long>(d => MesoStatus.Text = d.ToString());

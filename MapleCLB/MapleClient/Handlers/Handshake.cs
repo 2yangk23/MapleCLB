@@ -10,18 +10,18 @@ namespace MapleCLB.MapleClient.Handlers {
         internal override void Handle(object session, ServerInfo info) {
             Debug.WriteLine("HANDSHAKEEEEE");
             switch (Client.State) {
-                case ClientState.CONNECTED:
+                case ClientState.DISCONNECTED:
                     Debug.WriteLine("Validating login for MapleStory v" + info.Version + "." + info.Subversion);
                     SendPacket(Login.Validate(info.Locale, info.Version, short.Parse(info.Subversion)));
                     string authCode = Auth.GetAuth(Client.Account);
-                    Client.State = ClientState.LOGIN;
                     Debug.WriteLine(authCode);
                     Thread.Sleep(1000);
                     SendPacket(Login.ClientLogin(Client.Account, authCode));
+                    Client.State = ClientState.LOGIN;
                     break;
 
                 case ClientState.LOGIN:
-                    Debug.WriteLine("Logged in!");
+                    Client.Log.Report("Logged in!");
                     Client.dcst.Enabled = true;
                     SendPacket(Login.EnterServer(Client.Account, Client.UserId, Client.SessionId));
                     Client.State = ClientState.GAME;
@@ -36,8 +36,8 @@ namespace MapleCLB.MapleClient.Handlers {
                     SendPacket(Login.EnterServer(Client.Account, Client.UserId, Client.SessionId));
                     Thread.Sleep(2000);
                     SendPacket(General.ExitCS());
+                    Debug.WriteLine("Left Cash Shop!");
                     Client.State = ClientState.GAME;
-                    Client.Log.Report("Left CS!");
                     break;
             }
         }

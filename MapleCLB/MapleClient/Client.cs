@@ -7,19 +7,18 @@ using System.Timers;
 using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleClient.Scripts;
-using MapleCLB.Packets.Send;
 using ScriptLib;
 using MapleCLB.Tools;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
 using MapleLib;
 using MapleLib.Packet;
+using Portal = MapleCLB.Types.Portal;
 using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
     internal enum ClientState : byte {
         DISCONNECTED,
-        CONNECTED,
         LOGIN,
         CASHSHOP,
         GAME
@@ -41,13 +40,13 @@ namespace MapleCLB.MapleClient {
         internal readonly IProgress<string> Log;
 
         /* Client Info */
-        internal ClientState State;
-        private Session session;
-        internal long SessionId;
-
         private readonly ScriptManager<Client> scriptManager;
         private readonly Handshake handshakeHandler;
         private readonly Packet packetHandler;
+        private Session session;
+
+        internal ClientState State;
+        internal long SessionId;
 
         /* Dictionaries */
         internal readonly MultiKeyDictionary<byte, string, int> CharMap; // slot/ign -> uid
@@ -61,12 +60,12 @@ namespace MapleCLB.MapleClient {
         internal int UserId;
         internal byte Channel;
 
-        internal IProgress<List<PortalInfo>> MapRush;
+        internal IProgress<List<Portal>> MapRush;
         internal byte PortalCount = 1;
         internal int PortalCrc;
 
         /* Random stuff */
-        public Timer dcst = new Timer(1800000); // 30 minutes
+        public Timer dcst = new Timer(30 * 60 * 1000); // 30 minutes
         internal byte doWhat;
 
         internal bool hasFMShop = false;
@@ -103,12 +102,12 @@ namespace MapleCLB.MapleClient {
         internal void Initialize(Account account) {
             Account = account;
 
-            MapRush = new Progress<List<PortalInfo>>(list => {
+            MapRush = new Progress<List<Portal>>(list => {
                 if (list == null) {
                     return;
                 }
                 foreach (var data in list) {
-                    SendPacket(Portal.Enter(PortalCount, PortalCrc, data));
+                    SendPacket(Packets.Send.Portal.Enter(PortalCount, PortalCrc, data));
                     if (PortalCount++ == 255) {
                         PortalCount = 1; // wrap around
                     }
@@ -143,21 +142,21 @@ namespace MapleCLB.MapleClient {
             UpdateMapler.Report(null);
             UpdateChannel.Report(0);
             UpdateMesos.Report(-1);
-            Inventory.Clear();
+            Inventory?.Clear();
             totalPeopleCount = 0;
         }
 
         #region Client Connection
         internal void Connect() {
-            cForm.ConnectToggle.Report(false);
             Log.Report("Connecting to " + Program.LoginIp + ":" + Program.LoginPort);
-            var conn = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
-            conn.OnConnected += OnConnected;
-            conn.OnError += OnError;
 
+            cForm.ConnectToggle.Report(false);
             try {
-                conn.Connect(SERVER_TIMEOUT);
-                State = ClientState.CONNECTED;
+                var connector = new Connector(Program.LoginIp, Program.LoginPort, Program.AesCipher);
+                connector.OnConnected += OnConnected;
+                connector.OnError += OnError;
+
+                connector.Connect(SERVER_TIMEOUT);
             } catch {
                 Log.Report("Failed to connect.");
                 if (cForm.AutoRestart.Checked) {
@@ -168,18 +167,11 @@ namespace MapleCLB.MapleClient {
             }
         }
 
-        // TODO: Try to reuse same session
         internal void Reconnect(string ip, short port) {
             Log.Report("Reconnecting to " + ip + ":" + port);
-            session.Disconnect(false);
-
-            var newIp = IPAddress.Parse(ip);
-            var conn = new Connector(newIp, port, Program.AesCipher);
-            conn.OnConnected += OnConnected;
-            conn.OnError += OnError;
 
             try {
-                conn.Connect(CHANNEL_TIMEOUT);
+                session.Reconnect(IPAddress.Parse(ip), port, CHANNEL_TIMEOUT);
             } catch {
                 Log.Report("Bug Hunting 3");
                 session.Disconnect();
@@ -187,8 +179,8 @@ namespace MapleCLB.MapleClient {
         }
 
         internal void Disconnect() {
-            //Session.Disconnect();
-            SendPacket(General.ExitCS()); //Temp -.-
+            session.Disconnect();
+            //SendPacket(General.ExitCS()); //Temp -.-
         }
 
         public void WriteLog(string message) {
