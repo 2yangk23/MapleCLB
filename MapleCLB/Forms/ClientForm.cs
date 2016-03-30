@@ -59,7 +59,10 @@ namespace MapleCLB.Forms {
             string[] users = {
                 "T.heOldKingCoal@gmail.com",
                 "t.hemapleblc@gmail.com",
-                "t.h.emapleblc@gmail.com"
+                "t.h.e.m.apleblc@gmail.com",
+                "t.h.e.m.a.pleblc@gmail.com",
+                "t.h.e.m.a.p.leblc@gmail.com",
+                "t.h.e.m.a.p.l.eblc@gmail.com"
             };
 
             UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];

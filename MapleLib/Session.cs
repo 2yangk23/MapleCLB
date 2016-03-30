@@ -119,22 +119,18 @@ namespace MapleLib {
                 return;
             }
 
-            try {
-                SocketError error;
-                int length = socket.EndReceive(iar, out error);
-                if (length == 0 || error != SocketError.Success) {
-                    // If handshake not received and you disconnect, reconnect
-                    if (!Encrypted && Reconnect(socket.RemoteEndPoint)) {
-                        return;
-                    }
-                    Disconnect();
-                } else {
-                    Append(length);
-                    ManipulateBuffer();
-                    Receive();
+            SocketError error;
+            int length = socket.EndReceive(iar, out error);
+            if (length == 0 || error != SocketError.Success) {
+                // If handshake not received and you disconnect, reconnect
+                if (!Encrypted && Reconnect(socket.RemoteEndPoint)) {
+                    return;
                 }
-            } catch (ObjectDisposedException) { // Occurs if RECV packet while force disconnect
-                Console.WriteLine("I think this should never happen since socket doesn't linger anymore");
+                Disconnect();
+            } else {
+                Append(length);
+                ManipulateBuffer();
+                Receive();
             }
         }
 
@@ -247,12 +243,12 @@ namespace MapleLib {
                 return;
             }
 
+            Encrypted = false;
+            Connected = false;
+
             cursor = 0;
             socket.Shutdown(SocketShutdown.Both);
             socket.Disconnect(!finished);
-
-            Encrypted = false;
-            Connected = false;
 
             if (!finished) {
                 return;

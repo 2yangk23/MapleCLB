@@ -171,8 +171,14 @@ namespace MapleCLB.MapleClient {
         internal void Reconnect(string ip, short port) {
             Log.Report("Reconnecting to " + ip + ":" + port);
 
+            session.Disconnect(false);
             try {
-                session.Reconnect(IPAddress.Parse(ip), port, CHANNEL_TIMEOUT);
+                var connector = new Connector(IPAddress.Parse(ip), port, Program.AesCipher);
+                connector.OnConnected += OnConnected;
+                connector.OnError += OnError;
+
+                connector.Connect(CHANNEL_TIMEOUT);
+                //session.Reconnect(IPAddress.Parse(ip), port, CHANNEL_TIMEOUT);
             } catch {
                 Log.Report("Bug Hunting 3");
                 session.Disconnect();
