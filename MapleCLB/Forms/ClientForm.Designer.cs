@@ -58,7 +58,6 @@ namespace MapleCLB.Forms {
             this.AutoRestart = new System.Windows.Forms.CheckBox();
             this.FeatureGroup = new System.Windows.Forms.GroupBox();
             this.FM_Functions = new System.Windows.Forms.Button();
-            this.Information = new System.Windows.Forms.Button();
             this.CcBtn = new System.Windows.Forms.Button();
             this.CsBtn = new System.Windows.Forms.Button();
             this.MoveBtn = new System.Windows.Forms.Button();
@@ -66,11 +65,13 @@ namespace MapleCLB.Forms {
             this.AccountTab = new System.Windows.Forms.TabPage();
             this.InitTestBtn = new System.Windows.Forms.Button();
             this.PacketTab = new System.Windows.Forms.TabPage();
-            this.PacketView = new PacketTab();
+            this.PacketView = new MapleCLB.Forms.Tabs.PacketTab();
             this.RushTab = new System.Windows.Forms.TabPage();
-            this.RushView = new RusherTab();
+            this.RushView = new MapleCLB.Forms.Tabs.RusherTab();
             this.LogTab = new System.Windows.Forms.TabPage();
             this.LogText = new System.Windows.Forms.TextBox();
+            this.InventoryTab = new System.Windows.Forms.TabPage();
+            this.inventoryTab1 = new MapleCLB.Forms.InventoryTab();
             this.PacketInput = new System.Windows.Forms.TextBox();
             this.DelayInput = new System.Windows.Forms.TextBox();
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -86,6 +87,7 @@ namespace MapleCLB.Forms {
             this.PacketTab.SuspendLayout();
             this.RushTab.SuspendLayout();
             this.LogTab.SuspendLayout();
+            this.InventoryTab.SuspendLayout();
             this.SendMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -432,7 +434,6 @@ namespace MapleCLB.Forms {
             // FeatureGroup
             // 
             this.FeatureGroup.Controls.Add(this.FM_Functions);
-            this.FeatureGroup.Controls.Add(this.Information);
             this.FeatureGroup.Controls.Add(this.CcBtn);
             this.FeatureGroup.Location = new System.Drawing.Point(209, 6);
             this.FeatureGroup.Name = "FeatureGroup";
@@ -450,16 +451,6 @@ namespace MapleCLB.Forms {
             this.FM_Functions.Text = "FM Functions";
             this.FM_Functions.UseVisualStyleBackColor = true;
             this.FM_Functions.Click += new System.EventHandler(this.FMFunctions_Click);
-            // 
-            // Information
-            // 
-            this.Information.Location = new System.Drawing.Point(6, 59);
-            this.Information.Name = "Information";
-            this.Information.Size = new System.Drawing.Size(133, 34);
-            this.Information.TabIndex = 16;
-            this.Information.Text = "Information";
-            this.Information.UseVisualStyleBackColor = true;
-            this.Information.Click += new System.EventHandler(this.Information_Click);
             // 
             // CcBtn
             // 
@@ -497,6 +488,7 @@ namespace MapleCLB.Forms {
             this.Tabs.Controls.Add(this.PacketTab);
             this.Tabs.Controls.Add(this.RushTab);
             this.Tabs.Controls.Add(this.LogTab);
+            this.Tabs.Controls.Add(this.InventoryTab);
             this.Tabs.Location = new System.Drawing.Point(0, 0);
             this.Tabs.Margin = new System.Windows.Forms.Padding(0);
             this.Tabs.Name = "Tabs";
@@ -562,7 +554,7 @@ namespace MapleCLB.Forms {
             this.RushTab.Text = "Rusher";
             this.RushTab.UseVisualStyleBackColor = true;
             // 
-            // RusherView
+            // RushView
             // 
             this.RushView.Location = new System.Drawing.Point(-1, -1);
             this.RushView.Name = "RushView";
@@ -592,6 +584,24 @@ namespace MapleCLB.Forms {
             this.LogText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.LogText.Size = new System.Drawing.Size(682, 323);
             this.LogText.TabIndex = 12;
+            // 
+            // InventoryTab
+            // 
+            this.InventoryTab.Controls.Add(this.inventoryTab1);
+            this.InventoryTab.Location = new System.Drawing.Point(4, 22);
+            this.InventoryTab.Name = "InventoryTab";
+            this.InventoryTab.Padding = new System.Windows.Forms.Padding(3);
+            this.InventoryTab.Size = new System.Drawing.Size(681, 320);
+            this.InventoryTab.TabIndex = 4;
+            this.InventoryTab.Text = "Inventory";
+            this.InventoryTab.UseVisualStyleBackColor = true;
+            // 
+            // inventoryTab1
+            // 
+            this.inventoryTab1.Location = new System.Drawing.Point(158, 6);
+            this.inventoryTab1.Name = "inventoryTab1";
+            this.inventoryTab1.Size = new System.Drawing.Size(324, 285);
+            this.inventoryTab1.TabIndex = 0;
             // 
             // PacketInput
             // 
@@ -676,6 +686,7 @@ namespace MapleCLB.Forms {
             this.RushTab.ResumeLayout(false);
             this.LogTab.ResumeLayout(false);
             this.LogTab.PerformLayout();
+            this.InventoryTab.ResumeLayout(false);
             this.SendMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -724,7 +735,6 @@ namespace MapleCLB.Forms {
         private System.Windows.Forms.Label MesoStatus;
         private PacketTab PacketView;
         private System.Windows.Forms.Button InitTestBtn;
-        private System.Windows.Forms.Button Information;
         private System.Windows.Forms.Label ExpStatus;
         private System.Windows.Forms.Label Exp;
         private System.Windows.Forms.Button FM_Functions;
@@ -736,5 +746,7 @@ namespace MapleCLB.Forms {
         private System.Windows.Forms.Label Working;
         private RusherTab RushView;
         private System.Windows.Forms.Timer UpTimer;
+        private System.Windows.Forms.TabPage InventoryTab;
+        private InventoryTab inventoryTab1;
     }
 }

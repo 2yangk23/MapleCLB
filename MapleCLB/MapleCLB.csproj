@@ -95,6 +95,12 @@
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Tabs\InventoryTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Tabs\InventoryTab.designer.cs">
+      <DependentUpon>InventoryTab.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tabs\PacketTab.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -158,6 +164,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Tabs\InventoryTab.resx">
+      <DependentUpon>InventoryTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tabs\PacketTab.resx">
       <DependentUpon>PacketTab.cs</DependentUpon>

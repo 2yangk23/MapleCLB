@@ -48,7 +48,8 @@
             WHISPER = 0x0177,
             SEND_CHAT = 0x00, //not updated
 
-            DROP_ITEM = 0xF0, //Not updated, useless
+            DROP_ITEM = 0xEC,
+            DROP_MESO = 0x012F,
 
             BEFORE_MOVE = 0x022E,
 

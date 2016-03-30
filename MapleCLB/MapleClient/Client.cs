@@ -181,7 +181,6 @@ namespace MapleCLB.MapleClient {
 
         internal void Disconnect() {
             session.Disconnect();
-            //SendPacket(General.ExitCS()); //Temp -.-
         }
 
         public void WriteLog(string message) {
