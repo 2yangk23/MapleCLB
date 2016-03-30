@@ -62,7 +62,10 @@ namespace MapleCLB.Forms {
                 "t.h.e.m.apleblc@gmail.com",
                 "t.h.e.m.a.pleblc@gmail.com",
                 "t.h.e.m.a.p.leblc@gmail.com",
-                "t.h.e.m.a.p.l.eblc@gmail.com"
+                "t.h.e.m.a.p.l.eblc@gmail.com",
+                "The.OldKingCoal@gmail.com",
+                "TheO.ldKingCoal@gmail.com",
+                "TheOl.dKingCoal@gmail.com"
             };
 
             UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
@@ -259,6 +262,16 @@ namespace MapleCLB.Forms {
         private void UpTimer_Tick(object sender, EventArgs e) {
             uptime = uptime.AddSeconds(1);
             WorkingStatus.Text = uptime.ToString("HH:mm:ss");
+        }
+
+        private void InventoryTabs_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (this.Tabs.SelectedTab == InventoryTab)
+            {
+                Console.WriteLine("ALMOST DONE BRB CLASS");
+                //InventoryTab.clear();
+                //InventoryTab.updateInventory();}
+            }
         }
 
         private void SpamMenuItem_Click(object sender, EventArgs e) {

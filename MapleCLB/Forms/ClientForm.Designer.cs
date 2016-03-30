@@ -495,6 +495,7 @@ namespace MapleCLB.Forms {
             this.Tabs.SelectedIndex = 0;
             this.Tabs.Size = new System.Drawing.Size(689, 346);
             this.Tabs.TabIndex = 16;
+            this.Tabs.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.InventoryTabs_Selecting);
             // 
             // AccountTab
             // 
