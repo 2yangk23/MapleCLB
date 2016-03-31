@@ -14,13 +14,13 @@ namespace MapleCLB.MapleClient.Handlers {
         /* Client Headers */
         private readonly Dictionary<ushort, EventHandler<PacketReader>> headerMap;
         /* Script Headers */
-        private readonly ConcurrentDictionary<ushort, IProgress<PacketReader>> scriptHandler;
+        private readonly ConcurrentDictionary<ushort, EventHandler<PacketReader>> scriptHandler;
         private readonly ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>> scriptWait;
 
         internal Packet(Client client, IProgress<byte[]> log) : base(client) {
             writeRecv = log;
             headerMap = new Dictionary<ushort, EventHandler<PacketReader>>();
-            scriptHandler = new ConcurrentDictionary<ushort, IProgress<PacketReader>>();
+            scriptHandler = new ConcurrentDictionary<ushort, EventHandler<PacketReader>>();
             scriptWait = new ConcurrentDictionary<ushort, List<Tuple<bool, Blocking<PacketReader>>>>();
 
             Register(RecvOps.CHARLIST, Login.SelectCharacter);
@@ -48,7 +48,7 @@ namespace MapleCLB.MapleClient.Handlers {
                 headerMap[header](client, new PacketReader(packet, 2));
             }
             if (scriptHandler.ContainsKey(header)) {
-                scriptHandler[header].Report(new PacketReader(packet, 2));
+                scriptHandler[header](client, new PacketReader(packet, 2));
             }
             if (scriptWait.ContainsKey(header)) {
                 // Ordering is necessary to prevent race condition
@@ -66,16 +66,16 @@ namespace MapleCLB.MapleClient.Handlers {
             headerMap.Remove(header);
         }
 
-        internal bool RegisterHandler(ushort header, IProgress<PacketReader> progress) {
+        internal bool RegisterHandler(ushort header, EventHandler<PacketReader> handler) {
             if (scriptHandler.ContainsKey(header)) {
                 return false;
             }
-            scriptHandler[header] = progress;
+            scriptHandler[header] = handler;
             return true;
         }
 
         internal void UnregisterHandler(ushort header) {
-            IProgress<PacketReader> trash;
+            EventHandler<PacketReader> trash;
             scriptHandler.TryRemove(header, out trash);
         }
 

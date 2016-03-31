@@ -5,7 +5,7 @@ using ScriptLib;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class IgnBot : Script<Client> {
+    internal class IgnBot : UserScript<Client> {
         private const string NAME = "dismyign123";
         private readonly byte[] creationPacket, okPacket;
 
@@ -29,13 +29,15 @@ namespace MapleCLB.MapleClient.Scripts {
             okPacket = w.ToArray();
         }
 
-        protected override void Execute() {
+        protected override void Init() { }
+
+        protected override void Execute(CancellationToken token) {
             Console.WriteLine("Waiting for charlist...");
             WaitRecv(RecvOps.CHARLIST);
             SendPacket(okPacket);
             SendPacket(okPacket);
             Console.WriteLine("Starting...");
-            while (true) {
+            while (!token.IsCancellationRequested) {
                 Thread.Sleep(25);
                 Console.WriteLine("Trying ign " + NAME);
                 var w = new PacketWriter(0x74);

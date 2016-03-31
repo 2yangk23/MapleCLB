@@ -9,8 +9,8 @@
     <Import_RootNamespace>ScriptLib</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)ComplexScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Script.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserScript.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IScriptClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScriptManager.cs" />
   </ItemGroup>

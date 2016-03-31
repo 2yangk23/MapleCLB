@@ -223,8 +223,8 @@ namespace MapleCLB.MapleClient {
             return scriptManager as ScriptManager<T>;
         }
 
-        public bool AddScriptRecv(ushort header, IProgress<PacketReader> progress) {
-            return packetHandler.RegisterHandler(header, progress);
+        public bool AddScriptRecv(ushort header, EventHandler<PacketReader> handler) {
+            return packetHandler.RegisterHandler(header, handler);
         }
 
         public void RemoveScriptRecv(ushort header) {

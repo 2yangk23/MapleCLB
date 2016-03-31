@@ -1,83 +1,58 @@
 ﻿using System;
-using System.Runtime.Remoting.Contexts;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using MapleCLB.Tools;
 using MapleLib.Packet;
 using SharedTools;
 
 namespace ScriptLib {
-    [Synchronization(true)]
-    internal abstract class Script<TClient> where TClient : IScriptClient {
-        private int refs = 1;
-        private readonly ScriptManager<TClient> manager;
-        private readonly Blocking<PacketReader> reader = new Blocking<PacketReader>();
-        private readonly AutoResetEvent waiter = new AutoResetEvent(false);
+    public abstract class Script<TClient> where TClient : IScriptClient {
+        private readonly List<ushort> headers = new List<ushort>();
 
+        private int refs;
         protected TClient client;
         protected bool running;
 
         protected Script(TClient client) {
-            manager = client.GetScriptManager<TClient>();
-            Precondition.NotNull(manager);
             this.client = client;
         }
 
-        internal bool Start() {
+        #region Script Commands
+        public bool Start() {
             return Start(Run);
         }
 
-        // Wakes up script that is waiting on any header
-        internal void Wake() {
-            waiter.Set();
+        public void Stop() {
+            Interlocked.Decrement(ref refs);
+            if (refs == 0) {
+                headers.ForEach(d => client.RemoveScriptRecv(d));
+                headers.Clear();
+                running = false;
+            }
         }
 
-        #region Script Run
         private void Run() {
-            Execute();
-            Complete();
-            running = false;
+            try {
+                Init();
+            } catch (InvalidOperationException ex) {
+                Debug.WriteLine($"Error running {GetType().Name}.  Terminated.");
+                Debug.WriteLine(ex.ToString());
+            }
         }
         #endregion
 
-        #region Shared Implementations
         protected bool Start(Action run) {
             Interlocked.Increment(ref refs);
             if (running) {
                 return false;
             }
             running = true;
-            client.WriteLog($"[SCRIPT] Started {GetType().Name}.");
-            Task.Run(run);
+            Debug.WriteLine($"[SCRIPT] Started {GetType().Name}.");
+            run();
             return true;
         }
 
-        protected void Complete() {
-            manager.Release(GetType());
-        }
-
-        protected TScript Requires<TScript>() where TScript : Script<TClient> {
-            var script = manager.Get<TScript>();
-            ComplexScript<TClient> complex = script as ComplexScript<TClient>;
-
-            // Make sure script is started
-            if (complex != null) {
-                complex.Start();
-            } else {
-                script.Start();
-            }
-
-            return script;
-        }
-        #endregion
-
         #region Scripting Functions
-        // Returns 'null' if returnPacket is FALSE, else returns received packet
-        protected PacketReader WaitRecv(ushort header, bool returnPacket = false) {
-            client.WaitScriptRecv(header, reader, returnPacket);
-            return reader.Get();
-        }
-
         protected void SendPacket(byte[] packet) {
             client.SendPacket(packet);
         }
@@ -86,7 +61,18 @@ namespace ScriptLib {
             client.SendPacket(w);
         }
 
-        protected abstract void Execute();
+        protected void RegisterRecv(ushort header, EventHandler<PacketReader> handler) {
+            Precondition.Check<InvalidOperationException>(client.AddScriptRecv(header, handler),
+                $"Failed to register header {header:X4}.");
+            headers.Add(header);
+        }
+
+        protected void UnregisterRecv(ushort header) {
+            headers.Remove(header);
+            client.RemoveScriptRecv(header);
+        }
+
+        protected abstract void Init();
         #endregion
     }
 }

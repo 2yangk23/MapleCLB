@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
 using MapleCLB.Types;
@@ -11,7 +12,7 @@ namespace MapleCLB.MapleClient.Scripts {
     public enum StealMode { SNIPER, GREEDY, SERVER_CHECK }
 
     //TODO: Allow support of all shop ids & slots?
-    internal sealed class SpotStealer : ComplexScript<Client> {
+    internal sealed class SpotStealer : UserScript<Client> {
         /* Info */
         public StealMode Mode = StealMode.GREEDY;
         public ShopType Type = ShopType.PERMIT;
@@ -33,7 +34,7 @@ namespace MapleCLB.MapleClient.Scripts {
             RegisterRecv(RecvOps.BLUE_POP, OpenMushy);
         }
 
-        protected override void Execute() {
+        protected override void Execute(CancellationToken token) {
             if (client.State != ClientState.GAME) {
                 WaitRecv(RecvOps.FINISH_LOAD);
             }
@@ -83,25 +84,25 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         // Handlers
-        private void OpenMushy(PacketReader r) {
+        private void OpenMushy(object o, PacketReader r) {
             if (r.ReadByte() == 7) {
                 SendPacket(Trade.CreateShop(ShopType.MUSHY, ShopName, 1, 5030000));
             }
         }
 
-        private void PermitClosed(PacketReader r) {
+        private void PermitClosed(object o, PacketReader r) {
             int uid = r.ReadInt();
             if (r.ReadByte() == 5) { // Permit closed
                 StealSpot(uid << 4);
             }
         }
 
-        private void MushyClosed(PacketReader r) {
+        private void MushyClosed(object o, PacketReader r) {
             int uid = r.ReadInt();
             StealSpot(uid);
         }
 
-        private void SpawnPermit(PacketReader r) {
+        private void SpawnPermit(object o, PacketReader r) {
             int uid = r.ReadInt() << 4; // Shift uid so that it won't conflict with uid for mushys
             r.ReadByte(); // [Level (1)]
             string ign = r.ReadMapleString(); // Name
@@ -142,7 +143,7 @@ namespace MapleCLB.MapleClient.Scripts {
             }
         }
 
-        private void SpawnMushy(PacketReader r) {
+        private void SpawnMushy(object o, PacketReader r) {
             int uid = r.ReadInt();
             r.Skip(4);
             short x = r.ReadShort();

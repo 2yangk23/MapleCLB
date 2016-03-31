@@ -4,7 +4,7 @@ using MapleCLB.Packets.Send;
 using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class ChatBot : ComplexScript<Client> {
+    internal class ChatBot : Script<Client> {
         //private readonly PlayerLoader playerLoader;
 
         public ChatBot(Client client) : base(client) {
@@ -16,13 +16,7 @@ namespace MapleCLB.MapleClient.Scripts {
             RegisterRecv(RecvOps.ALL_CHAT, Respond);
         }
 
-        protected override void Execute() {
-            WaitRecv(RecvOps.CHAR_INFO);
-            SendPacket(Chat.All("Kelvin is gh3y"));
-            WaitRecv(0xFFFF); // Wait forever
-        }
-
-        private void Respond(PacketReader r) {
+        private void Respond(object o, PacketReader r) {
             int uid = r.ReadInt();
             r.ReadByte();
             string msg = r.ReadMapleString();

@@ -7,7 +7,7 @@ using MapleCLB.Tools;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class MesoVac : ComplexScript<Client> {
+    internal class MesoVac : UserScript<Client> {
         private readonly BlockingLinkedList<Item> lootQueue = new BlockingLinkedList<Item>();
 
         public MesoVac(Client client) : base(client) { }
@@ -16,7 +16,7 @@ namespace MapleCLB.MapleClient.Scripts {
             RegisterRecv(RecvOps.SPAWN_ITEM, LootMeso);
         }
 
-        protected override void Execute() {
+        protected override void Execute(CancellationToken token) {
             while (true) { // TODO: Some condition to terminate script
                 var item = lootQueue.GetFirst();
                 Thread.Sleep(30);
@@ -27,7 +27,7 @@ namespace MapleCLB.MapleClient.Scripts {
             }
         }
 
-        private void LootMeso(PacketReader r) {
+        private void LootMeso(object o, PacketReader r) {
             r.Skip(1); // 00
             byte type = r.ReadByte(); // [Type (1)] 0 = drop animation, 1 = visible, 2 = spawned, 3 = dissapearing
             if (type == 1 || type == 3) { // Don't loot item if visible/disappearing
