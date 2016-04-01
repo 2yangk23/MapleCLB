@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using MapleCLB.Tools;
 
 namespace MapleCLB.Types {
@@ -42,10 +43,32 @@ namespace MapleCLB.Types {
         public string Password { get; set; }
         public string Pic { get; set; }
 
-        public SelectMode Mode { get; set; }
+        public SelectMode SelectMode { get; set; }
         public string Select { get; set; }
 
         public byte World { get; set; }
         public byte Channel { get; set; }
+
+        public Account() { }
+
+        public Account(BinaryReader br) {
+            Username = br.ReadString();
+            Password = br.ReadString();
+            Pic = br.ReadString();
+            SelectMode = (SelectMode) br.ReadByte();
+            Select = br.ReadString();
+            World = br.ReadByte();
+            Channel = br.ReadByte();
+        }
+
+        public void WriteTo(BinaryWriter bw) {
+            bw.Write(Username);
+            bw.Write(Password);
+            bw.Write(Pic);
+            bw.Write((byte) SelectMode);
+            bw.Write(Select);
+            bw.Write(World);
+            bw.Write(Channel);
+        }
     }
 }

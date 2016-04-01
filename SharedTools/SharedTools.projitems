@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Blocking.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BlockingLinkedList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Crc32.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EncryptedStream.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HexEncoding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MultiKeyDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Precondition.cs" />

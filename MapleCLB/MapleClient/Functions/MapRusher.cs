@@ -4,7 +4,7 @@ using MapleCLB.Resources;
 using MapleCLB.Types;
 
 namespace MapleCLB.MapleClient.Functions {
-    internal class MapRusher {
+    internal static class MapRusher {
         internal static List<Portal> Pathfind(int src, int dst) {
             List<Portal> directions = new List<Portal>();
 
@@ -37,10 +37,10 @@ namespace MapleCLB.MapleClient.Functions {
         }
 
         internal static List<int> Reachable(int src) {
-            if (!MapData.Nodes.ContainsKey(src)) { // No dst in map
-                return new List<int>();
+            if (MapData.Nodes.ContainsKey(src)) {
+                return new List<int>(MapData.Nodes[src].Choice.Keys);
             }
-            return new List<int>(MapData.Nodes[src].Choice.Keys);
+            return new List<int>(); // No dst in map
         }
     }
 }

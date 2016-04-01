@@ -98,7 +98,7 @@
             // StatusSep2
             // 
             this.StatusSep2.Name = "StatusSep2";
-            this.StatusSep2.Size = new System.Drawing.Size(387, 17);
+            this.StatusSep2.Size = new System.Drawing.Size(389, 17);
             this.StatusSep2.Spring = true;
             // 
             // RushList
@@ -128,12 +128,13 @@
             this.henesysToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.henesysToolStripMenuItem.Text = "Henesys";
             // 
-            // RusherView
+            // RusherTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.RushStatusBar);
             this.Controls.Add(this.RushTree);
+            this.DoubleBuffered = true;
             this.Name = "RusherTab";
             this.Size = new System.Drawing.Size(683, 321);
             this.RushStatusBar.ResumeLayout(false);

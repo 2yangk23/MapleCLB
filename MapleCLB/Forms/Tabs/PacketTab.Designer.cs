@@ -156,12 +156,13 @@
             this.RecvTree.Size = new System.Drawing.Size(675, 295);
             this.RecvTree.TabIndex = 1;
             // 
-            // PacketView
+            // PacketTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.LogPacket);
             this.Controls.Add(this.PacketTabs);
+            this.DoubleBuffered = true;
             this.Name = "PacketTab";
             this.Size = new System.Drawing.Size(681, 319);
             this.PacketMenu.ResumeLayout(false);

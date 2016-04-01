@@ -89,11 +89,23 @@
     <Compile Include="Forms\Information.Designer.cs">
       <DependentUpon>Information.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\LoadAccountForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LoadAccountForm.Designer.cs">
+      <DependentUpon>LoadAccountForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\InputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InputForm.Designer.cs">
+      <DependentUpon>InputForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Tabs\InventoryTab.cs">
       <SubType>UserControl</SubType>
@@ -113,6 +125,7 @@
     <Compile Include="Forms\Tabs\RusherTab.Designer.cs">
       <DependentUpon>RusherTab.cs</DependentUpon>
     </Compile>
+    <Compile Include="MapleClient\Functions\AccountLoader.cs" />
     <Compile Include="MapleClient\Functions\MapRusher.cs" />
     <Compile Include="MapleClient\Handlers\Handler.cs" />
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
@@ -153,6 +166,7 @@
     <Compile Include="Types\Items\Other.cs" />
     <Compile Include="Types\Mapler.cs" />
     <Compile Include="Types\MapNode.cs" />
+    <Compile Include="Types\Settings.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -162,8 +176,14 @@
     <EmbeddedResource Include="Forms\Information.resx">
       <DependentUpon>Information.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LoadAccountForm.resx">
+      <DependentUpon>LoadAccountForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InputForm.resx">
+      <DependentUpon>InputForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tabs\InventoryTab.resx">
       <DependentUpon>InventoryTab.cs</DependentUpon>

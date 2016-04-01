@@ -672,6 +672,7 @@ namespace MapleCLB.Forms {
             this.Controls.Add(this.DelayInput);
             this.Controls.Add(this.PacketInput);
             this.Controls.Add(this.Tabs);
+            this.Location = new System.Drawing.Point(3, 3);
             this.Name = "ClientForm";
             this.Size = new System.Drawing.Size(689, 377);
             this.AccountGroup.ResumeLayout(false);

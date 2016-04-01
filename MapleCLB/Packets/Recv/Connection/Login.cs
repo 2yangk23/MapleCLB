@@ -59,7 +59,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             LoadCharlist(c, r);
 
             try {
-                switch (c.Account.Mode) {
+                switch (c.Account.SelectMode) {
                     case SelectMode.SLOT:
                         byte n;
                         byte.TryParse(c.Account.Select, out n);
@@ -69,7 +69,7 @@ namespace MapleCLB.Packets.Recv.Connection {
                         c.UserId = c.CharMap[c.Account.Select.ToLower()];
                         break;
                     default:
-                        throw new InvalidOperationException("Selection mode " + c.Account.Mode + " is not valid.");
+                        throw new InvalidOperationException("Selection mode " + c.Account.SelectMode + " is not valid.");
                 }
                 c.SendPacket(Send.Login.SelectCharacter(c.Account, c.UserId));
             } catch {

@@ -55,27 +55,41 @@ namespace MapleCLB.Forms {
             world.SelectedIndex     = 0;
             channel.SelectedIndex   = 0;*/
 #endif
+            InitializeAccount();
+        }
 
-            string[] users = {
-                "T.heOldKingCoal@gmail.com",
-                "t.hemapleblc@gmail.com",
-                "t.h.e.m.apleblc@gmail.com",
-                "t.h.e.m.a.pleblc@gmail.com",
-                "t.h.e.m.a.p.leblc@gmail.com",
-                "t.h.e.m.a.p.l.eblc@gmail.com",
-                "The.OldKingCoal@gmail.com",
-                "TheO.ldKingCoal@gmail.com",
-                "TheOl.dKingCoal@gmail.com"
-            };
+        public void InitializeAccount(Account account = null) {
+            if (account == null) {
+                string[] users = {
+                    "T.heOldKingCoal@gmail.com",
+                    "t.hemapleblc@gmail.com",
+                    "t.h.e.m.apleblc@gmail.com",
+                    "t.h.e.m.a.pleblc@gmail.com",
+                    "t.h.e.m.a.p.leblc@gmail.com",
+                    "t.h.e.m.a.p.l.eblc@gmail.com",
+                    "The.OldKingCoal@gmail.com",
+                    "TheO.ldKingCoal@gmail.com",
+                    "TheOl.dKingCoal@gmail.com"
+                };
 
-            UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
-            PassInput.Text = "maplestory";
-            PicInput.Text = "777000";
-            CharInput.Text = "1";
-            SelectList.SelectedIndex = 0;
-            WorldList.SelectedIndex = 2;
-            ChannelList.SelectedIndex = 6;
-            ModeList.SelectedIndex = 0;
+                UserInput.Text = users[Math.Abs(Environment.TickCount) % users.Length];
+                PassInput.Text = "maplestory";
+                PicInput.Text = "777000";
+                CharInput.Text = "1";
+                SelectList.SelectedIndex = 0;
+                WorldList.SelectedIndex = 2;
+                ChannelList.SelectedIndex = 6;
+                ModeList.SelectedIndex = 0;
+            } else {
+                UserInput.Text = account.Username;
+                PassInput.Text = account.Password;
+                PicInput.Text = account.Pic;
+                CharInput.Text = account.Select;
+                SelectList.SelectedIndex = (byte)account.SelectMode;
+                WorldList.SelectedIndex = account.World;
+                ChannelList.SelectedIndex = account.Channel;
+                ModeList.SelectedIndex = 0;
+            }
         }
 
         private void InitializeProgress() {
@@ -122,23 +136,25 @@ namespace MapleCLB.Forms {
             UpdatePeople = new Progress<int>(d => PeopleStatus.Text = d.ToString());
         }
 
+        public Account GetAccount() {
+            return new Account {
+                Username = UserInput.Text,
+                Password = PassInput.Text,
+                Pic = PicInput.Text,
+                Select = CharInput.Text,
+                SelectMode = (SelectMode)SelectList.SelectedIndex,
+                Channel = (byte)ChannelList.SelectedIndex,
+                World = (byte)WorldList.SelectedIndex
+            };
+        }
+
         /* Temporary stuff*/
         private void ConnectBtn_Click(object sender, EventArgs e) {
             if (ConnectBtn.Text.Equals("Connect")) {
-                var account = new Account {
-                    Username    = UserInput.Text,
-                    Password    = PassInput.Text,
-                    Pic         = PicInput.Text,
-                    Select      = CharInput.Text,
-                    Mode        = (SelectMode) SelectList.SelectedIndex,
-                    Channel     = (byte) ChannelList.SelectedIndex,
-                    World       = (byte) WorldList.SelectedIndex
-                };
-
                 client.doWhat = (byte) ModeList.SelectedIndex;
 
                 Task.Factory.StartNew(() => {
-                    client.Initialize(account);
+                    client.Initialize(GetAccount());
                     client.Connect();
                 }, TaskCreationOptions.LongRunning);
             } else {
