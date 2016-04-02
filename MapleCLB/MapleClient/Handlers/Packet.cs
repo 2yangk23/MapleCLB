@@ -35,6 +35,8 @@ namespace MapleCLB.MapleClient.Handlers {
             Register(RecvOps.REMOVE_PLAYER, Map.RemovePlayer);
             Register(RecvOps.SPAWN_PLAYER, Map.SpawnPlayer);
             Register(RecvOps.CHAR_INFO, Load.CharInfo);
+            Register(RecvOps.UPDATE_INVENTORY, Load.UpdateInventory);
+            Register(RecvOps.UPDATE_STATUS, Load.UpdateStatus);
 
             //Temp (Is this even working?)
             Register(RecvOps.FINISH_LOAD, FMMovement.moveFM1);

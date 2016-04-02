@@ -3,18 +3,18 @@ using System.Collections.ObjectModel;
 using System.IO;
 
 namespace MapleCLB.Types {
-    public sealed class Portal {
+    public sealed class PortalInfo {
         public short X { get; set; }
         public short Y { get; set; }
         public string Name { get; set; }
     }
 
     public class MapNode {
-        public ReadOnlyDictionary<int, Portal> Portals;
+        public ReadOnlyDictionary<int, PortalInfo> Portals;
         public ReadOnlyDictionary<int, int> Choice { get; set; }
         public int Id { get; }
 
-        public MapNode(int id, ReadOnlyDictionary<int, Portal> portals,
+        public MapNode(int id, ReadOnlyDictionary<int, PortalInfo> portals,
                        ReadOnlyDictionary<int, int> choice) {
             Id = id;
             Portals = portals;
@@ -25,10 +25,10 @@ namespace MapleCLB.Types {
             Id = reader.ReadInt32();
 
             int count = reader.ReadInt32();
-            Dictionary<int, Portal> portals = new Dictionary<int, Portal>(count);
+            Dictionary<int, PortalInfo> portals = new Dictionary<int, PortalInfo>(count);
             for (int i = 0; i < count; i++) {
                 int key = reader.ReadInt32();
-                portals[key] = new Portal {
+                portals[key] = new PortalInfo {
                     X = reader.ReadInt16(),
                     Y = reader.ReadInt16(),
                     Name = reader.ReadString()
@@ -44,7 +44,7 @@ namespace MapleCLB.Types {
             }
 
             // Assign Dictionaries
-            Portals = new ReadOnlyDictionary<int, Portal>(portals);
+            Portals = new ReadOnlyDictionary<int, PortalInfo>(portals);
             Choice = new ReadOnlyDictionary<int, int>(choice);
         }
 

@@ -40,6 +40,7 @@
 
             LOOT_ITEM = 0x032E,
             CHANGE_MAP = 0xAC,
+            SPECIAL_PORTAL = 0x01EE,
             CHANGE_CHANNEL = CHANGE_MAP + 0x01,
             TRADE = 0x0179,
             USE_MUSHY = 0x00E1,
@@ -56,7 +57,7 @@
             /* cashshop */
             ENTER_CASHSHOP = 0xB1,
             MOVE_PLAYER = 0xBB,
-            NPC_TALK = 0x00, //Not udpated
+            NPC_TALK = 0xDA, 
             NPC_TALK_MORE = NPC_TALK + 0x02; //why do i have this?
     }
 
@@ -94,6 +95,8 @@
 
             /* player */
             CHAR_INFO = 0x019E,
+            UPDATE_INVENTORY = 0x42,
+            UPDATE_STATUS = 0x44,
             SEED = 0x0172,  //4A FC E4 FF is magic number  
 
             BLUE_POP = 0x60,

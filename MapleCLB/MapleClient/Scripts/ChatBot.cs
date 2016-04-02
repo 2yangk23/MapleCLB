@@ -4,7 +4,7 @@ using MapleCLB.Packets.Send;
 using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class ChatBot : Script<Client> {
+    internal class ChatBot : Script {
         //private readonly PlayerLoader playerLoader;
 
         public ChatBot(Client client) : base(client) {

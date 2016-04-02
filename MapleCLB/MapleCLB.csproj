@@ -59,15 +59,8 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -131,6 +124,7 @@
     <Compile Include="MapleClient\Handlers\Handshake.cs" />
     <Compile Include="MapleClient\Handlers\Packet.cs" />
     <Compile Include="MapleClient\Scripts\MesoVac.cs" />
+    <Compile Include="MapleClient\Scripts\CustomScript.cs" />
     <Compile Include="MapleClient\Scripts\SpotStealer.cs" />
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
@@ -159,6 +153,9 @@
     <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
+    <Compile Include="ScriptLib\Script.cs" />
+    <Compile Include="ScriptLib\ScriptManager.cs" />
+    <Compile Include="ScriptLib\UserScript.cs" />
     <Compile Include="Types\Account.cs" />
     <Compile Include="Types\Items\Inventory.cs" />
     <Compile Include="Types\Items\Equip.cs" />
@@ -241,7 +238,6 @@
   </ItemGroup>
   <Import Project="..\SharedTools\SharedTools.projitems" Label="Shared" />
   <Import Project="..\MapleLib\MapleLib.projitems" Label="Shared" />
-  <Import Project="..\ScriptLib\ScriptLib.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

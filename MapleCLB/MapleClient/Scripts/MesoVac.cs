@@ -7,7 +7,7 @@ using MapleCLB.Tools;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class MesoVac : UserScript<Client> {
+    internal class MesoVac : UserScript {
         private readonly BlockingLinkedList<Item> lootQueue = new BlockingLinkedList<Item>();
 
         public MesoVac(Client client) : base(client) { }
@@ -49,6 +49,7 @@ namespace MapleCLB.MapleClient.Scripts {
                 Timestamp = Stopwatch.GetTimestamp() / Stopwatch.Frequency
             };
 
+            //TODO: This delay is still not perfect, maybe react on confirmation of loot instead?
             switch (type) {
                 case 0: // Item dropping
                     item.Timestamp++; // Delay 1 second

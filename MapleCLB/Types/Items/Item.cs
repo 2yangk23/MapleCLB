@@ -26,6 +26,10 @@ namespace MapleCLB.Types.Items {
                 return (T) Activator.CreateInstance(typeof(T), ItemType.UNKNOWN, 0, slot);
             }
 
+            return Parse<T>(pr, slot);
+        }
+
+        public static T Parse<T>(PacketReader pr, short slot) where T : Item {
             // [Type (1)] [Id (4)] [Flag (1) ? UniqueId (8)] [Timestamp (8)] FF FF FF FF
             var type = (ItemType) pr.ReadByte();
             int id = pr.ReadInt();

@@ -5,7 +5,7 @@ using ScriptLib;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
-    internal class IgnBot : UserScript<Client> {
+    internal class IgnBot : UserScript {
         private const string NAME = "dismyign123";
         private readonly byte[] creationPacket, okPacket;
 

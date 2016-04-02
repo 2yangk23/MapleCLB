@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using MapleCLB.MapleClient.Functions;
 using MapleCLB.Types;
-using Microsoft.VisualBasic;
 
 namespace MapleCLB.Forms {
     public sealed partial class MainForm : Form {
@@ -37,7 +36,7 @@ namespace MapleCLB.Forms {
         }
 
         private static bool ConfirmClose() {
-            var result = MessageBox.Show("Are you sure you to close to application?", "Close Application?",
+            var result = MessageBox.Show("Are you sure you want to close the application?", "Close Application?",
                              MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             return result == DialogResult.Yes;
         }

@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using MapleCLB.MapleClient;
 using MapleLib.Packet;
 using SharedTools;
 
 namespace ScriptLib {
-    public abstract class Script<TClient> where TClient : IScriptClient {
+    public abstract class Script {
         private readonly List<ushort> headers = new List<ushort>();
 
         private int refs;
-        protected TClient client;
+        protected Client client;
         protected bool running;
 
-        protected Script(TClient client) {
+        protected Script(Client client) {
             this.client = client;
         }
 
         #region Script Commands
-        public bool Start() {
+        public virtual bool Start() {
             return Start(Run);
         }
 
-        public void Stop() {
+        public virtual void Stop() {
             Interlocked.Decrement(ref refs);
             if (refs == 0) {
                 headers.ForEach(d => client.RemoveScriptRecv(d));

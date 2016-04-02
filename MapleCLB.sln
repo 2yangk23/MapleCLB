@@ -9,12 +9,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedTools", "SharedTools\
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MapleLib", "MapleLib\MapleLib.shproj", "{78A7284E-C54B-4B98-8573-4AF8E0243C71}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ScriptLib", "ScriptLib\ScriptLib.shproj", "{0F5ED141-4E6D-438C-8171-CA7290759F2B}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		ScriptLib\ScriptLib.projitems*{0f5ed141-4e6d-438c-8171-ca7290759f2b}*SharedItemsImports = 13
-		ScriptLib\ScriptLib.projitems*{0e6a99e3-156d-49c6-8cbd-83f74d609790}*SharedItemsImports = 4
 		MapleLib\MapleLib.projitems*{0e6a99e3-156d-49c6-8cbd-83f74d609790}*SharedItemsImports = 4
 		SharedTools\SharedTools.projitems*{0e6a99e3-156d-49c6-8cbd-83f74d609790}*SharedItemsImports = 4
 		SharedTools\SharedTools.projitems*{83c9ea29-2f0f-431b-96b6-1707f72e8062}*SharedItemsImports = 13

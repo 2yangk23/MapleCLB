@@ -18,7 +18,7 @@ namespace MapleCLB.Types {
         public int MaxMp { get; private set; }
 
         public int Ap { get; private set; }
-        public long Exp { get; private set; }
+        public long Exp { get; set; }
         public int Fame { get; private set; }
         public int Map { get; set; }
 

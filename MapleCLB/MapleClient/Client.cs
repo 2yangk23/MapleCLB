@@ -15,7 +15,6 @@ using MapleCLB.Types;
 using MapleCLB.Types.Items;
 using MapleLib;
 using MapleLib.Packet;
-using Portal = MapleCLB.Types.Portal;
 using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
@@ -26,7 +25,7 @@ namespace MapleCLB.MapleClient {
         GAME
     }
 
-    public class Client : IScriptClient {
+    public class Client {
         private const int SERVER_TIMEOUT = 20000;
         private const int CHANNEL_TIMEOUT = 10000;
 
@@ -42,7 +41,7 @@ namespace MapleCLB.MapleClient {
         internal readonly IProgress<string> Log;
 
         /* Client Info */
-        private readonly ScriptManager<Client> scriptManager;
+        public readonly ScriptManager ScriptManager;
         private readonly Handshake handshakeHandler;
         private readonly Packet packetHandler;
         private Session session;
@@ -62,7 +61,7 @@ namespace MapleCLB.MapleClient {
         internal int UserId;
         internal byte Channel;
 
-        internal IProgress<List<Portal>> MapRush;
+        internal IProgress<List<PortalInfo>> MapRush;
         internal byte PortalCount = 1;
         internal int PortalCrc;
 
@@ -93,7 +92,7 @@ namespace MapleCLB.MapleClient {
             CharMap = new MultiKeyDictionary<byte, string, int>();
             UidMap = new ConcurrentDictionary<int, string>();
 
-            scriptManager = new ScriptManager<Client>(this);
+            ScriptManager = new ScriptManager(this);
             handshakeHandler = new Handshake(this);
             packetHandler = new Packet(this, cForm.WriteRecv);
 
@@ -104,12 +103,12 @@ namespace MapleCLB.MapleClient {
         internal void Initialize(Account account) {
             Account = account;
 
-            MapRush = new Progress<List<Portal>>(list => {
+            MapRush = new Progress<List<PortalInfo>>(list => {
                 if (list == null) {
                     return;
                 }
                 foreach (var data in list) {
-                    SendPacket(Packets.Send.Portal.Enter(PortalCount, PortalCrc, data));
+                    SendPacket(Portal.Enter(PortalCount, PortalCrc, data));
                     if (PortalCount++ == 255) {
                         PortalCount = 1; // wrap around
                     }
@@ -128,7 +127,7 @@ namespace MapleCLB.MapleClient {
         //TODO: This shouldn't be in client
         internal void StartScript(string target, string shopName, short x, short y, short fh, StealMode mode, ShopType shopType) {
             //change to w.e you wanted? not exactly sure.. :D
-            var script = scriptManager.Get<SpotStealer>();
+            var script = ScriptManager.Get<SpotStealer>();
             script.Target = target;
             script.ShopName = shopName;
             script.X = x;
@@ -136,7 +135,7 @@ namespace MapleCLB.MapleClient {
             script.Fh = fh;
             script.Mode = mode;
             script.Type = shopType;
-            scriptManager.Get<SpotStealer>().Start();
+            ScriptManager.Get<SpotStealer>().Start();
         }
 
         internal void ClearStats() {
@@ -218,11 +217,6 @@ namespace MapleCLB.MapleClient {
         #endregion
 
         #region Script Packet Funcs (Concurrent)
-        // TODO: This is very prone to bugs, how to self reference generics?
-        public ScriptManager<T> GetScriptManager<T>() where T : IScriptClient {
-            return scriptManager as ScriptManager<T>;
-        }
-
         public bool AddScriptRecv(ushort header, EventHandler<PacketReader> handler) {
             return packetHandler.RegisterHandler(header, handler);
         }

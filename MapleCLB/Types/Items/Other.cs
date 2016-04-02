@@ -22,7 +22,7 @@ namespace MapleCLB.Types.Items {
     }
 
     public class Other : Item {
-        public short Quantity { get; private set; }
+        public short Quantity { get; set; }
         public Flag Flag { get; private set; }
 
         public int IdBase => Id / 10000;

@@ -12,7 +12,7 @@ namespace MapleCLB.MapleClient.Scripts {
     public enum StealMode { SNIPER, GREEDY, SERVER_CHECK }
 
     //TODO: Allow support of all shop ids & slots?
-    internal sealed class SpotStealer : UserScript<Client> {
+    internal sealed class SpotStealer : UserScript {
         /* Info */
         public StealMode Mode = StealMode.GREEDY;
         public ShopType Type = ShopType.PERMIT;

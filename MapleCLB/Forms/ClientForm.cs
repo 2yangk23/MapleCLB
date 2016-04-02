@@ -151,10 +151,11 @@ namespace MapleCLB.Forms {
         /* Temporary stuff*/
         private void ConnectBtn_Click(object sender, EventArgs e) {
             if (ConnectBtn.Text.Equals("Connect")) {
+                var account = GetAccount();
                 client.doWhat = (byte) ModeList.SelectedIndex;
 
                 Task.Factory.StartNew(() => {
-                    client.Initialize(GetAccount());
+                    client.Initialize(account);
                     client.Connect();
                 }, TaskCreationOptions.LongRunning);
             } else {

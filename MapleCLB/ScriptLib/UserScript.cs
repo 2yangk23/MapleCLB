@@ -4,33 +4,34 @@ using System.Diagnostics;
 using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
+using MapleCLB.MapleClient;
 using MapleCLB.Tools;
 using MapleLib.Packet;
 using SharedTools;
 
 namespace ScriptLib {
     [Synchronization(true)]
-    public abstract class UserScript<TClient> : Script<TClient> where TClient : IScriptClient {
-        private readonly ScriptManager<TClient> manager;
-        private readonly HashSet<Script<TClient>> dependencies = new HashSet<Script<TClient>>(); 
+    public abstract class UserScript : Script {
+        private readonly ScriptManager manager;
+        private readonly HashSet<Script> dependencies = new HashSet<Script>(); 
         private readonly Blocking<PacketReader> reader = new Blocking<PacketReader>();
         private readonly AutoResetEvent waiter = new AutoResetEvent(false);
         private readonly CancellationTokenSource source = new CancellationTokenSource();
 
-        protected UserScript(TClient client) : base(client) {
-            manager = client.GetScriptManager<TClient>();
+        protected UserScript(Client client) : base(client) {
+            manager = client.ScriptManager;
             Precondition.NotNull(manager);
         }
 
         #region Script Commands
-        public new bool Start() {
+        public override bool Start() {
             return Start(Run);
         }
 
-        public new void Stop() {
+        public override void Stop() {
             source?.Cancel();
             base.Stop();
-            foreach (Script<TClient> script in dependencies) {
+            foreach (Script script in dependencies) {
                 script.Stop();
             }
         }
@@ -60,9 +61,9 @@ namespace ScriptLib {
             return reader.Get();
         }
 
-        protected TScript Requires<TScript>() where TScript : Script<TClient> {
+        protected TScript Requires<TScript>() where TScript : Script {
             var script = manager.Get<TScript>();
-            Precondition.Check<InvalidOperationException>(!(script is UserScript<TClient>),
+            Precondition.Check<InvalidOperationException>(!(script is UserScript),
                 "You cannot require a UserScript.");
             Precondition.Check<InvalidOperationException>(dependencies.Contains(script),
                 $"{script.GetType().Name} is already a dependency.");
