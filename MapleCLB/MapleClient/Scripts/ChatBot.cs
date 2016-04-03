@@ -1,7 +1,7 @@
-﻿using MapleLib.Packet;
-using MapleCLB.Packets;
+﻿using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
-using ScriptLib;
+using MapleCLB.ScriptLib;
+using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
     internal class ChatBot : Script {

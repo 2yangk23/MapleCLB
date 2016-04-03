@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MapleCLB.Packets.Send;
 using MapleLib.Packet;
 
 namespace MapleCLB.Types.Items {
@@ -12,13 +11,21 @@ namespace MapleCLB.Types.Items {
         CASH = 5
     }
 
-    public class Inventory {
+    public sealed class Inventory {
         public long Mesos { get; set; }
-        public readonly Dictionary<short, Equip> EquipInventory = new Dictionary<short, Equip>();
-        public readonly Dictionary<short, Other> UseInventory = new Dictionary<short, Other>();
-        public readonly Dictionary<short, Other> SetupInventory = new Dictionary<short, Other>();
-        public readonly Dictionary<short, Other> EtcInventory = new Dictionary<short, Other>();
-        public readonly Dictionary<short, Other> CashInventory = new Dictionary<short, Other>();
+        public readonly Dictionary<short, Equip> EquipInventory;
+        public readonly Dictionary<short, Other> UseInventory;
+        public readonly Dictionary<short, Other> SetupInventory;
+        public readonly Dictionary<short, Other> EtcInventory;
+        public readonly Dictionary<short, Other> CashInventory;
+
+        public Inventory() {
+            EquipInventory = new Dictionary<short, Equip>();
+            UseInventory = new Dictionary<short, Other>();
+            SetupInventory = new Dictionary<short, Other>();
+            EtcInventory = new Dictionary<short, Other>();
+            CashInventory = new Dictionary<short, Other>();
+        }
 
         public void Clear() {
             EquipInventory.Clear();
@@ -100,8 +107,10 @@ namespace MapleCLB.Types.Items {
                     throw new ArgumentException($"{tab} is not a supported InventoryTab");
             }
         }
+    }
 
-        public static Inventory Parse(PacketReader pr) {
+    internal static class InventoryPacketExtensions {
+        internal static Inventory ReadInventory(this PacketReader pr) {
             var i = new Inventory();
 
             /* Inventory Info */
@@ -114,32 +123,32 @@ namespace MapleCLB.Types.Items {
 
             //TODO : Equipped Inventory 
             /* Equipped Items */
-            while (Item.Parse<Equip>(pr).Slot != 0) { }
+            while (pr.Read<Equip>().Slot != 0) { }
             /* Equipped CS Items */
-            while (Item.Parse<Equip>(pr).Slot != 0) { }
+            while (pr.Read<Equip>().Slot != 0) { }
 
             /* Equip Inventory */
             Equip equipItem;
-            while ((equipItem = Item.Parse<Equip>(pr)).Slot != 0) {
+            while ((equipItem = pr.Read<Equip>()).Slot != 0) {
                 i.EquipInventory[equipItem.Slot] = equipItem;
             }
             // [Zero (24)]
             pr.Skip(24);
             /* Use Inventory */
             Other otherItem;
-            while ((otherItem = Item.Parse<Other>(pr)).Slot != 0) {
+            while ((otherItem = pr.Read<Other>()).Slot != 0) {
                 i.UseInventory[otherItem.Slot] = otherItem;
             }
             /* Set-up Inventory */
-            while ((otherItem = Item.Parse<Other>(pr)).Slot != 0) {
+            while ((otherItem = pr.Read<Other>()).Slot != 0) {
                 i.SetupInventory[otherItem.Slot] = otherItem;
             }
             /* Etc Inventory */
-            while ((otherItem = Item.Parse<Other>(pr)).Slot != 0) {
+            while ((otherItem = pr.Read<Other>()).Slot != 0) {
                 i.EtcInventory[otherItem.Slot] = otherItem;
             }
             /* Cash Inventory */
-            while ((otherItem = Item.Parse<Other>(pr)).Slot != 0) {
+            while ((otherItem = pr.Read<Other>()).Slot != 0) {
                 i.CashInventory[otherItem.Slot] = otherItem;
             }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using MapleCLB.Packets;
-using ScriptLib;
+using MapleCLB.ScriptLib;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
@@ -12,12 +12,12 @@ namespace MapleCLB.MapleClient.Scripts {
         public IgnBot(Client client) : base(client) {
             var w = new PacketWriter(0x87);
             w.WriteMapleString(NAME);
-            w.WriteInt(0); // Key Settings - = basic
+            w.WriteInt(); // Key Settings - = basic
             w.WriteInt(-1);
             w.WriteInt(1); // Job
-            w.WriteShort(0); // Sub Job
+            w.WriteShort(); // Sub Job
             w.WriteByte(1); // gender
-            w.WriteByte(0); // Skin
+            w.WriteByte(); // Skin
             // [Blocks (1)] [4 * Blocks]
             w.WriteHexString("06 D1 52 00 00 9F 93 00 00 00 00 00 00 DA 0A 10 00 C1 5E 10 00 F0 DD 13 00");
 

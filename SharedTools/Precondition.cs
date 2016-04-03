@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace SharedTools {
     public class Precondition {
+        [ContractAnnotation("condition:false => halt")]
         public static void Check<T>(bool condition, string message = null) where T : Exception, new() {
             if (condition) {
                 return;
@@ -14,6 +16,7 @@ namespace SharedTools {
             throw exception;
         }
 
+        [ContractAnnotation("o:null => halt")]
         public static void NotNull(object o, string name = null) {
             Check<ArgumentNullException>(o != null, name);
         }

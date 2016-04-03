@@ -22,7 +22,9 @@ namespace MapleCLB.Forms.Tabs {
             List<int> reachable = MapRusher.Reachable(srcMap);
             foreach (int map in reachable) {
                 string[] names;
-                MapData.Names.TryGetValue(map, out names);
+                if (!MapData.Names.TryGetValue(map, out names)) {
+                    continue;
+                }
 
                 if (!RushTree.Nodes.ContainsKey(names[0])) {
                     RushTree.Nodes.Add(names[0], names[0]);

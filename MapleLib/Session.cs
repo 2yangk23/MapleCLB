@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using MapleLib.Crypto;
 using MapleLib.Packet;
 using SharedTools;
@@ -22,6 +23,7 @@ namespace MapleLib {
 
         public readonly SessionType SessionType;
 
+        private static int rngSeed = Environment.TickCount;
         private readonly Socket socket;
         private MapleCipher clientCipher;
         private int cursor;
@@ -81,7 +83,7 @@ namespace MapleLib {
             if (info != null) {
                 byte[] siv = new byte[4];
                 byte[] riv = new byte[4];
-                var rng = new Random();
+                var rng = new Random(Interlocked.Increment(ref rngSeed));
 
                 rng.NextBytes(siv);
                 rng.NextBytes(riv);

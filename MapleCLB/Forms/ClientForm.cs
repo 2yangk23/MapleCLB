@@ -4,8 +4,8 @@ using System.Windows.Forms;
 using MapleCLB.MapleClient;
 using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
-using MapleCLB.Tools;
 using MapleCLB.Types;
+using SharedTools;
 
 namespace MapleCLB.Forms {
     public partial class ClientForm : UserControl {
@@ -31,14 +31,13 @@ namespace MapleCLB.Forms {
 
         public ClientForm() {
             InitializeComponent();
+            UserInput.SetCueBanner("Username");
+            PassInput.SetCueBanner("Password");
+            PicInput.SetCueBanner("PIC");
+            CharInput.SetCueBanner("Character");
+            PacketInput.SetCueBanner("Enter packet to send...");
+            DelayInput.SetCueBanner("Delay");
             InitializeProgress();
-            
-            Win32.SendMessage(UserInput.Handle, Win32.EM_SETCUEBANNER, 0, "Username");
-            Win32.SendMessage(PassInput.Handle, Win32.EM_SETCUEBANNER, 0, "Password");
-            Win32.SendMessage(PicInput.Handle, Win32.EM_SETCUEBANNER, 0, "PIC");
-            Win32.SendMessage(CharInput.Handle, Win32.EM_SETCUEBANNER, 0, "Character");
-            Win32.SendMessage(PacketInput.Handle, Win32.EM_SETCUEBANNER, 0, "Enter packet to send...");
-            Win32.SendMessage(DelayInput.Handle, Win32.EM_SETCUEBANNER, 0, "Delay");
 
             client = new Client(this);
             PacketView.SetInput(PacketInput);
@@ -175,18 +174,7 @@ namespace MapleCLB.Forms {
         private void MoveBtn_Click(object sender, EventArgs e) {
             client.SendPacket(Movement.beforeTeleport());
             client.SendPacket(Movement.beforeTeleport());
-            client.SendPacket(Movement.Teleport(client.PortalCount, 0x26F611E3, 80, 34, 52));
-        }
-
-        private void Information_Click(object sender, EventArgs e){
-            if (client.ShowInformation == false) {
-                Test.UpdateInventory(client.Inventory);
-                Test.Show();
-                client.ShowInformation = true;}
-            else{
-                Test.Clear();
-                Test.Hide();
-                client.ShowInformation = false;}
+            client.SendPacket(Movement.Teleport(client.PortalCount, 0x26F611E3, new Position(80, 34), 52));
         }
 
         private void FMFunctions_Click(object sender, EventArgs e){
@@ -217,7 +205,7 @@ namespace MapleCLB.Forms {
         private void SendSpamBtn_Click(object sender, EventArgs e) {
             if (PacketInput.Text.Length == 0) return;
 
-            client.SendPacket(HexEncoding.ToByteArray(PacketInput.Text));
+            client.SendPacket(PacketInput.Text.ToByteArray());
             /*if (!sMenuSpam.Checked) {
                 C.SendPacket(sendPacket.Text);
             } else {
@@ -283,7 +271,7 @@ namespace MapleCLB.Forms {
 
         private void InventoryTabs_Selecting(object sender, TabControlCancelEventArgs e)
         {
-            if (this.Tabs.SelectedTab == InventoryTab)
+            if (Tabs.SelectedTab == InventoryTab)
             {
                 Console.WriteLine("ALMOST DONE BRB CLASS");
                 //InventoryTab.clear();

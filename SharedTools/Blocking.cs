@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace MapleCLB.Tools {
+namespace SharedTools {
     public class Blocking<T> {
         private readonly AutoResetEvent waiter;
         private T value;
@@ -17,6 +17,12 @@ namespace MapleCLB.Tools {
         public T Get() {
             waiter.WaitOne();
             return value;
+        }
+
+        public bool TryGet(out T outValue, int timeout = -1) {
+            bool success = waiter.WaitOne(timeout);
+            outValue = success ? value : default(T);
+            return success;
         }
 
         public void Set(T value) {

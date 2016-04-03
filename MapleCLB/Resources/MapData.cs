@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using MapleCLB.Types;
+using SharedTools;
 
 namespace MapleCLB.Resources {
     public class MapData {
@@ -13,6 +14,7 @@ namespace MapleCLB.Resources {
 
         private static ReadOnlyDictionary<int, MapNode> LoadMaps() {
             using (var file = assembly.GetManifestResourceStream("MapleCLB.Resources.Map.node.map")) {
+                Precondition.NotNull(file);
                 var br = new BinaryReader(file);
 
                 int count = br.ReadInt32();
@@ -29,6 +31,7 @@ namespace MapleCLB.Resources {
 
         private static ReadOnlyDictionary<int, string[]> LoadMapNames() {
             using (var file = assembly.GetManifestResourceStream("MapleCLB.Resources.Map.name.map")) {
+                Precondition.NotNull(file);
                 var br = new BinaryReader(file);
 
                 int count = br.ReadInt32();

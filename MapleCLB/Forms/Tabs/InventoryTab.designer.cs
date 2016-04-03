@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace MapleCLB.Forms
+namespace MapleCLB.Forms.Tabs
 {
     partial class InventoryTab
     {

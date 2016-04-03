@@ -45,7 +45,7 @@ namespace MapleCLB.Forms
             this.lolToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.lolToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.FileSaveAs = new System.Windows.Forms.ToolStripMenuItem();
-            this.ClientForm = new MapleCLB.Forms.ClientForm();
+            this.ClientForm = new ClientForm();
             this.AccountTabs.SuspendLayout();
             this.Account1.SuspendLayout();
             this.menuStrip1.SuspendLayout();

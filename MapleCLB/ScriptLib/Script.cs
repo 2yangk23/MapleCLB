@@ -6,7 +6,7 @@ using MapleCLB.MapleClient;
 using MapleLib.Packet;
 using SharedTools;
 
-namespace ScriptLib {
+namespace MapleCLB.ScriptLib {
     public abstract class Script {
         private readonly List<ushort> headers = new List<ushort>();
 

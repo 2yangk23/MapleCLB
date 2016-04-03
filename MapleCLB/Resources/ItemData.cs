@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
+using SharedTools;
 
 namespace MapleCLB.Resources {
     public class ItemData {
@@ -15,6 +16,7 @@ namespace MapleCLB.Resources {
 
         private static ReadOnlyDictionary<int, string> LoadNames(string filename) {
             using (var file = assembly.GetManifestResourceStream("MapleCLB.Resources.Item." + filename)) {
+                Precondition.NotNull(file);
                 var br = new BinaryReader(file);
 
                 int count = br.ReadInt32();

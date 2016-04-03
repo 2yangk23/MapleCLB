@@ -4,19 +4,20 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using MapleCLB.Types;
 using MapleLib.Crypto;
 using MapleLib.Packet;
-using MapleCLB.Types;
 
-namespace MapleCLB.MapleClient {
+namespace MapleLib {
     internal static class Auth {
         private const short AUTH_1 = 0x33;
         private const short AUTH_2 = 0x2D;
         private const short AUTH_3 = 0x35;
+        private const ushort AUTH_PORT = 47611;
 
         private static readonly byte[] authKey1 = { 0x1D, 0x6A, 0x20, 0xCE };
-        private static readonly byte[] authKey2 = { 0xEB, 0x29, 0x72, 0x30 }; // { 0xEB, 0x29, 0x72, 0x31 };
-        private static readonly byte[] authKey3 = { 0xF7, 0xDD, 0xB1, 0x35 }; // { 0xF7, 0xDD, 0xB0, 0x35 };
+        private static readonly byte[] authKey2 = { 0xEB, 0x29, 0x72, 0x32 };
+        private static readonly byte[] authKey3 = { 0xF7, 0xDD, 0xB3, 0x35 };
 
         private static readonly IPAddress[] authIps = {
             IPAddress.Parse("208.85.110.164"),
@@ -25,9 +26,12 @@ namespace MapleCLB.MapleClient {
             IPAddress.Parse("208.85.110.170"),
             IPAddress.Parse("208.85.110.171")
         };
-        private const ushort AUTH_PORT = 47611;
-        private static int seed = Environment.TickCount;
-        private static readonly ThreadLocal<Random> rng = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
+
+        private static int rngSeed = Environment.TickCount;
+
+        private static readonly ThreadLocal<Random> rng =
+            new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref rngSeed)));
+
         private static readonly ThreadLocal<byte[]> buffer = new ThreadLocal<byte[]>(() => new byte[1024]);
 
         public static string GetAuth(Account account) {
@@ -40,25 +44,22 @@ namespace MapleCLB.MapleClient {
                         authSocket.Send(AuthFirst(account.Username, account.Password));
                         int length = authSocket.Receive(buffer.Value);
                         if (length == 0) {
-                            i = 4; // Skip the rest of the auths
+                            i = 3; // Skip the rest of the auths
                             Debug.WriteLine("Invalid username or password");
                         } else {
                             auth = ParseAuth(buffer.Value);
-                            //Debug.WriteLine("Finished first step of auth");
                         }
                         break;
                     case 2:
                         authSocket.Send(AuthSecond(auth));
                         authSocket.Receive(buffer.Value);
-                        //Debug.WriteLine("Finished second step of auth");
                         break;
                     case 3:
                         authSocket.Send(AuthThird(auth));
                         authSocket.Receive(buffer.Value);
-                        //Debug.WriteLine("Finished third step of auth");
                         break;
                     default:
-                        Debug.WriteLine(i + " isnt even a valid auth sequence.");
+                        Debug.WriteLine(i + " isn't even a valid auth sequence.");
                         break;
                 }
                 authSocket.Shutdown(SocketShutdown.Both);
@@ -110,7 +111,7 @@ namespace MapleCLB.MapleClient {
         private static string GetRandomString(int length) {
             const string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_~";
             var result = new StringBuilder(length);
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < length; ++i) {
                 result.Append(characters[rng.Value.Next(characters.Length)]);
             }
             return result.ToString();

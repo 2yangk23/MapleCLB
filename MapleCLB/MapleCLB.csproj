@@ -56,6 +56,10 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=10.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.0.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -150,7 +154,6 @@
     <Compile Include="Forms\SplitButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MapleClient\Auth.cs" />
     <Compile Include="Packets\Ops.cs" />
     <Compile Include="MapleClient\Client.cs" />
     <Compile Include="ScriptLib\Script.cs" />
@@ -163,6 +166,11 @@
     <Compile Include="Types\Items\Other.cs" />
     <Compile Include="Types\Mapler.cs" />
     <Compile Include="Types\MapNode.cs" />
+    <Compile Include="Types\Map\MapObject.cs" />
+    <Compile Include="Types\Map\Item.cs" />
+    <Compile Include="Types\Map\Monster.cs" />
+    <Compile Include="Types\Map\Player.cs" />
+    <Compile Include="Types\Position.cs" />
     <Compile Include="Types\Settings.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
@@ -201,6 +209,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

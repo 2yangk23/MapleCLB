@@ -24,7 +24,7 @@
         BEFORE_MOVE     - Send before first MOVE_PLAYER [Header][TimeStamp]
          ********************************/
 
-    internal class SendOps {
+    internal static class SendOps {
         public const int FM1_CRC = 0x26F611E3;
 
         public const ushort
@@ -81,7 +81,7 @@
     CLOSE_MUSHY  - Recieved when someone closes a mushroom
     ********************************/
 
-    internal class RecvOps {
+    internal static class RecvOps {
         public const ushort
             PING = 0x12,
 

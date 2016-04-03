@@ -2,9 +2,11 @@
 using System.Threading;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
-using ScriptLib;
-using MapleCLB.Tools;
+using MapleCLB.ScriptLib;
+using MapleCLB.Types;
+using MapleCLB.Types.Map;
 using MapleLib.Packet;
+using SharedTools;
 
 namespace MapleCLB.MapleClient.Scripts {
     internal class MesoVac : UserScript {
@@ -17,13 +19,16 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         protected override void Execute(CancellationToken token) {
-            while (true) { // TODO: Some condition to terminate script
-                var item = lootQueue.GetFirst();
+            while (!token.IsCancellationRequested) {
+                Item item;
+                if (!lootQueue.TryGetFirst(out item, 1000)) {
+                    continue;
+                }
                 Thread.Sleep(30);
                 while (item.Timestamp > Stopwatch.GetTimestamp() / Stopwatch.Frequency) {
                     Thread.Sleep(300);
                 }
-                SendPacket(Map.LootItem(item.X, item.Y, item.Id, item.Crc));
+                SendPacket(Map.LootItem(item));
             }
         }
 
@@ -38,13 +43,10 @@ namespace MapleCLB.MapleClient.Scripts {
                 return;
             }
             r.Skip(21); // [Zero (12)] [MesoAmount/ItemId (4)] [DropType (1)]
-            short x = r.ReadShort(); // [x (2)]
-            short y = r.ReadShort(); // [y (2)]
+            var pos = r.ReadPosition(); // [x (2)] [y (2)]
 
-            var item = new Item {
-                X = x,
-                Y = y,
-                Id = objectId,
+            var item = new Item(objectId) {
+                Position = pos,
                 Crc = 0, // Crc for mesos is 0
                 Timestamp = Stopwatch.GetTimestamp() / Stopwatch.Frequency
             };
@@ -52,19 +54,13 @@ namespace MapleCLB.MapleClient.Scripts {
             //TODO: This delay is still not perfect, maybe react on confirmation of loot instead?
             switch (type) {
                 case 0: // Item dropping
-                    item.Timestamp++; // Delay 1 second
+                    item.Timestamp += 2; // Delay 2 seconds
                     lootQueue.AddLast(item);
                     break;
                 case 2: // Item already on ground
                     lootQueue.AddFirst(item);
                     break;
             }
-        }
-
-        private class Item {
-            public uint Id, Crc;
-            public long Timestamp;
-            public short X, Y;
         }
     }
 }

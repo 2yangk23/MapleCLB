@@ -1,10 +1,11 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
-namespace MapleCLB.Tools {
-    public class Win32 {
+namespace SharedTools {
+    public static class Win32 {
         public const int WM_MOUSEMOVE = 0x0200;
         public const int WM_LBUTTONDOWN = 0x0201;
         public const int WM_LBUTTONUP = 0x0202;
@@ -27,26 +28,26 @@ namespace MapleCLB.Tools {
 
         public const int EM_POSFROMCHAR = 0x00D6;
 
-        public const int EM_SETCUEBANNER = 0x1501;
-        public const int EM_GETCUEBANNER = 0x1502;
-
-        public const long PRF_CLIENT = 0x00000004L;
-        public const long PRF_ERASEBKGND = 0x00000008L;
-
         [DllImport("USER32.DLL", CharSet = CharSet.Auto)]
-        public static extern int SendMessage(IntPtr hWnd, int msg, int wParam,
-                                             [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+        public static extern bool SendMessage(IntPtr hWnd, uint msg, 
+            int wParam, [MarshalAs(UnmanagedType.LPWStr)] string lParam);
+
+        [DllImport("USER32.DLL")]
+        private static extern bool SendMessage(IntPtr hwnd, int msg, 
+            [MarshalAs(UnmanagedType.LPWStr)] StringBuilder wParam, int lParam);
 
         [DllImport("USER32.DLL", EntryPoint = "PostMessage")]
         public static extern bool PostMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
-        public static extern int SendMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);
+        public static extern int SendMessage(IntPtr hwnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("USER32.DLL", EntryPoint = "GetCaretBlinkTime")]
         public static extern uint GetCaretBlinkTime();
 
-        public static bool CaptureWindow(Control control, ref Bitmap bitmap) {
+        private const long PRF_CLIENT = 0x00000004L;
+        private const long PRF_ERASEBKGND = 0x00000008L;
+        public static bool CaptureWindow(this Control control, ref Bitmap bitmap) {
             //This function captures the contents of a window or control
             var g2 = Graphics.FromImage(bitmap);
 
@@ -61,6 +62,28 @@ namespace MapleCLB.Tools {
             g2.Dispose();
 
             return true;
+        }
+
+        private const int EM_SETCUEBANNER = 0x1501;
+        private const int CB_SETCUEBANNER = 0x1703;
+        public static void SetCueBanner(this Control control, string banner) {
+            if (control is ComboBox) {
+                SendMessage(control.Handle, CB_SETCUEBANNER, 0, banner);
+            } else {
+                SendMessage(control.Handle, EM_SETCUEBANNER, 0, banner);
+            }
+        }
+
+        private const int EM_GETCUEBANNER = 0x1502;
+        private const int CB_GETCUEBANNER = 0x1704;
+        public static string GetCueBanner(this Control control) {
+            var builder = new StringBuilder(255);
+            if (control is ComboBox) {
+                SendMessage(control.Handle, CB_GETCUEBANNER, builder, 255);
+            } else {
+                SendMessage(control.Handle, EM_GETCUEBANNER, builder, 255);
+            }
+            return builder.ToString();
         }
     }
 }

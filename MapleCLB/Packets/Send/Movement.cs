@@ -1,20 +1,19 @@
-﻿using MapleLib.Packet;
+﻿using MapleCLB.Types;
+using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class Movement {
-        public static byte[] Teleport(byte count, int crc, short x, short y, short fh) {
+        public static byte[] Teleport(byte count, int crc, Position pos, short fh) {
             var pw = new PacketWriter(SendOps.MOVE_PLAYER);
             short temper = -8188;
             pw.WriteByte(count);
             pw.WriteInt(crc);
             pw.Timestamp();
             pw.WriteZero(5);
-            pw.WriteShort(x);
-            pw.WriteShort(y);
+            pw.WritePosition(pos);
             pw.WriteZero(4);
             pw.WriteShort(1); //number of movement things  1 minimum
-            pw.WriteShort(x);
-            pw.WriteShort(y);
+            pw.WritePosition(pos);
             pw.WriteZero(4);
             pw.WriteShort(fh);
             pw.WriteZero(4);

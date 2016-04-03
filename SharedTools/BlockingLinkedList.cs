@@ -1,14 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 
-namespace MapleCLB.Tools {
+namespace SharedTools {
     public class BlockingLinkedList<T> {
         private readonly object accessLock = new object();
         private readonly LinkedList<T> list = new LinkedList<T>();
         private readonly ManualResetEvent waiter = new ManualResetEvent(false);
 
-        public T GetFirst() {
-            waiter.WaitOne();
+        public T GetFirst(int timeout = -1) {
+            if (!waiter.WaitOne(timeout)) {
+                return default(T);
+            }
             lock (accessLock) {
                 var result = list.First.Value;
                 list.RemoveFirst();
@@ -17,6 +19,21 @@ namespace MapleCLB.Tools {
                 }
                 return result;
             }
+        }
+
+        public bool TryGetFirst(out T outValue, int timeout = -1) {
+            if (!waiter.WaitOne(timeout)) {
+                outValue = default(T);
+                return false;
+            }
+            lock (accessLock) {
+                outValue = list.First.Value;
+                list.RemoveFirst();
+                if (list.Count == 0) {
+                    waiter.Reset();
+                }
+            }
+            return true;
         }
 
         public void AddFirst(T item) {

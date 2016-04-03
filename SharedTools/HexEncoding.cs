@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading;
-using SharedTools;
 
-namespace MapleCLB.Tools {
+namespace SharedTools {
     public static class HexEncoding {
         private static int seed = Environment.TickCount;
 
@@ -35,18 +34,19 @@ namespace MapleCLB.Tools {
         };
 
         private static readonly byte[] nybbleLookup = {
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 255, 255, 255, 255, 255,
-            255, 255, 10, 11, 12, 13, 14, 15, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 10, 11, 12, 13, 14, 15
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
+            0x06, 0x07, 0x08, 0x09, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
         };
 
-        public static bool IsHexDigit(char c) {
+        public static bool IsHexDigit(this char c) {
             return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
         }
 
-        public static unsafe byte ToByte(string hex) {
+        public static unsafe byte ToByte(this string hex) {
             Precondition.Check<ArgumentException>(hex.Length == 1 || hex.Length == 2,
                 "Hex byte string must have 1-2 characters");
 
@@ -55,7 +55,7 @@ namespace MapleCLB.Tools {
             }
         }
 
-        public static unsafe string ToHex(byte b) {
+        public static unsafe string ToHex(this byte b) {
             string result = new string('\0', 2);
             fixed (char* ptr = result)
             fixed (uint* lookupPtr = hexLookup) {
@@ -64,7 +64,7 @@ namespace MapleCLB.Tools {
             return result;
         }
 
-        public static unsafe byte[] ToByteArray(string hex) {
+        public static unsafe byte[] ToByteArray(this string hex) {
             hex = hex.Replace(" ", string.Empty);
             Precondition.Check<ArgumentException>(hex.Length % 2 == 0, "Hex string must have even number of characters");
 
@@ -77,7 +77,7 @@ namespace MapleCLB.Tools {
             return result;
         }
 
-        public static unsafe string ToAsciiString(byte[] bytes) {
+        public static unsafe string ToAsciiString(this byte[] bytes) {
             string result = new string('\0', bytes.Length);
             fixed (char* resultPtr = result) {
                 for (int i = 0; i < bytes.Length; i++) {
@@ -87,7 +87,7 @@ namespace MapleCLB.Tools {
             return result;
         }
 
-        public static unsafe string ToHexString(byte[] bytes) {
+        public static unsafe string ToHexString(this byte[] bytes) {
             string result = new string('\0', bytes.Length * 2);
             fixed (byte* bytesPtr = bytes)
             fixed (char* resultPtr = result)
@@ -100,7 +100,7 @@ namespace MapleCLB.Tools {
             return result;
         }
 
-        public static unsafe string ToHexString(byte[] bytes, char sep) {
+        public static unsafe string ToHexString(this byte[] bytes, char sep) {
             string result = new string(sep, bytes.Length * 3 - 1);
             fixed (byte* bytesPtr = bytes)
             fixed (char* resultPtr = result)
@@ -127,7 +127,7 @@ namespace MapleCLB.Tools {
             return ToHexString(buffer, sep);
         }
 
-        public static unsafe string FillRandom(string packet) {
+        public static unsafe string FillRandom(this string packet) {
             fixed (char* pch = packet) {
                 for (int i = 0; i < packet.Length; i++) { // randomizes wildcards
                     if (pch[i] == '*') {

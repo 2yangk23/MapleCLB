@@ -20,30 +20,32 @@ namespace MapleCLB.Types.Items {
             Slot = slot;
         }
 
-        public static T Parse<T>(PacketReader pr) where T : Item {
+        internal abstract void Parse(PacketReader pr);
+    }
+
+    internal static class ItemPacketExtensions {
+        internal static T Read<T>(this PacketReader pr) where T : Item {
             short slot = typeof(T) == typeof(Equip) ? pr.ReadShort() : pr.ReadByte();
             if (slot == 0) {
-                return (T) Activator.CreateInstance(typeof(T), ItemType.UNKNOWN, 0, slot);
+                return (T)Activator.CreateInstance(typeof(T), ItemType.UNKNOWN, 0, slot);
             }
 
-            return Parse<T>(pr, slot);
+            return Read<T>(pr, slot);
         }
 
-        public static T Parse<T>(PacketReader pr, short slot) where T : Item {
+        internal static T Read<T>(this PacketReader pr, short slot) where T : Item {
             // [Type (1)] [Id (4)] [Flag (1) ? UniqueId (8)] [Timestamp (8)] FF FF FF FF
-            var type = (ItemType) pr.ReadByte();
+            var type = (ItemType)pr.ReadByte();
             int id = pr.ReadInt();
             if (pr.ReadBool()) {
                 pr.ReadLong();
             }
             pr.Skip(12); // Used to check for expiration?
 
-            var item = (T) Activator.CreateInstance(typeof(T), type, id, slot);
+            var item = (T)Activator.CreateInstance(typeof(T), type, id, slot);
             item.Parse(pr); // Parses remaining item info, and stores data
 
             return item;
         }
-
-        protected abstract void Parse(PacketReader pr);
     }
 }

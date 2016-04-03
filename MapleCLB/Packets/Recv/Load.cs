@@ -2,6 +2,7 @@
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
 using MapleLib.Packet;
+using SharedTools;
 
 namespace MapleCLB.Packets.Recv {
     internal static class Load {
@@ -9,6 +10,8 @@ namespace MapleCLB.Packets.Recv {
 
         public static void CharInfo(object o, PacketReader pr) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             if (pr.Available < 100) {
                 pr.Skip(44);
                 c.Mapler.Map = pr.ReadInt();
@@ -26,7 +29,7 @@ namespace MapleCLB.Packets.Recv {
             pr.Skip(18 + 15 + 21 + 7);
 
             /* Character Stats */
-            c.Mapler = Mapler.Parse(pr);
+            c.Mapler = pr.ReadMapler();
 
             /* Char Info */
             pr.Skip(1); // BL Size
@@ -41,7 +44,7 @@ namespace MapleCLB.Packets.Recv {
             }
 
             /* Inventory Info */
-            c.Inventory = Inventory.Parse(pr);
+            c.Inventory = pr.ReadInventory();
 
             c.Channel = (byte) (channel + 1);
 
@@ -53,6 +56,8 @@ namespace MapleCLB.Packets.Recv {
 
         public static void UpdateInventory(object o, PacketReader r) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             r.ReadByte(); // [EnableActions Bool]
             for (int i = r.ReadShort(); i > 0; i--) {
                 var tab = (InventoryTab) r.ReadByte();
@@ -60,9 +65,9 @@ namespace MapleCLB.Packets.Recv {
                 switch (r.ReadByte()) {
                     case 0x00: // Add item
                         if (tab == InventoryTab.EQUIP) {
-                            c.Inventory.Add(tab, Item.Parse<Equip>(r, slot));
+                            c.Inventory.Add(tab, r.Read<Equip>(slot));
                         } else {
-                            c.Inventory.Add(tab, Item.Parse<Other>(r, slot));
+                            c.Inventory.Add(tab, r.Read<Other>(slot));
                         }
                         break;
                     case 0x01: // Update item
@@ -83,6 +88,8 @@ namespace MapleCLB.Packets.Recv {
         // [42 00] 00 00 00 [01] 00 00 00 00 00 [1A 5D 6D D9 01 00 00 00] FF 00 00 00 00
         public static void UpdateStatus(object o, PacketReader r) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             r.Skip(3); // [InChat (1)] 00 00
             switch (r.ReadByte()) {
                 case 0x01: // Exp update
@@ -100,6 +107,8 @@ namespace MapleCLB.Packets.Recv {
 
         public static void Seed(object o, PacketReader pr) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             int seed = pr.ReadInt();
             c.PortalCrc = c.Mapler.Id ^ seed ^ MAGIC_NUM;
             c.PortalCount = 1;

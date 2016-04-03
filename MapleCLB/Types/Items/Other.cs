@@ -21,7 +21,7 @@ namespace MapleCLB.Types.Items {
         KARMA_USE = 0x2
     }
 
-    public class Other : Item {
+    public sealed class Other : Item {
         public short Quantity { get; set; }
         public Flag Flag { get; private set; }
 
@@ -38,7 +38,7 @@ namespace MapleCLB.Types.Items {
 
         public Other(ItemType type, int id, short slot) : base(type, id, slot) { }
 
-        protected override void Parse(PacketReader pr) {
+        internal override void Parse(PacketReader pr) {
             if (ItemType == ItemType.PET) {
                 Quantity = 1;
                 Flag = Flag.NONE;

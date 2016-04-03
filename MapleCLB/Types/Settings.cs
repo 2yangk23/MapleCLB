@@ -1,7 +1,7 @@
 ﻿using System.IO;
 
 namespace MapleCLB.Types {
-    public class Settings {
+    public sealed class Settings {
         public string Temp = "Settings to come...";
 
         public Settings() { }

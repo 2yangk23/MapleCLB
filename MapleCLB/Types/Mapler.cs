@@ -3,23 +3,23 @@ using MapleLib.Packet;
 
 namespace MapleCLB.Types {
     public sealed class Mapler {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public byte Level { get; private set; }
-        public short Job { get; private set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public byte Level { get; set; }
+        public short Job { get; set; }
 
-        public short Str { get; private set; }
-        public short Dex { get; private set; }
-        public short Int { get; private set; }
-        public short Luk { get; private set; }
-        public int Hp { get; private set; }
-        public int MaxHp { get; private set; }
-        public int Mp { get; private set; }
-        public int MaxMp { get; private set; }
+        public short Str { get; set; }
+        public short Dex { get; set; }
+        public short Int { get; set; }
+        public short Luk { get; set; }
+        public int Hp { get; set; }
+        public int MaxHp { get; set; }
+        public int Mp { get; set; }
+        public int MaxMp { get; set; }
 
-        public int Ap { get; private set; }
+        public int Ap { get; set; }
         public long Exp { get; set; }
-        public int Fame { get; private set; }
+        public int Fame { get; set; }
         public int Map { get; set; }
 
         public bool IsAran => Job == 2000 || Job / 100 == 21;
@@ -28,9 +28,17 @@ namespace MapleCLB.Types {
         public bool IsZero => Job == 10000 || Job / 100 == 101;
         public bool IsBeastTamer => Job == 11000 || Job / 100 == 112;
 
-        public static Mapler Parse(PacketReader pr) {
-            var m = new Mapler();
+        public void Print() {
+            Console.WriteLine("Id: {0}, Name: {1}, Job: {2}, Level: {3}", Id, Name, Job, Level);
+            Console.WriteLine("Str[{0}] Dex[{1}] Int[{2}] Luk[{3}], {4} / {5} Hp, {6} / {7} Mp", 
+                Str, Dex, Int, Luk, Hp, MaxHp, Mp, MaxMp);
+            Console.WriteLine("Ap: {0}, Exp: {1}, Fame: {2}, Map: {3}", Ap, Exp, Fame, Map);
+        }
+    }
 
+    internal static class MaplerPacketExtensions {
+        internal static Mapler ReadMapler(this PacketReader pr) {
+            var m = new Mapler();
             // [uid (4)] [uid (4)] [02 00 00 00] [Name (13)]
             m.Id = pr.ReadInt();
             pr.Skip(8);
@@ -86,8 +94,12 @@ namespace MapleCLB.Types {
             return m;
         }
 
-        public static void SkipAppearance(PacketReader pr, short job) {
+        internal static void SkipAppearance(this PacketReader pr, short job) {
             var m = new Mapler { Job = job };
+            pr.SkipAppearance(m);
+        }
+
+        internal static void SkipAppearance(this PacketReader pr, Mapler m) {
             pr.Skip(15); // [Gender (1)] [Skin (1)] [Face (4)] [Job (2)] [SubJob (2)] [Mega (1)] [Hair (4)]
             for (int j = 0; j < 3; ++j) { // Skips the Equipment
                 pr.Next(0xFF);
@@ -101,13 +113,6 @@ namespace MapleCLB.Types {
                 pr.Skip(14); // [FaceMark (4)] [Ears (1)] [EarType (4)] [Tail (1)] [TailType (4)]
             }
             pr.Skip(3); // ?? ?? ??
-        }
-
-        public void Print() {
-            Console.WriteLine("Id: {0}, Name: {1}, Job: {2}, Level: {3}", Id, Name, Job, Level);
-            Console.WriteLine("Str[{0}] Dex[{1}] Int[{2}] Luk[{3}], {4} / {5} Hp, {6} / {7} Mp", 
-                Str, Dex, Int, Luk, Hp, MaxHp, Mp, MaxMp);
-            Console.WriteLine("Ap: {0}, Exp: {1}, Fame: {2}, Map: {3}", Ap, Exp, Fame, Map);
         }
     }
 }

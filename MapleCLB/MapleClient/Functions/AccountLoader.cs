@@ -10,7 +10,7 @@ namespace MapleCLB.MapleClient.Functions {
             0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
         };
 
-        public static Tuple<Account, Settings> Load(string path) {
+        internal static Tuple<Account, Settings> Load(string path) {
             if (!File.Exists(path)) {
                 return null;
             }
@@ -24,7 +24,7 @@ namespace MapleCLB.MapleClient.Functions {
             }
         }
 
-        public static void Save(string path, Account account, Settings settings) {
+        internal static void Save(string path, Account account, Settings settings) {
             Precondition.NotNull(account);
             Precondition.NotNull(settings);
 

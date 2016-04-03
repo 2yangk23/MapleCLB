@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using MapleCLB.Tools;
+using SharedTools;
 
 namespace MapleCLB.Forms {
     public sealed partial class InputForm : Form {
@@ -10,7 +10,7 @@ namespace MapleCLB.Forms {
             NameInput.Text = text;
             ConfirmBtn.Text = confirm;
 
-            Win32.SendMessage(NameInput.Handle, Win32.EM_SETCUEBANNER, 0, banner);
+            NameInput.SetCueBanner(banner);
         }
 
         public static DialogResult Show(string title, ref string text, string banner = "", string confirm = "OK") {

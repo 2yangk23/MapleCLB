@@ -4,12 +4,11 @@ using System.IO;
 
 namespace MapleCLB.Types {
     public sealed class PortalInfo {
-        public short X { get; set; }
-        public short Y { get; set; }
+        public Position Position { get; set; }
         public string Name { get; set; }
     }
 
-    public class MapNode {
+    public sealed class MapNode {
         public ReadOnlyDictionary<int, PortalInfo> Portals;
         public ReadOnlyDictionary<int, int> Choice { get; set; }
         public int Id { get; }
@@ -29,8 +28,7 @@ namespace MapleCLB.Types {
             for (int i = 0; i < count; i++) {
                 int key = reader.ReadInt32();
                 portals[key] = new PortalInfo {
-                    X = reader.ReadInt16(),
-                    Y = reader.ReadInt16(),
+                    Position = new Position(reader.ReadInt16(), reader.ReadInt16()),
                     Name = reader.ReadString()
                 };
             }

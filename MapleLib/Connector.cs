@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using MapleLib.Crypto;
+using SharedTools;
 
 namespace MapleLib {
     public sealed class Connector {
@@ -32,6 +33,8 @@ namespace MapleLib {
 
         private void EndConnect(IAsyncResult iar) {
             var socket = iar.AsyncState as Socket;
+            Precondition.NotNull(socket);
+
             try {
                 socket.EndConnect(iar);
                 if (socket.Connected) {

@@ -5,11 +5,10 @@ using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using MapleCLB.MapleClient;
-using MapleCLB.Tools;
 using MapleLib.Packet;
 using SharedTools;
 
-namespace ScriptLib {
+namespace MapleCLB.ScriptLib {
     [Synchronization(true)]
     public abstract class UserScript : Script {
         private readonly ScriptManager manager;
@@ -31,7 +30,7 @@ namespace ScriptLib {
         public override void Stop() {
             source?.Cancel();
             base.Stop();
-            foreach (Script script in dependencies) {
+            foreach (var script in dependencies) {
                 script.Stop();
             }
         }
@@ -60,6 +59,7 @@ namespace ScriptLib {
             client.WaitScriptRecv(header, reader, returnPacket);
             return reader.Get();
         }
+        //TODO: WaitRecv with timeout?
 
         protected TScript Requires<TScript>() where TScript : Script {
             var script = manager.Get<TScript>();

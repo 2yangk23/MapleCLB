@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using MapleCLB.MapleClient;
 
-namespace ScriptLib {
+namespace MapleCLB.ScriptLib {
     public class ScriptManager {
         private readonly Client client;
         private readonly ConcurrentDictionary<Type, Lazy<Script>> scripts;

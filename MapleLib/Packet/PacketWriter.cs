@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using MapleCLB.Tools;
+using SharedTools;
 
 namespace MapleLib.Packet {
     public class PacketWriter {
@@ -137,7 +137,7 @@ namespace MapleLib.Packet {
         }
 
         public void WriteHexString(string value) {
-            byte[] bytes = HexEncoding.ToByteArray(value);
+            byte[] bytes = value.ToByteArray();
             WriteBytes(bytes);
         }
 
@@ -152,7 +152,7 @@ namespace MapleLib.Packet {
         }
 
         public override string ToString() {
-            return HexEncoding.ToHexString(ToArray(), ' ');
+            return ToArray().ToHexString(' ');
         }
     }
 }

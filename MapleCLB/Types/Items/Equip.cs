@@ -20,7 +20,7 @@ namespace MapleCLB.Types.Items {
 
         public Equip(ItemType type, int id, short slot) : base(type, id, slot) { }
 
-        protected override void Parse(PacketReader pr) {
+        internal override void Parse(PacketReader pr) {
             pr.Next(0xFF); // Skip item stats
             // [00 11 00 00] Unknown
             if (pr.ReadShort() != 0) {

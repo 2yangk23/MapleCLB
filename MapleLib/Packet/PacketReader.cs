@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using MapleCLB.Tools;
 using SharedTools;
 
 namespace MapleLib.Packet {
@@ -123,7 +122,7 @@ namespace MapleLib.Packet {
         }
 
         public string ReadHexString(int count) {
-            return HexEncoding.ToHexString(ReadBytes(count), ' ');
+            return ReadBytes(count).ToHexString(' ');
         }
 
         public void Skip(int count) {
@@ -143,7 +142,7 @@ namespace MapleLib.Packet {
         }
 
         public override string ToString() {
-            return HexEncoding.ToHexString(Buffer, ' ');
+            return Buffer.ToHexString(' ');
         }
     }
 }

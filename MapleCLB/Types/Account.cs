@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using MapleCLB.Tools;
+using SharedTools;
 
 namespace MapleCLB.Types {
     public enum SelectMode : byte {
@@ -27,14 +27,14 @@ namespace MapleCLB.Types {
                 byte[] macBuffer = new byte[6];
                 rng.NextBytes(macBuffer);
                 // XX-XX-XX-XX-XX-XX
-                MacAddress = HexEncoding.ToHexString(macBuffer, '-');
+                MacAddress = macBuffer.ToHexString('-');
 
                 byte[] hwidBuffer1 = new byte[6];
                 byte[] hwidBuffer2 = new byte[4];
                 rng.NextBytes(hwidBuffer1);
                 rng.NextBytes(hwidBuffer2);
                 // XXXXXXXXXXXX_XXXXXXXX
-                Hwid = HexEncoding.ToHexString(hwidBuffer1) + '_' + HexEncoding.ToHexString(hwidBuffer2);
+                Hwid = hwidBuffer1.ToHexString() + '_' + hwidBuffer2.ToHexString();
 
                 username = value;
             }

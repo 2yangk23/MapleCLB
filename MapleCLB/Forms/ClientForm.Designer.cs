@@ -1,4 +1,5 @@
 ﻿using MapleCLB.Forms.Tabs;
+using MapleCLB.Tools;
 
 namespace MapleCLB.Forms {
     partial class ClientForm {
@@ -65,13 +66,10 @@ namespace MapleCLB.Forms {
             this.AccountTab = new System.Windows.Forms.TabPage();
             this.InitTestBtn = new System.Windows.Forms.Button();
             this.PacketTab = new System.Windows.Forms.TabPage();
-            this.PacketView = new MapleCLB.Forms.Tabs.PacketTab();
             this.RushTab = new System.Windows.Forms.TabPage();
-            this.RushView = new MapleCLB.Forms.Tabs.RusherTab();
             this.LogTab = new System.Windows.Forms.TabPage();
             this.LogText = new System.Windows.Forms.TextBox();
             this.InventoryTab = new System.Windows.Forms.TabPage();
-            this.inventoryTab1 = new MapleCLB.Forms.InventoryTab();
             this.PacketInput = new System.Windows.Forms.TextBox();
             this.DelayInput = new System.Windows.Forms.TextBox();
             this.SendMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -79,6 +77,9 @@ namespace MapleCLB.Forms {
             this.SpamMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.UpTimer = new System.Windows.Forms.Timer(this.components);
             this.SendSpamBtn = new MapleCLB.Forms.SplitButton();
+            this.PacketView = new MapleCLB.Forms.Tabs.PacketTab();
+            this.RushView = new MapleCLB.Forms.Tabs.RusherTab();
+            this.inventoryTab1 = new MapleCLB.Forms.Tabs.InventoryTab();
             this.AccountGroup.SuspendLayout();
             this.StatGroup.SuspendLayout();
             this.FeatureGroup.SuspendLayout();
@@ -536,15 +537,6 @@ namespace MapleCLB.Forms {
             this.PacketTab.Text = "Packets";
             this.PacketTab.UseVisualStyleBackColor = true;
             // 
-            // PacketView
-            // 
-            this.PacketView.AutoSize = true;
-            this.PacketView.Location = new System.Drawing.Point(0, 1);
-            this.PacketView.Margin = new System.Windows.Forms.Padding(0);
-            this.PacketView.Name = "PacketView";
-            this.PacketView.Size = new System.Drawing.Size(681, 319);
-            this.PacketView.TabIndex = 0;
-            // 
             // RushTab
             // 
             this.RushTab.Controls.Add(this.RushView);
@@ -554,13 +546,6 @@ namespace MapleCLB.Forms {
             this.RushTab.TabIndex = 3;
             this.RushTab.Text = "Rusher";
             this.RushTab.UseVisualStyleBackColor = true;
-            // 
-            // RushView
-            // 
-            this.RushView.Location = new System.Drawing.Point(-1, -1);
-            this.RushView.Name = "RushView";
-            this.RushView.Size = new System.Drawing.Size(682, 321);
-            this.RushView.TabIndex = 0;
             // 
             // LogTab
             // 
@@ -596,13 +581,6 @@ namespace MapleCLB.Forms {
             this.InventoryTab.TabIndex = 4;
             this.InventoryTab.Text = "Inventory";
             this.InventoryTab.UseVisualStyleBackColor = true;
-            // 
-            // inventoryTab1
-            // 
-            this.inventoryTab1.Location = new System.Drawing.Point(158, 6);
-            this.inventoryTab1.Name = "inventoryTab1";
-            this.inventoryTab1.Size = new System.Drawing.Size(324, 285);
-            this.inventoryTab1.TabIndex = 0;
             // 
             // PacketInput
             // 
@@ -662,6 +640,29 @@ namespace MapleCLB.Forms {
             this.SendSpamBtn.Text = "Send";
             this.SendSpamBtn.UseVisualStyleBackColor = true;
             this.SendSpamBtn.Click += new System.EventHandler(this.SendSpamBtn_Click);
+            // 
+            // PacketView
+            // 
+            this.PacketView.AutoSize = true;
+            this.PacketView.Location = new System.Drawing.Point(0, 1);
+            this.PacketView.Margin = new System.Windows.Forms.Padding(0);
+            this.PacketView.Name = "PacketView";
+            this.PacketView.Size = new System.Drawing.Size(681, 319);
+            this.PacketView.TabIndex = 0;
+            // 
+            // RushView
+            // 
+            this.RushView.Location = new System.Drawing.Point(-1, -1);
+            this.RushView.Name = "RushView";
+            this.RushView.Size = new System.Drawing.Size(682, 321);
+            this.RushView.TabIndex = 0;
+            // 
+            // inventoryTab1
+            // 
+            this.inventoryTab1.Location = new System.Drawing.Point(158, 6);
+            this.inventoryTab1.Name = "inventoryTab1";
+            this.inventoryTab1.Size = new System.Drawing.Size(324, 285);
+            this.inventoryTab1.TabIndex = 0;
             // 
             // ClientForm
             // 

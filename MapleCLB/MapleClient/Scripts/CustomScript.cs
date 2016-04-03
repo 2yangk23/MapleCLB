@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using MapleCLB.MapleClient.Functions;
 using MapleCLB.Packets.Send;
+using MapleCLB.ScriptLib;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
-using ScriptLib;
 
 namespace MapleCLB.MapleClient.Scripts {
     internal abstract class CustomScript : UserScript {
@@ -27,8 +27,7 @@ namespace MapleCLB.MapleClient.Scripts {
         public void EnterPortal(string name, short x, short y) {
             var portal = new PortalInfo {
                 Name = name,
-                X = x,
-                Y = y
+                Position = new Position(x, y)
             };
             SendPacket(Portal.Enter(client.PortalCount, client.PortalCrc, portal));
         }

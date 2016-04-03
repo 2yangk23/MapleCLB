@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 
-namespace MapleCLB.Tools {
+namespace SharedTools {
     public class MultiKeyDictionary<TK, TL, TV> {
         internal readonly Dictionary<TK, TV> BaseDictionary = new Dictionary<TK, TV>();
         internal readonly Dictionary<TK, TL> PrimaryToSubkeyMapping = new Dictionary<TK, TL>();

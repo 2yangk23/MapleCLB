@@ -9,12 +9,12 @@ using MapleCLB.Forms;
 using MapleCLB.MapleClient.Handlers;
 using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
-using ScriptLib;
-using MapleCLB.Tools;
+using MapleCLB.ScriptLib;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
 using MapleLib;
 using MapleLib.Packet;
+using SharedTools;
 using Timer = System.Timers.Timer;
 
 namespace MapleCLB.MapleClient {
@@ -74,7 +74,7 @@ namespace MapleCLB.MapleClient {
         internal bool ShowInformation = false;
 
         internal int totalItemCount = 0;
-        internal int totalPeopleCount = 0;
+        internal int totalPeopleCount;
 
         internal Client(ClientForm form) {
             /* Initialize Form */

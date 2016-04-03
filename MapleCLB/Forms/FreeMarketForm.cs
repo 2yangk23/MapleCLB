@@ -2,7 +2,8 @@
 using System.Windows.Forms;
 using MapleCLB.MapleClient.Scripts;
 using MapleCLB.Packets.Send;
-using MapleCLB.Tools;
+using SharedTools;
+
 namespace MapleCLB.Forms
 {
     public partial class FreeMarketForm : Form {
@@ -11,11 +12,11 @@ namespace MapleCLB.Forms
         public FreeMarketForm(ClientForm frm1) {
             InitializeComponent();
             mParent = frm1;
-            Win32.SendMessage(FMStealIgnBox.Handle, Win32.EM_SETCUEBANNER, 0, "Enter IGN");
-            Win32.SendMessage(XTBox.Handle, Win32.EM_SETCUEBANNER, 0, "X");
-            Win32.SendMessage(YTBox.Handle, Win32.EM_SETCUEBANNER, 0, "Y");
-            Win32.SendMessage(FHTBox.Handle, Win32.EM_SETCUEBANNER, 0, "FH");
-            Win32.SendMessage(NameOfShopTBox.Handle, Win32.EM_SETCUEBANNER, 0, "Enter Shop Name");
+            FMStealIgnBox.SetCueBanner("Enter IGN");
+            XTBox.SetCueBanner("X");
+            YTBox.SetCueBanner("Y");
+            FHTBox.SetCueBanner("FH");
+            NameOfShopTBox.SetCueBanner("Enter Shop Name");
         }
 
         private void StartFMBotNorButton_Click(object sender, EventArgs e) {

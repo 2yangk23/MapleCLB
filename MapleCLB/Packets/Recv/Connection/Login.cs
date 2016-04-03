@@ -3,12 +3,15 @@ using System.Threading;
 using MapleCLB.MapleClient;
 using MapleCLB.Types;
 using MapleLib.Packet;
+using SharedTools;
 
 // TODO: The Thread.Sleep here will cause UI to freeze
 namespace MapleCLB.Packets.Recv.Connection {
     internal class Login {
         public static void LoginSecond(object o, PacketReader r) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             switch (r.ReadByte()) {
                 case 0x01:
                     c.Log.Report("Incorrect password");
@@ -30,6 +33,8 @@ namespace MapleCLB.Packets.Recv.Connection {
 
         public static void LoginStatus(object o, PacketReader r) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             switch (r.ReadByte()) {
                 case 0x01:
                     c.Log.Report("Incorrect Password");
@@ -54,6 +59,8 @@ namespace MapleCLB.Packets.Recv.Connection {
 
         public static void SelectCharacter(object o, PacketReader r) {
             var c = o as Client;
+            Precondition.NotNull(c);
+
             c.Log.Report("Selecting Character...");
             //no new thread here, MUST finish loading chars
             LoadCharlist(c, r);
@@ -92,10 +99,10 @@ namespace MapleCLB.Packets.Recv.Connection {
 
             for (byte i = 0; i < count; ++i) {
                 /* Character Stats */
-                var m = Mapler.Parse(pr);
+                var m = pr.ReadMapler();
 
-                /* AddPlayer Appearance */
-                Mapler.SkipAppearance(pr, m.Job);
+                /* Mapler Appearance */
+                pr.SkipAppearance(m);
 
                 bool hasRank = pr.ReadBool(); // [HasRanking (1)]
                 if (hasRank) {

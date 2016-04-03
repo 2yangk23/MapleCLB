@@ -5,8 +5,8 @@ using MapleCLB.Packets;
 using MapleCLB.Packets.Recv;
 using MapleCLB.Packets.Recv.Connection;
 using MapleCLB.Packets.Recv.Maps;
-using MapleCLB.Tools;
 using MapleLib.Packet;
+using SharedTools;
 
 namespace MapleCLB.MapleClient.Handlers {
     internal class Packet : Handler<byte[]> {

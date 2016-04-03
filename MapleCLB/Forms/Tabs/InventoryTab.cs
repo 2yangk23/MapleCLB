@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using MapleCLB.Resources;
 using MapleCLB.Types.Items;
-using System;
 
-namespace MapleCLB.Forms
+namespace MapleCLB.Forms.Tabs
 {
     public partial class InventoryTab : UserControl
     {
@@ -74,8 +74,6 @@ namespace MapleCLB.Forms
                     break;
                 case "Drop Inventory":
                     Console.WriteLine("Dropping Inventory!");
-                    break;
-                default:
                     break;
 
             }
