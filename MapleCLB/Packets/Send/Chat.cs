@@ -22,24 +22,5 @@ namespace MapleCLB.Packets.Send {
 
             return pw.ToArray();
         }
-
-        /* Types
-         * 00 = Buddy
-         * 01 = Party
-         * 02 = Guild
-         * 03 = Alliance
-         * 06 = Expedition
-         */
-        public static byte[] Send(byte type, int[] uid, string msg) {
-            var pw = new PacketWriter(SendOps.SEND_CHAT);
-            pw.WriteByte(type);
-            pw.WriteByte((byte)uid.Length);
-            foreach (int u in uid) {
-                pw.WriteInt(u);
-            }
-            pw.WriteMapleString(msg);
-
-            return pw.ToArray();
-        }
     }
 }

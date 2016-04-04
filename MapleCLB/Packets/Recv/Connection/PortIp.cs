@@ -1,13 +1,9 @@
 ﻿using MapleCLB.MapleClient;
 using MapleLib.Packet;
-using SharedTools;
 
 namespace MapleCLB.Packets.Recv.Connection {
     internal class PortIp {
-        public static void ServerIp(object o, PacketReader r) {
-            var c = o as Client;
-            Precondition.NotNull(c);
-
+        public static void ServerIp(Client c, PacketReader r) {
             r.ReadShort();
             byte[] serverIp = r.ReadBytes(4);
             short port = r.ReadShort();
@@ -15,10 +11,7 @@ namespace MapleCLB.Packets.Recv.Connection {
             c.Reconnect(ip, port);
         }
 
-        public static void ChannelIp(object o, PacketReader r) {
-            var c = o as Client;
-            Precondition.NotNull(c);
-
+        public static void ChannelIp(Client c, PacketReader r) {
             r.ReadByte();
             byte[] channelIp = r.ReadBytes(4);
             short port = r.ReadShort();

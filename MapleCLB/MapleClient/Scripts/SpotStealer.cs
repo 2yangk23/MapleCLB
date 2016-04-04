@@ -6,6 +6,7 @@ using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
 using MapleCLB.Types;
+using MapleCLB.Types.Map;
 using MapleLib.Packet;
 
 namespace MapleCLB.MapleClient.Scripts {
@@ -40,7 +41,7 @@ namespace MapleCLB.MapleClient.Scripts {
             }
             if (Mode == StealMode.SERVER_CHECK) {
                 SendPacket(Movement.beforeTeleport());
-                SendPacket(Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, new Position(X, Y), Fh));
+                SendPacket(Movement.Teleport(client.PortalCount, GameConsts.FM1_CRC, new Position(X, Y), Fh));
                 OpenShop();
             }
             WaitRecv(RecvOps.UPDATE_SHOP);
@@ -84,65 +85,36 @@ namespace MapleCLB.MapleClient.Scripts {
         }
 
         // Handlers
-        private void OpenMushy(object o, PacketReader r) {
+        private void OpenMushy(Client c, PacketReader r) {
             if (r.ReadByte() == 7) {
                 SendPacket(Trade.CreateShop(ShopType.MUSHY, ShopName, 1, 5030000));
             }
         }
 
-        private void PermitClosed(object o, PacketReader r) {
+        private void PermitClosed(Client c, PacketReader r) {
             int uid = r.ReadInt();
             if (r.ReadByte() == 5) { // Permit closed
                 StealSpot(uid << 4);
             }
         }
 
-        private void MushyClosed(object o, PacketReader r) {
+        private void MushyClosed(Client c, PacketReader r) {
             int uid = r.ReadInt();
             StealSpot(uid);
         }
 
-        private void SpawnPermit(object o, PacketReader r) {
-            int uid = r.ReadInt() << 4; // Shift uid so that it won't conflict with uid for mushys
-            r.ReadByte(); // [Level (1)]
-            string ign = r.ReadMapleString(); // Name
-            r.ReadMapleString(); // Ultimate Explorer's Parent
-            r.ReadMapleString(); // Guild
-            r.Skip(6); // [LogoBG (2)] [ColoUr (1)] [Logo (2)] [ColoUr (1)]
+        private void SpawnPermit(Client c, PacketReader r) {
+            var p = r.ReadPlayer();
+            int uid = p.Id << 4;
+            if (p.HasPermit) {
+                UidMap[uid] = p.Ign;
+                UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, GameConsts.FM1_CRC, p.Position, p.Fh);
 
-            r.Skip(13); // 00 [40 00 00 00] [01 00 00 00] [00 00 00 00]
-
-            // Sub
-            r.Skip(64); // Mostly Zeros 
-            r.Skip(4); // -1
-            r.Skip(64); // TODO: Figure this part out later but until then cheat
-            r.Next(01); // Time Encoding
-            r.Skip(12); // ?? ?? ?? ?? [Zero (8)]
-            r.Skip(30); // [TimeEncode (5)] [00 00] [00 00 00 00] [00 00 00 00] [TimeEncode (5)] [00 00] [00 00 00 00] [00 00 00 00]
-            r.Skip(13); // [TimeEncode (5)] [00 00 00 00] [00 00 00 00]
-            r.Skip(20); // [TimeEncode (5)] 00 [DE AC 77 DA] [00 00 00 00] [00 00 00 00] [00 00]
-            r.Skip(28); // [TimeEncode (5)] [Zero (16)] [TimeEncode (5)] 00 00
-
-            short job = r.ReadShort(); // JOB 
-            r.Skip(6); // [SubJob (2)] [? (4)]
-
-            r.SkipAppearance(job);
-
-            r.Skip(4 * 14 + 14); // [00 00 00 00] * 14 [FF FF] [00 00 00 00 00 00 00 00 00 00 00 00]
-
-            var pos = r.ReadPosition();
-            r.Skip(1); // Type or stance?
-            short fh = r.ReadShort();
-            r.Skip(17); // Unknown shit
-            if (r.ReadByte() != 0) {
-                UidMap[uid] = ign;
-                UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, pos, fh);
-
-                client.WriteLog("Added Permit : " + ign + " to shifted UID : " + uid + "@ " + pos + ", fh: " + fh);
+                client.WriteLog("Added Permit : " + p.Ign + " to shifted UID : " + uid + "@ " + p.Position + ", fh: " + p.Fh);
             }
         }
 
-        private void SpawnMushy(object o, PacketReader r) {
+        private void SpawnMushy(Client c, PacketReader r) {
             int uid = r.ReadInt();
             r.Skip(4);
             var pos = r.ReadPosition();
@@ -150,7 +122,7 @@ namespace MapleCLB.MapleClient.Scripts {
             string ign = r.ReadMapleString();
 
             UidMap[uid] = ign;
-            UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, SendOps.FM1_CRC, pos, fh);
+            UidMovementPacket[uid] = Movement.Teleport(client.PortalCount, GameConsts.FM1_CRC, pos, fh);
 
             client.WriteLog("Added Mushy : " + ign + " to UID : " + uid + "@ " + pos + ", fh: " + fh);
         }

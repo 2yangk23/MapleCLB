@@ -3,24 +3,24 @@ using System.Threading;
 using MapleCLB.Packets;
 using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
-using MapleCLB.Types;
 using MapleCLB.Types.Map;
 using MapleLib.Packet;
 using SharedTools;
 
 namespace MapleCLB.MapleClient.Scripts {
     internal class MesoVac : UserScript {
-        private readonly BlockingLinkedList<Item> lootQueue = new BlockingLinkedList<Item>();
+        private readonly BlockingLinkedList<DroppedItem> lootQueue = new BlockingLinkedList<DroppedItem>();
 
         public MesoVac(Client client) : base(client) { }
 
         protected override void Init() {
-            RegisterRecv(RecvOps.SPAWN_ITEM, LootMeso);
+            RegisterRecv(RecvOps.SPAWN_ITEM, SpawnItem);
+            RegisterRecv(RecvOps.REMOVE_ITEM, RemoveItem);
         }
 
         protected override void Execute(CancellationToken token) {
             while (!token.IsCancellationRequested) {
-                Item item;
+                DroppedItem item;
                 if (!lootQueue.TryGetFirst(out item, 1000)) {
                     continue;
                 }
@@ -32,35 +32,28 @@ namespace MapleCLB.MapleClient.Scripts {
             }
         }
 
-        private void LootMeso(object o, PacketReader r) {
-            r.Skip(1); // 00
-            byte type = r.ReadByte(); // [Type (1)] 0 = drop animation, 1 = visible, 2 = spawned, 3 = dissapearing
-            if (type == 1 || type == 3) { // Don't loot item if visible/disappearing
+        private void SpawnItem(Client c, PacketReader r) {
+            var item = r.ReadMapItem();
+            if (item.Type == DropType.VISIBLE || item.Type == DropType.DISAPPEARING) {
                 return;
             }
-            uint objectId = r.ReadUInt(); // [ObjectId (4)]
-            if (!r.ReadBool()) { // If not meso, currently cannot loot
-                return;
-            }
-            r.Skip(21); // [Zero (12)] [MesoAmount/ItemId (4)] [DropType (1)]
-            var pos = r.ReadPosition(); // [x (2)] [y (2)]
-
-            var item = new Item(objectId) {
-                Position = pos,
-                Crc = 0, // Crc for mesos is 0
-                Timestamp = Stopwatch.GetTimestamp() / Stopwatch.Frequency
-            };
 
             //TODO: This delay is still not perfect, maybe react on confirmation of loot instead?
-            switch (type) {
-                case 0: // Item dropping
+            switch (item.Type) {
+                case DropType.DROPPING:
                     item.Timestamp += 2; // Delay 2 seconds
                     lootQueue.AddLast(item);
                     break;
-                case 2: // Item already on ground
+                case DropType.SPAWNED:
                     lootQueue.AddFirst(item);
                     break;
             }
+        }
+
+        private void RemoveItem(Client c, PacketReader r) {
+            r.ReadByte(); // Animation?
+            r.ReadInt(); // Object Id
+            r.ReadInt(); // Looter Uid
         }
     }
 }

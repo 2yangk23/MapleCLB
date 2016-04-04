@@ -25,40 +25,45 @@
          ********************************/
 
     internal static class SendOps {
-        public const int FM1_CRC = 0x26F611E3;
-
         public const ushort
-            PONG = 0x93,
-
             /* login */
             CLIENT_HELLO = 0x67,
             CLIENT_LOGIN = 0x69,
             SERVER_LOGIN = 0x6A,
             CHAR_SELECT = 0x6B,
             PLAYER_LOGGEDIN = 0x6E,
-            GET_SERVERS = 0x9E,
+            PONG = 0x93,
 
-            LOOT_ITEM = 0x032E,
-            CHANGE_MAP = 0xAC,
+            GET_SERVERS = 0x9E, // Useless
+
+            MOVE_BASE = 0xAC,
+            ENTER_PORTAL = MOVE_BASE,
+            CHANGE_CHANNEL = MOVE_BASE + 0x01,
+            ENTER_CASHSHOP = MOVE_BASE + 0x05,
+            MOVE_PLAYER = MOVE_BASE + 0x0F,
+
             SPECIAL_PORTAL = 0x01EE,
-            CHANGE_CHANNEL = CHANGE_MAP + 0x01,
+
+            HIT_REACTOR = 0x0331,
+            LOOT_ITEM = 0x032E,
             TRADE = 0x0179,
             USE_MUSHY = 0x00E1,
             /* Chat */
             GENERAL_CHAT = 0xC7,
             WHISPER = 0x0177,
-            SEND_CHAT = 0x00, //not updated
 
             DROP_ITEM = 0xEC,
             DROP_MESO = 0x012F,
 
             BEFORE_MOVE = 0x022E,
 
-            /* cashshop */
-            ENTER_CASHSHOP = 0xB1,
-            MOVE_PLAYER = 0xBB,
-            NPC_TALK = 0xDA, 
-            NPC_TALK_MORE = NPC_TALK + 0x02; //why do i have this?
+            /* NPC */
+            NPC_CHAT = 0xDA, 
+            NPC_CHAT_MORE = NPC_CHAT + 0x02; //why do i have this?
+    }
+
+    internal static class GameConsts {
+        public const int FM1_CRC = 0x26F611E3;
     }
 
     /*************RECEIVE************
@@ -83,24 +88,25 @@
 
     internal static class RecvOps {
         public const ushort
-            PING = 0x12,
-
             /* server */
             LOGIN_STATUS = 0x00,
-            LOGIN_SECOND = 0x08,
             CHARLIST = 0x06,
-            SERVERLIST = 0x01, // Useless
             SERVER_IP = 0x07,
+            LOGIN_SECOND = 0x08,
             CHANNEL_IP = 0x11,
+            PING = 0x12,
+
+            SERVERLIST = 0x01, //Useless
 
             /* player */
             CHAR_INFO = 0x019E,
             UPDATE_INVENTORY = 0x42,
             UPDATE_STATUS = 0x44,
-            SEED = 0x0172,  //4A FC E4 FF is magic number  
+            UPDATE_REACTOR = 0x03C4,
+            SPAWN_REACTOR = 0x03C6,
+            SEED = 0x0172,
 
             BLUE_POP = 0x60,
-            TEMP = 0x003F, //Not Updated, need to fix too
 
             /* shop */
             LOAD_MUSHY = 0x03B1,
@@ -109,12 +115,17 @@
             UPDATE_SHOP = 0x04D6,
 
             /* map */
-            SPAWN_PLAYER = 0x01EE, 
+            SPAWN_PLAYER = 0x01EE,
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01,
+            ALL_CHAT = SPAWN_PLAYER + 0x02,
             SPAWN_ITEM = 0x03B4,
+            REMOVE_ITEM = SPAWN_ITEM + 0x02,
             FINISH_LOAD = 0x0047,
 
-            /* chat */
-            ALL_CHAT = 0x01EF; 
+            /* Mob */
+            MOB_BASE = 0x35B,
+            SPAWN_MOB = MOB_BASE,
+            REMOVE_MOB = MOB_BASE + 0x01,
+            CONTROL_MOB = MOB_BASE + 0x02;
     }
 }

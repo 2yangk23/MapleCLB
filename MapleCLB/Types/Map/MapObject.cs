@@ -1,15 +1,14 @@
 ﻿namespace MapleCLB.Types.Map {
     internal abstract class MapObject {
-        internal readonly uint Id;
+        internal readonly int Id;
         internal Position Position { get; set; }
 
-        protected MapObject(uint id) {
+        protected MapObject(int id) {
             Id = id;
-            //X.
         }
 
         public override int GetHashCode() {
-            return (int) Id;
+            return Id;
         }
     }
 }

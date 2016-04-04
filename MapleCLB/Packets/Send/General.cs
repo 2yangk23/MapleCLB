@@ -1,18 +1,11 @@
-﻿using MapleLib.Packet;
+﻿using MapleCLB.Types.Items;
+using MapleLib.Packet;
 
 namespace MapleCLB.Packets.Send {
     internal class General {
         public static byte[] Pong() {
             var pw = new PacketWriter(SendOps.PONG);
             pw.Timestamp(); //Is this actually timestamp?
-
-            return pw.ToArray();
-        }
-
-        public static byte[] RandomChannel() {
-            var pw = new PacketWriter(SendOps.CHANGE_CHANNEL);
-            pw.WriteByte(0x03); //fix later so its acutally random :D
-            pw.Timestamp();
 
             return pw.ToArray();
         }
@@ -34,20 +27,20 @@ namespace MapleCLB.Packets.Send {
         }
 
         public static byte[] ExitCS() {
-            var pw = new PacketWriter(SendOps.CHANGE_MAP);
+            var pw = new PacketWriter(SendOps.ENTER_PORTAL);
 
             return pw.ToArray();
         }
 
-        public static byte[] DropItem(byte tab, byte slot,short amount) {
-            // 01 = Equip tab, 02 = Use tab, 04 = Etc tab, 03 = SetUp Tab
+        public static byte[] DropItem(InventoryTab tab, byte slot, short amount) {
             var pw = new PacketWriter(SendOps.DROP_ITEM);
             pw.Timestamp();
-            pw.WriteByte(tab);
+            pw.WriteByte((byte) tab);
             pw.WriteByte(slot);
             //pw.WriteInt(1);
             pw.WriteZero(3);
             pw.WriteShort(amount);
+
             return pw.ToArray();
         }
     }

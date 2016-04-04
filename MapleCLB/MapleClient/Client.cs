@@ -12,6 +12,7 @@ using MapleCLB.Packets.Send;
 using MapleCLB.ScriptLib;
 using MapleCLB.Types;
 using MapleCLB.Types.Items;
+using MapleCLB.Types.Map;
 using MapleLib;
 using MapleLib.Packet;
 using SharedTools;
@@ -49,9 +50,10 @@ namespace MapleCLB.MapleClient {
         internal ClientState State;
         internal long SessionId;
 
-        /* Dictionaries */
-        internal readonly MultiKeyDictionary<byte, string, int> CharMap; // slot/ign -> uid
-        internal readonly ConcurrentDictionary<int, string> UidMap; //uid -> ign
+        /* Map Info */
+        internal readonly ConcurrentDictionary<int, Player> UidMap; 
+        internal readonly ConcurrentDictionary<int, Reactor> ReactorMap;
+        internal readonly ConcurrentDictionary<int, Monster> MonsterMap;
 
         /* User Info */
         internal Account Account;
@@ -89,8 +91,9 @@ namespace MapleCLB.MapleClient {
             UpdatePeople = form.UpdatePeople;
 
             /* Initialize Client */
-            CharMap = new MultiKeyDictionary<byte, string, int>();
-            UidMap = new ConcurrentDictionary<int, string>();
+            UidMap = new ConcurrentDictionary<int, Player>();
+            ReactorMap = new ConcurrentDictionary<int, Reactor>();
+            MonsterMap = new ConcurrentDictionary<int, Monster>();
 
             ScriptManager = new ScriptManager(this);
             handshakeHandler = new Handshake(this);
@@ -217,7 +220,7 @@ namespace MapleCLB.MapleClient {
         #endregion
 
         #region Script Packet Funcs (Concurrent)
-        public bool AddScriptRecv(ushort header, EventHandler<PacketReader> handler) {
+        public bool AddScriptRecv(ushort header, Action<Client, PacketReader> handler) {
             return packetHandler.RegisterHandler(header, handler);
         }
 
@@ -247,7 +250,6 @@ namespace MapleCLB.MapleClient {
         private void OnDisconnected(object o, EventArgs e) {
             Log.Report("Disconnected from server.");
             State = ClientState.DISCONNECTED;
-            CharMap.Clear();
             ClearStats();
             dcst.Enabled = false;
             if (cForm.AutoRestart.Checked) {

@@ -30,7 +30,7 @@ namespace MapleLib.Packet {
         }
 
         public bool ReadBool() {
-            return ReadByte() == 1;
+            return ReadByte() != 0;
         }
 
         public byte[] ReadBytes(int count) {

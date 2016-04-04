@@ -1,5 +1,4 @@
 ﻿using MapleCLB.Forms.Tabs;
-using MapleCLB.Tools;
 
 namespace MapleCLB.Forms {
     partial class ClientForm {

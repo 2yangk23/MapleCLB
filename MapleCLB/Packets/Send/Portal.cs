@@ -4,7 +4,7 @@ using MapleLib.Packet;
 namespace MapleCLB.Packets.Send {
     internal class Portal {
         public static byte[] Enter(byte count, int crc, PortalInfo data) {
-            var pw = new PacketWriter(SendOps.CHANGE_MAP);
+            var pw = new PacketWriter(SendOps.ENTER_PORTAL);
             pw.WriteByte(count);
             pw.WriteInt(-1); // FF FF FF FF
             pw.WriteInt(crc);

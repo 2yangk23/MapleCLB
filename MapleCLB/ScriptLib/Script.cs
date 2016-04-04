@@ -62,7 +62,7 @@ namespace MapleCLB.ScriptLib {
             client.SendPacket(w);
         }
 
-        protected void RegisterRecv(ushort header, EventHandler<PacketReader> handler) {
+        protected void RegisterRecv(ushort header, Action<Client, PacketReader> handler) {
             Precondition.Check<InvalidOperationException>(client.AddScriptRecv(header, handler),
                 $"Failed to register header {header:X4}.");
             headers.Add(header);

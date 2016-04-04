@@ -133,6 +133,8 @@
     <Compile Include="MapleClient\Scripts\ChatBot.cs" />
     <Compile Include="MapleClient\Scripts\IgnBot.cs" />
     <Compile Include="Packets\Recv\Map.cs" />
+    <Compile Include="Packets\Recv\Update.cs" />
+    <Compile Include="Packets\Send\Attack.cs" />
     <Compile Include="Packets\Send\Map.cs" />
     <Compile Include="Resources\Exp.cs" />
     <Compile Include="Resources\ItemData.cs" />
@@ -167,9 +169,10 @@
     <Compile Include="Types\Mapler.cs" />
     <Compile Include="Types\MapNode.cs" />
     <Compile Include="Types\Map\MapObject.cs" />
-    <Compile Include="Types\Map\Item.cs" />
+    <Compile Include="Types\Map\DroppedItem.cs" />
     <Compile Include="Types\Map\Monster.cs" />
     <Compile Include="Types\Map\Player.cs" />
+    <Compile Include="Types\Map\Reactor.cs" />
     <Compile Include="Types\Position.cs" />
     <Compile Include="Types\Settings.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
