@@ -6,30 +6,35 @@ namespace MapleCLB.Packets.Recv {
     internal static class Update {
         public static void Inventory(Client c, PacketReader r) {
             r.ReadByte(); // [EnableActions Bool]
-            for (int i = r.ReadShort(); i > 0; i--) {
+            for (int i = r.ReadShort(); i > 0; i--){
+                byte action = r.ReadByte();
                 var tab = (InventoryTab)r.ReadByte();
                 short slot = r.ReadShort();
-                switch (r.ReadByte()) {
-                    case 0x00: // Add item
-                        if (tab == InventoryTab.EQUIP) {
+                switch (action){
+                    case 0x00: //Add New Item If not already in slot or already full?
+                        if (tab == InventoryTab.EQUIP){
                             c.Inventory.Add(tab, r.Read<Equip>(slot));
-                        } else {
+                        }
+                        else {
                             c.Inventory.Add(tab, r.Read<Other>(slot));
                         }
-                        break;
-                    case 0x01: // Update item
+                            break;
+                    case 0x01: //Update Item if more of same slot looted
                         c.Inventory.Update(tab, slot, r.ReadShort());
                         break;
-                    case 0x02: // Move item
+                    case 0x02: //Move Item Between Slots (Probably not used)
                         c.Inventory.Move(tab, slot, r.ReadShort());
                         break;
-                    case 0x03: // Remove item
+                    case 0x03: //Remove All of that Slot
                         c.Inventory.Update(tab, slot, 0);
                         break;
                 }
+
             }
+          }
+     
             //TODO: Report inventory update to client?
-        }
+        
 
         //TODO: See other function vals (spoof RECV), example:
         // [42 00] 00 00 00 [01] 00 00 00 00 00 [1A 5D 6D D9 01 00 00 00] FF 00 00 00 00

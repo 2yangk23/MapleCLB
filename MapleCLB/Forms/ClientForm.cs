@@ -67,7 +67,6 @@ namespace MapleCLB.Forms {
                     "t.h.e.m.a.p.leblc@gmail.com",
                     "t.h.e.m.a.p.l.eblc@gmail.com",
                     "The.OldKingCoal@gmail.com",
-                    "TheO.ldKingCoal@gmail.com",
                     "TheOl.dKingCoal@gmail.com"
                 };
 

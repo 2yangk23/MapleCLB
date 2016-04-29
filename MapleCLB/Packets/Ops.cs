@@ -45,7 +45,7 @@
             SPECIAL_PORTAL = 0x0136, //Maybe?
 
             HIT_REACTOR = 0x0331, //Not updated
-            LOOT_ITEM = 0x0322,
+            LOOT_ITEM = 0x0332,
             TRADE = 0x0179,
             USE_MUSHY = 0x00E1, //Not updated
             /* Chat */

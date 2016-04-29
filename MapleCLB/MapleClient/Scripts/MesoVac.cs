@@ -49,11 +49,13 @@ namespace MapleCLB.MapleClient.Scripts {
                     break;
             }
         }
-
+        //Why even waste time on catching the recv for removing items?
         private void RemoveItem(Client c, PacketReader r) {
-            r.ReadByte(); // Animation?
-            r.ReadInt(); // Object Id
-            r.ReadInt(); // Looter Uid
+            if (System.Convert.ToBoolean(r.ReadByte())) // Animation?
+            {
+                r.ReadInt(); // Object Id
+                r.ReadInt(); // Looter Uid
+            }
         }
     }
 }

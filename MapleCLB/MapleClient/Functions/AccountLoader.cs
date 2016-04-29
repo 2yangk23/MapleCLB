@@ -5,7 +5,7 @@ using SharedTools;
 
 namespace MapleCLB.MapleClient.Functions {
     internal static class AccountLoader {
-        private static readonly byte[] key = { // TODO: Constant key is not very secure...
+        private static readonly byte[] key = { // TODO: Constant key is not very secure... iheku
             0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
             0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
         };

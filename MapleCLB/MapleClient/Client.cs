@@ -124,7 +124,7 @@ namespace MapleCLB.MapleClient {
             //ScriptManager.Get<ChatBot>().Start();
             //ScriptManager.Get<IgnBot>().Start();
             //ScriptManager.Get<SpotStealerBot>().Start();
-            //ScriptManager.Get<MesoVac>().Start();
+            ScriptManager.Get<MesoVac>().Start();
         }
 
         //TODO: This shouldn't be in client
