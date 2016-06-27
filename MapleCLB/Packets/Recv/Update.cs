@@ -51,6 +51,8 @@ namespace MapleCLB.Packets.Recv {
                     c.Inventory.Mesos = r.ReadLong();
                     c.UpdateMesos.Report(c.Inventory.Mesos);
                     break;
+                default:
+                    break;
             }
         }
     }

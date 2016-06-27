@@ -272,9 +272,10 @@ namespace MapleCLB.Forms {
         {
             if (Tabs.SelectedTab == InventoryTab)
             {
-                Console.WriteLine("ALMOST DONE BRB CLASS");
-                //InventoryTab.clear();
-                //InventoryTab.updateInventory();}
+                //Console.WriteLine("ALMOST DONE BRB CLASS");
+                inventoryTab1.clear();
+                if(client.Inventory != null)
+                    inventoryTab1.updateInventory(client.Inventory);
             }
         }
 

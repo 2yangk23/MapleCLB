@@ -34,32 +34,32 @@
             PLAYER_LOGGEDIN = 0x6E,
             PONG = 0x93,
 
-            GET_SERVERS = 0x9E, // Useless
+            GET_SERVERS = 0xA2, // Useless 
 
-            MOVE_BASE = 0xAC,
+            MOVE_BASE = 0xAF,
             ENTER_PORTAL = MOVE_BASE,
             CHANGE_CHANNEL = MOVE_BASE + 0x01,
             ENTER_CASHSHOP = MOVE_BASE + 0x05,
             MOVE_PLAYER = MOVE_BASE + 0x0F,
 
-            SPECIAL_PORTAL = 0x0136, //Maybe?
+            SPECIAL_PORTAL = 0x0136, //Maybe? //Not Updated 13A maybe?
 
             HIT_REACTOR = 0x0331, //Not updated
-            LOOT_ITEM = 0x0332,
-            TRADE = 0x0179,
+            LOOT_ITEM = 0x0350,
+            TRADE = 0x0183,
             USE_MUSHY = 0x00E1, //Not updated
             /* Chat */
-            GENERAL_CHAT = 0xC7,
-            WHISPER = 0x0177,
+            GENERAL_CHAT = 0xCB,
+            WHISPER = 0x0181,
 
-            DROP_ITEM = 0xEC,
-            DROP_MESO = 0x012F,
+            DROP_ITEM = 0xF1,
+            DROP_MESO = 0x0134,
 
             BEFORE_MOVE = 0x023A,
 
             /* NPC */
-            NPC_CHAT = 0xDA, 
-            NPC_CHAT_MORE = NPC_CHAT + 0x02; //why so gay?
+            NPC_CHAT = 0xDD, 
+            NPC_CHAT_MORE = NPC_CHAT + 0x02;
     }
 
     internal static class GameConsts {
@@ -99,28 +99,28 @@
             SERVERLIST = 0x01, //Useless
 
             /* player */
-            CHAR_INFO = 0x019F,
-            UPDATE_INVENTORY = 0x44,
-            UPDATE_STATUS = 0x46,
+            CHAR_INFO = 0x01AC,
+            UPDATE_INVENTORY = 0x47,
+            UPDATE_STATUS = 0x49,
             UPDATE_REACTOR = 0x03C4,//Not updated
             SPAWN_REACTOR = 0x03C6,//Not Updated
-            SEED = 0x0174,
+            SEED = 0x0181,
 
             BLUE_POP = 0x60, //Not Updated
 
             /* shop */
-            LOAD_MUSHY = 0x03B6,
+            LOAD_MUSHY = 0x03EB,
             CLOSE_MUSHY = LOAD_MUSHY + 0x02,
             CLOSE_PERMIT = 0x01F2, //Not Updated
             UPDATE_SHOP = 0x04D6, //Not Updated
 
             /* map */
-            SPAWN_PLAYER = 0x01EF,
+            SPAWN_PLAYER = 0x0204,
             REMOVE_PLAYER = SPAWN_PLAYER + 0x01,
             ALL_CHAT = SPAWN_PLAYER + 0x02,
-            SPAWN_ITEM = 0x03B9,
+            SPAWN_ITEM = 0x03EE,
             REMOVE_ITEM = SPAWN_ITEM + 0x02,
-            FINISH_LOAD = 0x004A,
+            FINISH_LOAD = 0x004D,
 
             /* Mob */
             MOB_BASE = 0x35B, //Not updated
